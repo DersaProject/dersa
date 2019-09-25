@@ -1,0 +1,15 @@
+*.dll
+*.user
+*.pdb
+Dersa.Common/bin/Debug/Microsoft.Web.Infrastructure.xml
+Dersa.Common/DersaStereotypes/
+Dersa.Common/bin/Debug/
+Dersa.Common/obj/
+Dersa/Backup/Company.cs
+Dersa/Build/
+Dersa/demo/d5.html
+Dersa/demo/app-cshtml5/app/CSharpXamlForHtml5.System.ServiceModel.dll.js
+Dersa/obj/
+Dersa/TempFiles/
+Dersa/user_resources/
+Dersa/UploadedFiles/
