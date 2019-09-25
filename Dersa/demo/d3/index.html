@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DERSA</title>
+    <style>
+        html {
+            margin: 0;
+            padding: 0;
+            font-size: 62.5%;
+        }
+
+        body {
+            max-width: 1600px;
+            min-width: 300px;
+            margin-left: 20px;
+            padding: 20px 10px;
+            font-size: 14px;
+            font-size: 1.4em;
+        }
+
+        h1 {
+            font-size: 1.8em;
+        }
+
+        .tree {
+            overflow: auto;
+            border: 1px solid silver;
+            min-height: 100px;
+            max-width: 400px;
+            padding: 0;
+        }
+
+        .descr {
+            overflow: auto;
+            border: 1px solid silver;
+            min-height: 100px;
+            max-width: 400px;
+            padding: 0;
+        }
+
+
+.context-menu {
+    position: absolute; /* Задаем абсолютное позиционирование для нашего меню */
+    display: none; /* Изначально не показываем его */
+    background-color: #fff; /* Цвет фона меню */
+    border: 1px solid #333; /* граница */
+
+    /* Немного красивостей. Добавляем тень для нашего меню, что бы отобразить его слегка выше остальных элементов страницы: */
+    -moz-box-shadow: -5px 2px 10px rgba(0,0,0,0.5); /* Для Firefox */
+    -webkit-box-shadow: -5px 2px 10px rgba(0,0,0,0.5); /* Для Safari и Chrome */
+    box-shadow: -5px 2px 10px rgba(0,0,0,0.5); /* Параметры тени */
+    }
+
+/* Добавляем стили для списка которые будет находиться внутри меню и, собственно, содержать его пункты: */
+.context-menu ul { list-style: none; margin: 0; padding: 0; }
+            
+.context-menu ul li { margin: 0; padding: 0; background-color: #fff; display: block; }
+
+/* Стили для ссылок пунктов меню: */
+.context-menu ul li a { color: #333; text-decoration: none; font-size: 12px; display: block; padding: 5px; }
+            
+.context-menu ul li a:hover { background-color: #eee; }
+
+    </style>
+    <link rel="stylesheet" href="dist/themes/default/style.css" />
+</head>
+<body>
+
+    <input id="displaytext" type="hidden"/>
+
+    <button id="find_button">Найти</button>
+    <input id="searchtext" type="text" size="105" /> <br>
+    <input id="found" type="text" size="10" value="0" />
+    <input id="foundpath" type="text" size="80" />
+    <button id="goto_button">Перейти</button>
+    <button id="reset_button">Reset</button><br>
+    <select id="listBox" multiple size="5"></select>
+
+    <h1>DERSA modeller</h1>
+
+    <div id="dersa" class="block1">
+    </div>
+    <div id="infoboard" class="block2">
+    </div>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="dist/jstree.min.js"></script>
+    <script src="dist/menu.js"></script>
+
+    <script>
+
+        $('#goto_button').on("click", function () {
+            if(!instance)
+                instance = $('#dersa').jstree(true);
+            instance.deselect_all();
+            var found = document.getElementById("found");
+            var nextId = found.value;
+            if (instance.get_node(nextId))
+                instance.select_node(nextId);
+            else
+            {
+                npath = JSON.parse(GetPath(nextId, 1));
+                //npath[0] = nextId;
+                LoadPath();
+            }
+        });
+
+        $('#listBox').on("click", function () {
+            var listBox = document.getElementById("listBox");
+            Index = listBox.selectedIndex;
+            if (Index >= 0) {
+                var found = document.getElementById("found");
+                found.value = listBox.options[Index].value;
+                var foundpath = document.getElementById("foundpath");
+                foundpath.value = listBox.options[Index].text;
+            }
+        });
+
+        $('#reset_button').on("click", function () {
+            var listBox = document.getElementById("listBox");
+            while (listBox.options.length > 0) {
+                listBox.options[0] = null;
+            }
+        });
+
+        $('#find_button').on("click", function () {
+            var searchtext = document.getElementById("searchtext");
+            if (searchtext.value.length < 3)
+                return;
+            var instance = $('#dersa').jstree(true);
+            var found = document.getElementById("found");
+            var foundpath = document.getElementById("foundpath");
+            var nextId = found.value;
+            nextId = FindNext(nextId, searchtext.value);
+            found.value = nextId;
+            foundpath.value = GetPath(nextId);
+            addValue(found);
+        });
+
+        $('#dersa')
+		.on("changed.jstree", function (e, data) {
+		    bnEdit = document.getElementById("bnEdit");
+		    if (bnEdit != null && bnEdit.checked)
+		        return;
+		    if (data.selected.length) {
+
+		        selected_id = data.instance.get_node(data.selected[0]).id;
+
+		        var infoControl = document.getElementById("infoboard");
+		        if (selected_id.length == 0 || selected_id[0] != "D") {
+		            infoControl.innerHTML = GetText(selected_id, "") + GetText(selected_id, "Text");
+		        }
+		        else {
+		            infoControl.innerHTML = GetText(selected_id, "Diagram");
+		        }
+		    }
+		})
+            /*
+		.on("loaded.jstree", function (e, data) {
+		    data.instance.load_all('312885');
+		})*/
+
+    .jstree({
+        'core': {
+            "animation": 0,
+            "check_callback": true,
+            'data': {
+                'multiple': false,
+                "url": "Handler.ashx",
+                "dataType": "json",
+                "data": function (node) {
+                    return { "id": node.id };
+                }
+            }
+        },
+        "plugins": [
+            "state", "wholerow"
+        ]
+    });
+    </script>
+    <script src="dist/user-functions.js"></script>
+
+</body>
+</html>
+
