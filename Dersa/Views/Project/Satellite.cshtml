@@ -1,0 +1,47 @@
+	@using System.Data
+	@model DataTable
+	@{
+	    ViewBag.Title = "СпутникЪ";
+	}
+	<h2>СпутникЪ</h2>
+	<table>
+	    <tr>
+	        <th>
+	            <strong>описание</strong>
+	        </th>
+	        <th>
+	            <strong>№</strong>
+	        </th>
+	        <th>
+	            <strong>название</strong>
+	        </th>
+	        <th>
+	            <strong>satellite_status</strong>
+	        </th>
+	        <th></th>
+	    </tr>
+	    @foreach (DataRow item in Model.Rows)
+	    {
+	        <tr>
+	            <td style="padding:2px 5px">
+	                @Html.DisplayFor(modelItem => item["description"], "string")
+	            </td>
+	            <td style="padding:2px 5px">
+	                @Html.DisplayFor(modelItem => item["N_KA"], "string")
+	            </td>
+	            <td style="padding:2px 5px">
+	                @Html.DisplayFor(modelItem => item["name"], "string")
+	            </td>
+	            <td style="padding:2px 5px">
+	                @Html.DisplayFor(modelItem => item["satellite_status"], "string")
+	            </td>
+	            <td style="padding:2px 5px">
+	                @Html.ActionLink("Edit", "Edit/" + item["satellite"].ToString(), new { class_name = "SATELLITE" })
+	                | @Html.ActionLink("Delete", "Delete", new { id = -5 })
+	            </td>
+	        </tr>
+	    }
+	</table>
+	@Html.ActionLink("Create", "Create")
+	<br>
+	<br>

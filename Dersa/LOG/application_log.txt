@@ -1,0 +1,1217 @@
+
+22.11.2018 18:50:37
+Login failed for user 'd_user'.
+
+22.11.2018 18:51:40
+Login failed for user 'd_user'.
+
+22.11.2018 18:52:35
+Login failed for user 'd_user'.
+
+22.11.2018 18:53:26
+Login failed for user 'd_user'.
+
+22.11.2018 18:58:33
+Could not find stored procedure 'USER_SETTING$List'.
+
+22.11.2018 18:58:43
+Could not find stored procedure 'OBJ$TypesList'.
+
+22.11.2018 19:04:38
+Could not find stored procedure 'ENTITY$GetChildStereotypes'.
+
+22.11.2018 19:04:41
+Could not find stored procedure 'ENTITY$GetChildStereotypes'.
+
+22.11.2018 19:04:42
+Could not find stored procedure 'ENTITY$GetChildStereotypes'.
+
+22.11.2018 19:04:42
+Could not find stored procedure 'ENTITY$GetChildStereotypes'.
+
+22.11.2018 19:04:42
+Could not find stored procedure 'ENTITY$GetChildStereotypes'.
+
+22.11.2018 19:04:45
+Could not find stored procedure 'ENTITY$GetChildStereotypes'.
+
+22.11.2018 19:04:47
+Could not find stored procedure 'ENTITY$GetChildStereotypes'.
+
+22.11.2018 19:04:53
+Could not find stored procedure 'ENTITY$GetChildStereotypes'.
+
+22.11.2018 19:04:55
+Could not find stored procedure 'ENTITY$GetChildStereotypes'.
+
+22.11.2018 19:04:56
+Could not find stored procedure 'ENTITY$GetChildStereotypes'.
+
+22.11.2018 19:04:56
+Could not find stored procedure 'ENTITY$GetChildStereotypes'.
+
+22.11.2018 19:05:08
+Could not find stored procedure 'USER_SETTING$List'.
+
+22.11.2018 19:05:20
+Could not find stored procedure 'ENTITY$GetChildStereotypes'.
+
+22.11.2018 19:06:41
+Could not find stored procedure 'ENTITY$GetChildStereotypes'.
+
+22.11.2018 19:16:12
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:12
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:13
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:13
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:13
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:13
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:13
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:14
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:14
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:14
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:15
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:15
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:16
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:16
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:16
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:16
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:16
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:17
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:17
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:17
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:22
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:23
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:23
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:23
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:23
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:24
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:24
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:24
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:24
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:25
+Could not find stored procedure 'DERSA_USER$Exists'.
+
+22.11.2018 19:16:36
+Could not find stored procedure 'DERSA_USER$CanAuthorize'.
+
+22.11.2018 19:17:30
+Could not find stored procedure 'DERSA_USER$CanAuthorize'.
+
+22.11.2018 19:50:17
+Invalid object name '1gb_x_dersa.dbo.sysobjects'.
+Database '1gb_x_dersa' does not exist. Make sure that the name is entered correctly.
+
+08.12.2018 13:56:19
+Cannot insert the value NULL into column 'owner_account', table 'dersa_new.dbo.ATTRIBUTE'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+08.12.2018 13:56:52
+Cannot insert the value NULL into column 'owner_account', table 'dersa_new.dbo.ATTRIBUTE'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+01.02.2019 21:34:45
+Cannot insert the value NULL into column 'stereotype', table '1gb_dersa8.dbo.ENTITY'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+01.02.2019 21:35:18
+Cannot insert the value NULL into column 'stereotype', table '1gb_dersa8.dbo.ENTITY'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+01.02.2019 21:35:27
+Cannot insert the value NULL into column 'stereotype', table '1gb_dersa8.dbo.ENTITY'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+01.02.2019 21:37:08
+Cannot insert the value NULL into column 'stereotype', table '1gb_dersa8.dbo.ENTITY'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+01.02.2019 21:37:29
+Cannot insert the value NULL into column 'stereotype', table '1gb_dersa8.dbo.ENTITY'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+01.02.2019 21:53:06
+Cannot insert the value NULL into column 'stereotype', table '1gb_dersa8.dbo.ENTITY'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+01.02.2019 21:53:16
+Cannot insert the value NULL into column 'stereotype', table '1gb_dersa8.dbo.ENTITY'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+01.02.2019 22:04:55
+Cannot insert the value NULL into column 'stereotype', table '1gb_dersa8.dbo.ENTITY'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+01.02.2019 22:58:46
+Procedure or function ENTITY$GetChildStereotypes has too many arguments specified.
+
+01.02.2019 22:58:52
+Procedure or function ENTITY$GetChildStereotypes has too many arguments specified.
+
+01.02.2019 22:58:59
+Procedure or function ENTITY$GetChildStereotypes has too many arguments specified.
+
+16.02.2019 8:24:20
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: Named Pipes Provider, error: 40 - Не удалось открыть подключение к SQL Server)
+
+16.02.2019 8:24:21
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: Named Pipes Provider, error: 40 - Не удалось открыть подключение к SQL Server)
+
+16.02.2019 18:12:55
+The error description is 'XML document must have a top level element.'.
+Could not find prepared statement with handle 0.
+Could not find prepared statement with handle 0.
+Invalid object name '#R'.
+The XML parse error 0xc00ce558 occurred on line number 0, near the XML text "".
+The statement has been terminated.
+The statement has been terminated.
+
+16.02.2019 18:13:34
+The error description is 'XML document must have a top level element.'.
+Could not find prepared statement with handle 0.
+Could not find prepared statement with handle 0.
+Invalid object name '#R'.
+The XML parse error 0xc00ce558 occurred on line number 0, near the XML text "".
+The statement has been terminated.
+The statement has been terminated.
+
+16.02.2019 18:14:27
+The error description is 'XML document must have a top level element.'.
+Could not find prepared statement with handle 0.
+Could not find prepared statement with handle 0.
+Invalid object name '#R'.
+The XML parse error 0xc00ce558 occurred on line number 0, near the XML text "".
+The statement has been terminated.
+The statement has been terminated.
+
+16.02.2019 18:15:09
+The error description is 'XML document must have a top level element.'.
+Could not find prepared statement with handle 0.
+Could not find prepared statement with handle 0.
+Invalid object name '#R'.
+The XML parse error 0xc00ce558 occurred on line number 0, near the XML text "".
+The statement has been terminated.
+The statement has been terminated.
+
+16.02.2019 18:18:52
+The error description is 'XML document must have a top level element.'.
+Could not find prepared statement with handle 0.
+Could not find prepared statement with handle 0.
+Invalid object name '#R'.
+The XML parse error 0xc00ce558 occurred on line number 0, near the XML text "".
+The statement has been terminated.
+The statement has been terminated.
+
+16.02.2019 18:21:38
+The error description is 'XML document must have a top level element.'.
+Could not find prepared statement with handle 0.
+Could not find prepared statement with handle 0.
+Invalid object name '#R'.
+The XML parse error 0xc00ce558 occurred on line number 0, near the XML text "".
+The statement has been terminated.
+The statement has been terminated.
+
+20.02.2019 23:10:25
+Invalid length parameter passed to the LEFT or SUBSTRING function.
+
+23.02.2019 11:23:34
+The DELETE statement conflicted with the SAME TABLE REFERENCE constraint "FK__ENTITY__parent__25C68D63". The conflict occurred in database "1gb_dersa8", table "dbo.ENTITY", column 'parent'.
+The statement has been terminated.
+
+23.02.2019 11:25:02
+The DELETE statement conflicted with the SAME TABLE REFERENCE constraint "FK__ENTITY__parent__25C68D63". The conflict occurred in database "1gb_dersa8", table "dbo.ENTITY", column 'parent'.
+The statement has been terminated.
+
+23.02.2019 11:25:16
+The DELETE statement conflicted with the SAME TABLE REFERENCE constraint "FK__ENTITY__parent__25C68D63". The conflict occurred in database "1gb_dersa8", table "dbo.ENTITY", column 'parent'.
+The statement has been terminated.
+
+23.02.2019 11:28:19
+The DELETE statement conflicted with the SAME TABLE REFERENCE constraint "FK__ENTITY__parent__25C68D63". The conflict occurred in database "1gb_dersa8", table "dbo.ENTITY", column 'parent'.
+The statement has been terminated.
+
+23.02.2019 11:31:27
+The DELETE statement conflicted with the SAME TABLE REFERENCE constraint "FK__ENTITY__parent__25C68D63". The conflict occurred in database "1gb_dersa8", table "dbo.ENTITY", column 'parent'.
+The statement has been terminated.
+
+23.02.2019 11:48:24
+The DELETE statement conflicted with the SAME TABLE REFERENCE constraint "FK__ENTITY__parent__25C68D63". The conflict occurred in database "1gb_dersa8", table "dbo.ENTITY", column 'parent'.
+The DELETE statement conflicted with the SAME TABLE REFERENCE constraint "FK__ENTITY__parent__25C68D63". The conflict occurred in database "1gb_dersa8", table "dbo.ENTITY", column 'parent'.
+The statement has been terminated.
+The statement has been terminated.
+
+23.02.2019 11:53:01
+The DELETE statement conflicted with the SAME TABLE REFERENCE constraint "FK__ENTITY__parent__25C68D63". The conflict occurred in database "1gb_dersa8", table "dbo.ENTITY", column 'parent'.
+The DELETE statement conflicted with the SAME TABLE REFERENCE constraint "FK__ENTITY__parent__25C68D63". The conflict occurred in database "1gb_dersa8", table "dbo.ENTITY", column 'parent'.
+The statement has been terminated.
+The statement has been terminated.
+
+20.04.2019 10:00:14
+Could not find stored procedure 'DERSA_USER$GetBoolUserSetting'.
+
+20.04.2019 10:01:51
+Could not find stored procedure 'DERSA_USER$GetBoolUserSetting'.
+
+27.04.2019 10:49:53
+Login failed for user 'quiestce'.
+
+27.04.2019 10:50:15
+Login failed for user 'quiestce'.
+
+27.04.2019 10:50:25
+Login failed for user 'quiestce'.
+
+27.04.2019 10:50:40
+Подключение к серверу успешно установлено, но затем произошла ошибка при входе. (provider: Shared Memory Provider, error: 0 - С обоих концов канала отсутствуют процессы.)
+
+27.04.2019 10:51:37
+Login failed for user 'quiestce'.
+
+27.04.2019 10:53:14
+Login failed for user 'quiestce'.
+
+27.04.2019 10:54:07
+Login failed for user 'quiestce'.
+
+27.04.2019 10:58:39
+Login failed for user '1gb_barmahlot'.
+
+27.04.2019 10:58:40
+Login failed for user '1gb_barmahlot'.
+
+27.04.2019 10:58:56
+Login failed for user '1gb_barmahlot'.
+
+27.04.2019 11:00:46
+Cannot open database "1gb_dersa8" requested by the login. The login failed.
+Login failed for user '1gb_barmahlot'.
+
+27.04.2019 11:00:48
+Cannot open database "1gb_dersa8" requested by the login. The login failed.
+Login failed for user '1gb_barmahlot'.
+
+27.04.2019 11:01:11
+Cannot open database "1gb_dersa8" requested by the login. The login failed.
+Login failed for user '1gb_barmahlot'.
+
+27.04.2019 11:03:13
+Cannot open database "1gb_dersa8" requested by the login. The login failed.
+Login failed for user '1gb_barmahlot'.
+
+27.04.2019 11:03:14
+Cannot open database "1gb_dersa8" requested by the login. The login failed.
+Login failed for user '1gb_barmahlot'.
+
+01.05.2019 10:05:42
+Cannot insert the value NULL into column 'stereotype', table '1gb_dersa8.dbo.RELATION'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+01.05.2019 10:08:24
+Cannot insert the value NULL into column 'stereotype', table '1gb_dersa8.dbo.RELATION'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+02.05.2019 14:02:12
+Error converting data type varchar to int.
+
+02.05.2019 16:17:03
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: Named Pipes Provider, error: 40 - Не удалось открыть подключение к SQL Server)
+
+02.05.2019 16:17:33
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: Named Pipes Provider, error: 40 - Не удалось открыть подключение к SQL Server)
+
+02.05.2019 16:18:12
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: Named Pipes Provider, error: 40 - Не удалось открыть подключение к SQL Server)
+
+02.05.2019 16:18:29
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: Named Pipes Provider, error: 40 - Не удалось открыть подключение к SQL Server)
+
+03.05.2019 20:58:00
+Cannot insert the value NULL into column 'stereotype', table '1gb_dersa8.dbo.ENTITY'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+04.05.2019 9:24:17
+Procedure or function 'ENTITY$GetInfo' expects parameter '@entity', which was not supplied.
+
+04.05.2019 9:25:50
+Procedure or function 'ENTITY$GetInfo' expects parameter '@entity', which was not supplied.
+
+04.05.2019 9:30:53
+Procedure or function 'ENTITY$GetInfo' expects parameter '@entity', which was not supplied.
+
+04.05.2019 10:04:02
+Procedure or function 'ENTITY$GetInfo' expects parameter '@entity', which was not supplied.
+
+04.05.2019 10:21:11
+Procedure or function 'ENTITY$GetInfo' expects parameter '@entity', which was not supplied.
+
+04.05.2019 11:17:28
+Could not find stored procedure ''.
+
+06.05.2019 21:23:17
+ExecuteReader: Свойство CommandText не инициализировано
+
+06.05.2019 21:25:09
+ExecuteReader: Свойство CommandText не инициализировано
+
+06.05.2019 22:08:56
+Procedure or function 'REPORT$CompareEntities' expects parameter '@entity1', which was not supplied.
+
+06.05.2019 22:58:54
+Procedure or function 'ENTITY$JTreeList' expects parameter '@id', which was not supplied.
+
+14.07.2019 13:40:56
+Время ожидания выполнения истекло. Время ожидания истекло до завершения операции, или сервер не отвечает.
+При выполнении текущей команды возникла серьезная ошибка.. При наличии результатов они должны быть аннулированы.
+Ошибка на транспортном уровне при получении результатов с сервера. (provider: TCP Provider, error: 0 - Удаленный хост принудительно разорвал существующее подключение.)
+
+26.07.2019 17:03:38
+Время ожидания выполнения истекло. Время ожидания истекло до завершения операции, или сервер не отвечает.
+
+26.07.2019 17:04:23
+Время ожидания выполнения истекло. Время ожидания истекло до завершения операции, или сервер не отвечает.
+
+31.07.2019 17:39:44
+Incorrect syntax near ','.
+
+31.07.2019 17:39:47
+Incorrect syntax near ','.
+
+31.07.2019 17:39:51
+Incorrect syntax near ','.
+
+31.07.2019 17:39:55
+Incorrect syntax near ','.
+
+31.07.2019 17:46:51
+Incorrect syntax near 'PhisicalName'.
+
+31.07.2019 17:47:00
+Invalid column name 'SQL'.
+
+31.07.2019 17:47:03
+Invalid column name 'SQL'.
+
+31.07.2019 17:47:05
+Invalid column name 'SQL'.
+
+31.07.2019 18:57:16
+'Name' is not a recognized built-in function name.
+
+11.08.2019 11:50:33
+Invalid column name 'SQL'.
+
+11.08.2019 11:51:02
+Invalid column name 'SQL'.
+
+11.08.2019 11:51:05
+Invalid column name 'SQL'.
+
+11.08.2019 11:51:39
+Invalid column name 'SQL'.
+
+11.08.2019 11:53:54
+Invalid column name 'SQL'.
+
+11.08.2019 11:55:03
+Invalid column name 'SQL'.
+
+11.08.2019 11:55:49
+Invalid column name 'SQL'.
+
+11.08.2019 12:08:53
+Invalid column name 'SQL'.
+
+11.08.2019 12:11:07
+Invalid column name 'SQL'.
+
+11.08.2019 12:18:41
+Invalid column name 'SQL'.
+
+11.08.2019 16:52:05
+Ambiguous column name 'Name'.
+
+12.08.2019 21:44:29
+Ambiguous column name 'Name'.
+
+12.08.2019 21:44:42
+The SELECT permission was denied on the object 'ATTRIBUTE', database 'dersa', schema 'dbo'.
+
+12.08.2019 21:45:00
+The SELECT permission was denied on the object 'ENTITY', database 'dersa', schema 'dbo'.
+
+12.08.2019 21:46:30
+The SELECT permission was denied on the object 'ATTRIBUTE', database 'dersa', schema 'dbo'.
+
+12.08.2019 21:46:37
+The SELECT permission was denied on the object 'ENTITY', database 'dersa', schema 'dbo'.
+
+12.08.2019 22:09:22
+Ambiguous column name 'Name'.
+
+12.08.2019 22:09:44
+Ambiguous column name 'Name'.
+
+12.08.2019 22:09:48
+Ambiguous column name 'Name'.
+
+12.08.2019 22:09:56
+Ambiguous column name 'Name'.
+
+12.08.2019 22:10:12
+Ambiguous column name 'Name'.
+
+12.08.2019 22:20:52
+Ambiguous column name 'Name'.
+
+13.08.2019 20:58:31
+Cannot open database "1gb_xdersa" requested by the login. The login failed.
+Login failed for user '1gb_barmahlot'.
+
+13.08.2019 22:20:24
+Ambiguous column name 'Name'.
+
+14.08.2019 11:51:29
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: SQL Network Interfaces, error: 26 - Ошибка при обнаружении указанного сервера или экземпляра)
+
+14.08.2019 14:24:50
+Ambiguous column name 'Name'.
+
+14.08.2019 14:25:05
+Ambiguous column name 'Name'.
+
+14.08.2019 14:25:07
+Ambiguous column name 'Name'.
+
+14.08.2019 14:25:18
+Ambiguous column name 'Name'.
+
+14.08.2019 14:25:23
+Ambiguous column name 'Name'.
+
+14.08.2019 14:25:32
+Ambiguous column name 'Name'.
+
+14.08.2019 14:25:33
+Ambiguous column name 'Name'.
+
+14.08.2019 14:25:36
+Ambiguous column name 'Name'.
+
+14.08.2019 14:25:45
+Ambiguous column name 'Name'.
+
+14.08.2019 14:25:46
+Ambiguous column name 'Name'.
+
+14.08.2019 14:26:16
+Ambiguous column name 'Name'.
+
+14.08.2019 14:28:03
+Ambiguous column name 'Name'.
+
+14.08.2019 14:30:54
+Ambiguous column name 'Name'.
+
+14.08.2019 14:31:03
+Ambiguous column name 'Name'.
+
+14.08.2019 14:31:25
+Ambiguous column name 'Name'.
+
+14.08.2019 14:36:37
+Ambiguous column name 'Name'.
+
+14.08.2019 14:36:45
+Ambiguous column name 'Name'.
+
+14.08.2019 14:36:52
+Ambiguous column name 'Name'.
+
+14.08.2019 14:49:47
+Ambiguous column name 'Name'.
+
+14.08.2019 17:01:39
+Ambiguous column name 'Name'.
+
+14.08.2019 17:02:06
+Ambiguous column name 'Name'.
+
+14.08.2019 17:18:18
+Ambiguous column name 'Name'.
+
+14.08.2019 17:27:09
+Ambiguous column name 'Name'.
+
+14.08.2019 21:05:55
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: SQL Network Interfaces, error: 26 - Ошибка при обнаружении указанного сервера или экземпляра)
+
+14.08.2019 21:05:57
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: SQL Network Interfaces, error: 26 - Ошибка при обнаружении указанного сервера или экземпляра)
+
+14.08.2019 21:06:28
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: SQL Network Interfaces, error: 26 - Ошибка при обнаружении указанного сервера или экземпляра)
+
+14.08.2019 21:08:06
+Login failed. The login is from an untrusted domain and cannot be used with Windows authentication.
+
+14.08.2019 21:10:33
+Ambiguous column name 'Name'.
+
+17.08.2019 9:49:04
+Ambiguous column name 'Name'.
+
+17.08.2019 9:49:22
+Ambiguous column name 'Name'.
+
+17.08.2019 9:50:41
+Ambiguous column name 'Name'.
+
+17.08.2019 9:50:48
+Ambiguous column name 'Name'.
+
+17.08.2019 10:00:32
+Ambiguous column name 'Name'.
+
+17.08.2019 10:00:38
+Ambiguous column name 'Name'.
+
+17.08.2019 10:00:45
+Ambiguous column name 'Name'.
+
+17.08.2019 10:01:06
+Ambiguous column name 'Name'.
+
+17.08.2019 10:01:17
+Ambiguous column name 'Name'.
+
+17.08.2019 10:02:44
+Ambiguous column name 'Name'.
+
+17.08.2019 10:03:12
+Ambiguous column name 'Name'.
+
+17.08.2019 10:03:15
+Ambiguous column name 'Name'.
+
+17.08.2019 10:05:27
+Время ожидания выполнения истекло. Время ожидания истекло до завершения операции, или сервер не отвечает.
+
+17.08.2019 10:06:29
+Время ожидания выполнения истекло. Время ожидания истекло до завершения операции, или сервер не отвечает.
+
+17.08.2019 10:16:46
+Ambiguous column name 'Name'.
+
+17.08.2019 13:00:25
+Ambiguous column name 'Name'.
+
+17.08.2019 13:06:13
+Ambiguous column name 'Name'.
+
+17.08.2019 13:06:17
+Ambiguous column name 'Name'.
+
+17.08.2019 13:06:48
+Ambiguous column name 'Name'.
+
+17.08.2019 13:06:58
+Ambiguous column name 'Name'.
+
+17.08.2019 13:14:49
+Ambiguous column name 'Name'.
+
+17.08.2019 13:17:09
+Ambiguous column name 'Name'.
+
+17.08.2019 13:17:14
+Ambiguous column name 'Name'.
+
+17.08.2019 13:17:18
+Ambiguous column name 'Name'.
+
+17.08.2019 13:17:23
+Ambiguous column name 'Name'.
+
+17.08.2019 13:17:26
+Ambiguous column name 'Name'.
+
+17.08.2019 13:18:01
+Ambiguous column name 'Name'.
+
+17.08.2019 13:18:05
+Ambiguous column name 'Name'.
+
+17.08.2019 13:18:13
+Ambiguous column name 'Name'.
+
+17.08.2019 13:21:49
+Ambiguous column name 'Name'.
+
+17.08.2019 13:21:56
+Ambiguous column name 'Name'.
+
+17.08.2019 13:22:20
+Ambiguous column name 'Name'.
+
+17.08.2019 13:24:16
+Ambiguous column name 'Name'.
+
+17.08.2019 13:24:37
+Ambiguous column name 'Name'.
+
+17.08.2019 13:28:08
+Ambiguous column name 'Name'.
+
+17.08.2019 13:28:13
+Ambiguous column name 'Name'.
+
+17.08.2019 13:49:29
+Ambiguous column name 'Name'.
+
+17.08.2019 13:49:35
+Ambiguous column name 'Name'.
+
+17.08.2019 13:49:40
+Ambiguous column name 'Name'.
+
+17.08.2019 13:50:26
+Ambiguous column name 'Name'.
+
+17.08.2019 13:50:32
+Ambiguous column name 'Name'.
+
+17.08.2019 13:56:00
+Ambiguous column name 'Name'.
+
+17.08.2019 14:06:19
+Ambiguous column name 'Name'.
+
+17.08.2019 14:06:36
+Ambiguous column name 'Name'.
+
+17.08.2019 14:06:55
+Ambiguous column name 'Name'.
+
+17.08.2019 14:06:59
+Ambiguous column name 'Name'.
+
+17.08.2019 14:13:27
+Ambiguous column name 'Name'.
+
+17.08.2019 14:13:56
+Ambiguous column name 'Name'.
+
+17.08.2019 14:14:07
+Ambiguous column name 'Name'.
+
+17.08.2019 14:15:03
+Ambiguous column name 'Name'.
+
+17.08.2019 17:32:28
+Ambiguous column name 'Name'.
+
+17.08.2019 17:32:29
+Ambiguous column name 'Name'.
+
+17.08.2019 17:38:58
+Ambiguous column name 'Name'.
+
+17.08.2019 18:25:56
+Ambiguous column name 'Name'.
+
+18.08.2019 12:00:40
+Ambiguous column name 'Name'.
+
+18.08.2019 12:02:00
+Ambiguous column name 'Name'.
+
+18.08.2019 12:04:26
+Ambiguous column name 'Name'.
+
+18.08.2019 12:04:29
+Ambiguous column name 'Name'.
+
+18.08.2019 12:04:31
+Ambiguous column name 'Name'.
+
+18.08.2019 12:06:26
+Ambiguous column name 'Name'.
+
+18.08.2019 12:10:34
+Ambiguous column name 'Name'.
+
+18.08.2019 12:10:40
+Ambiguous column name 'Name'.
+
+18.08.2019 12:10:51
+Ambiguous column name 'Name'.
+
+18.08.2019 12:13:49
+Ambiguous column name 'Name'.
+
+18.08.2019 12:14:53
+Ambiguous column name 'Name'.
+
+18.08.2019 12:19:42
+Ambiguous column name 'Name'.
+
+18.08.2019 12:20:46
+Ambiguous column name 'Name'.
+
+18.08.2019 12:21:02
+Ambiguous column name 'Name'.
+
+18.08.2019 14:24:03
+Ambiguous column name 'Name'.
+
+18.08.2019 14:24:29
+Ambiguous column name 'Name'.
+
+18.08.2019 14:24:42
+Ambiguous column name 'Name'.
+
+18.08.2019 14:25:02
+Ambiguous column name 'Name'.
+
+18.08.2019 14:25:05
+Ambiguous column name 'Name'.
+
+18.08.2019 14:25:19
+Ambiguous column name 'Name'.
+
+18.08.2019 14:25:22
+Ambiguous column name 'Name'.
+
+18.08.2019 14:25:39
+Ambiguous column name 'Name'.
+
+18.08.2019 14:25:53
+Ambiguous column name 'Name'.
+
+18.08.2019 14:26:03
+Ambiguous column name 'Name'.
+
+18.08.2019 14:26:19
+Ambiguous column name 'Name'.
+
+18.08.2019 14:27:01
+Ambiguous column name 'Name'.
+
+18.08.2019 14:27:07
+Ambiguous column name 'Name'.
+
+18.08.2019 14:28:23
+Ambiguous column name 'Name'.
+
+18.08.2019 14:28:32
+Ambiguous column name 'Name'.
+
+18.08.2019 14:29:01
+Ambiguous column name 'Name'.
+
+18.08.2019 14:29:04
+Ambiguous column name 'Name'.
+
+18.08.2019 14:40:00
+Ambiguous column name 'Name'.
+
+18.08.2019 14:40:11
+Ambiguous column name 'Name'.
+
+18.08.2019 14:40:39
+Ambiguous column name 'Name'.
+
+18.08.2019 14:40:42
+Ambiguous column name 'Name'.
+
+18.08.2019 14:40:43
+Ambiguous column name 'Name'.
+
+18.08.2019 14:40:55
+Ambiguous column name 'Name'.
+
+18.08.2019 14:40:58
+Ambiguous column name 'Name'.
+
+18.08.2019 14:41:03
+Ambiguous column name 'Name'.
+
+18.08.2019 14:41:05
+Ambiguous column name 'Name'.
+
+18.08.2019 14:47:57
+Ambiguous column name 'Name'.
+
+18.08.2019 14:51:32
+Ambiguous column name 'Name'.
+
+18.08.2019 14:52:28
+Ambiguous column name 'Name'.
+
+18.08.2019 14:52:41
+Ambiguous column name 'Name'.
+
+18.08.2019 14:53:16
+Ambiguous column name 'Name'.
+
+18.08.2019 15:17:33
+Ambiguous column name 'Name'.
+
+18.08.2019 15:27:09
+Ambiguous column name 'Name'.
+
+18.08.2019 15:33:07
+Ambiguous column name 'Name'.
+
+18.08.2019 15:33:19
+Ambiguous column name 'Name'.
+
+18.08.2019 15:47:31
+Ambiguous column name 'Name'.
+
+18.08.2019 15:54:59
+Ambiguous column name 'Name'.
+
+18.08.2019 16:03:04
+Ambiguous column name 'Name'.
+
+25.08.2019 11:32:13
+Ambiguous column name 'Name'.
+
+25.08.2019 11:45:39
+Ambiguous column name 'Name'.
+
+25.08.2019 11:54:17
+Ambiguous column name 'Name'.
+
+25.08.2019 11:54:40
+Ambiguous column name 'Name'.
+
+25.08.2019 11:54:55
+Ambiguous column name 'Name'.
+
+25.08.2019 11:54:57
+Ambiguous column name 'Name'.
+
+25.08.2019 11:55:03
+Ambiguous column name 'Name'.
+
+25.08.2019 11:55:06
+Ambiguous column name 'Name'.
+
+25.08.2019 11:55:09
+Ambiguous column name 'Name'.
+
+25.08.2019 11:55:22
+Ambiguous column name 'Name'.
+
+25.08.2019 11:55:26
+Ambiguous column name 'Name'.
+
+25.08.2019 11:55:50
+Ambiguous column name 'Name'.
+
+25.08.2019 12:23:00
+Ambiguous column name 'Name'.
+
+25.08.2019 12:25:29
+Ambiguous column name 'Name'.
+
+25.08.2019 12:25:42
+Ambiguous column name 'Name'.
+
+25.08.2019 12:25:48
+Ambiguous column name 'Name'.
+
+25.08.2019 12:35:40
+Ambiguous column name 'Name'.
+
+25.08.2019 12:36:53
+Ambiguous column name 'Name'.
+
+25.08.2019 12:42:22
+Ambiguous column name 'Name'.
+
+25.08.2019 12:43:02
+Ambiguous column name 'Name'.
+
+25.08.2019 12:43:04
+Ambiguous column name 'Name'.
+
+25.08.2019 12:44:42
+Ambiguous column name 'Name'.
+
+25.08.2019 12:44:44
+Ambiguous column name 'Name'.
+
+25.08.2019 12:45:33
+Ambiguous column name 'Name'.
+
+25.08.2019 12:53:49
+Ambiguous column name 'Name'.
+
+25.08.2019 13:12:03
+Ambiguous column name 'Name'.
+
+25.08.2019 13:33:31
+Ambiguous column name 'Name'.
+
+25.08.2019 13:34:28
+Ambiguous column name 'Name'.
+
+25.08.2019 13:37:29
+Ambiguous column name 'Name'.
+
+25.08.2019 13:38:34
+Ambiguous column name 'Name'.
+
+25.08.2019 13:39:01
+Ambiguous column name 'Name'.
+
+25.08.2019 13:39:38
+Ambiguous column name 'Name'.
+
+25.08.2019 13:39:44
+Ambiguous column name 'Name'.
+
+25.08.2019 13:44:16
+Ambiguous column name 'Name'.
+
+25.08.2019 13:46:55
+Ambiguous column name 'Name'.
+
+25.08.2019 14:31:54
+Ambiguous column name 'Name'.
+
+25.08.2019 14:32:56
+Ambiguous column name 'Name'.
+
+25.08.2019 14:34:29
+Ambiguous column name 'Name'.
+
+25.08.2019 14:38:58
+Ambiguous column name 'Name'.
+
+25.08.2019 14:40:43
+Ambiguous column name 'Name'.
+
+25.08.2019 14:55:59
+Ambiguous column name 'Name'.
+
+25.08.2019 14:57:52
+Ambiguous column name 'Name'.
+
+25.08.2019 15:24:08
+Ambiguous column name 'Name'.
+
+25.08.2019 15:45:38
+Ambiguous column name 'Name'.
+
+25.08.2019 15:45:39
+Ambiguous column name 'Name'.
+
+25.08.2019 16:14:40
+Ambiguous column name 'Name'.
+
+25.08.2019 16:16:49
+Ambiguous column name 'Name'.
+
+26.08.2019 22:46:04
+Incorrect syntax near ')'.
+
+26.08.2019 22:46:06
+Incorrect syntax near ')'.
+
+26.08.2019 22:56:55
+Incorrect syntax near ')'.
+
+26.08.2019 23:12:26
+Incorrect syntax near ')'.
+
+26.08.2019 23:14:28
+Incorrect syntax near ')'.
+
+27.08.2019 21:55:22
+Incorrect syntax near ')'.
+
+28.08.2019 22:22:23
+Incorrect syntax near ')'.
+
+31.08.2019 11:17:39
+Could not find stored procedure 'OBJ$TypesList'.
+
+31.08.2019 11:47:41
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: SQL Network Interfaces, error: 26 - Ошибка при обнаружении указанного сервера или экземпляра)
+
+31.08.2019 11:47:41
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: SQL Network Interfaces, error: 26 - Ошибка при обнаружении указанного сервера или экземпляра)
+
+31.08.2019 11:48:30
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: SQL Network Interfaces, error: 26 - Ошибка при обнаружении указанного сервера или экземпляра)
+
+31.08.2019 11:48:34
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: SQL Network Interfaces, error: 26 - Ошибка при обнаружении указанного сервера или экземпляра)
+
+31.08.2019 11:48:36
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: SQL Network Interfaces, error: 26 - Ошибка при обнаружении указанного сервера или экземпляра)
+
+31.08.2019 11:49:02
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: SQL Network Interfaces, error: 26 - Ошибка при обнаружении указанного сервера или экземпляра)
+
+31.08.2019 11:49:43
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: SQL Network Interfaces, error: 26 - Ошибка при обнаружении указанного сервера или экземпляра)
+
+31.08.2019 11:49:50
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: SQL Network Interfaces, error: 26 - Ошибка при обнаружении указанного сервера или экземпляра)
+
+31.08.2019 11:50:02
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: SQL Network Interfaces, error: 26 - Ошибка при обнаружении указанного сервера или экземпляра)
+
+31.08.2019 11:51:05
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: SQL Network Interfaces, error: 26 - Ошибка при обнаружении указанного сервера или экземпляра)
+
+31.08.2019 11:51:39
+При установлении соединения с SQL Server произошла ошибка, связанная с сетью или с определенным экземпляром. Сервер не найден или недоступен. Убедитесь, что имя экземпляра указано правильно и что на SQL Server разрешены удаленные соединения. (provider: SQL Network Interfaces, error: 26 - Ошибка при обнаружении указанного сервера или экземпляра)
+
+07.09.2019 10:22:20
+Cannot open database "1gb_dersa8" requested by the login. The login failed.
+Login failed for user 'dersa_user'.
+
+07.09.2019 10:22:20
+Cannot open database "1gb_dersa8" requested by the login. The login failed.
+Login failed for user 'dersa_user'.
+
+07.09.2019 10:22:21
+Cannot open database "1gb_dersa8" requested by the login. The login failed.
+Login failed for user 'dersa_user'.
+
+07.09.2019 10:22:48
+Cannot open database "1gb_dersa8" requested by the login. The login failed.
+Login failed for user 'dersa_user'.
+
+14.09.2019 12:56:41
+Incorrect syntax near ')'.
+
+14.09.2019 13:00:41
+Incorrect syntax near ')'.
+
+14.09.2019 13:01:29
+Incorrect syntax near ')'.
+
+14.09.2019 13:02:04
+Incorrect syntax near ')'.
+
+14.09.2019 13:03:17
+Incorrect syntax near ')'.
+
+14.09.2019 13:12:38
+Incorrect syntax near ')'.
+
+14.09.2019 13:16:10
+Incorrect syntax near ')'.
+
+14.09.2019 13:17:55
+Incorrect syntax near ')'.
+
+14.09.2019 13:19:36
+Incorrect syntax near ')'.
+
+14.09.2019 13:23:39
+Incorrect syntax near ')'.
+
+21.09.2019 13:01:51
+Incorrect syntax near ')'.
+
+21.09.2019 13:09:18
+Incorrect syntax near ')'.
+
+21.09.2019 19:16:19
+Cannot insert the value NULL into column 'stereotype', table 'dersa.dbo.ENTITY'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+21.09.2019 19:16:20
+Cannot insert the value NULL into column 'stereotype', table 'dersa.dbo.ENTITY'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+21.09.2019 19:16:21
+Cannot insert the value NULL into column 'stereotype', table 'dersa.dbo.ENTITY'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+21.09.2019 19:16:21
+Cannot insert the value NULL into column 'stereotype', table 'dersa.dbo.ENTITY'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+21.09.2019 19:16:22
+Cannot insert the value NULL into column 'stereotype', table 'dersa.dbo.ENTITY'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+21.09.2019 19:16:22
+Cannot insert the value NULL into column 'stereotype', table 'dersa.dbo.ENTITY'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+21.09.2019 19:16:22
+Cannot insert the value NULL into column 'stereotype', table 'dersa.dbo.ENTITY'; column does not allow nulls. INSERT fails.
+The statement has been terminated.
+
+22.09.2019 21:58:51
+Invalid column name 'permissions'.
+
+22.09.2019 21:59:16
+Invalid column name 'permissions'.

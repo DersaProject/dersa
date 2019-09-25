@@ -1,0 +1,32 @@
+﻿@model Dersa.Models.LoginInfo
+
+@{
+    ViewBag.Title = "Вход";
+}
+
+<h2>Вход</h2>
+<span style="color: red;">@ViewBag.AuthResult</span>
+<br>
+<br>
+@using (Html.BeginForm("Auth", "Account")) {
+
+    <fieldset>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.login, "имя пользователя:")
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.login)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.password, "пароль:")
+        </div>
+        <div class="editor-field">
+            @Html.PasswordFor(model => model.password)
+        </div>
+        <br>
+        <p>
+            <input type="submit" value="Отправить" />
+        </p>
+    </fieldset>
+}

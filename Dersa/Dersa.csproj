@@ -1,0 +1,672 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1456418E-8282-4E3D-B5B4-77C173ADC917}</ProjectGuid>
+    <ProjectTypeGuids>{E3E379DF-F4C6-4180-9B81-6769533ABE47};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Dersa</RootNamespace>
+    <AssemblyName>Dersa</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <TargetFrameworkProfile />
+    <Use64BitIISExpress />
+    <UseGlobalApplicationHostFile />
+    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Dersa.Common">
+      <HintPath>..\Dersa.Common\bin\Debug\Dersa.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Dios.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\bin\Dios.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Dios.Interfaces">
+      <HintPath>..\bin\Dios.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Dios.SqlManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\DIOS\DIOS.Server\common\Dios.SqlManager.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Owin, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Microsoft.Owin.Security.Cookies.dll</HintPath>
+    </Reference>
+    <Reference Include="mxgraph, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\mxgraph.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Optimization, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Mvc.FixedDisplayModes, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.FixedDisplayModes.1.0.0\lib\net40\Microsoft.Web.Mvc.FixedDisplayModes.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Net.Http.2.0.30506.0\lib\net40\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.4.0.30506.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Net.Http.2.0.30506.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.4.0.30506.0\lib\net40\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.30506.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.4.0.30506.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.30506.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controllers\QueryController.cs" />
+    <Compile Include="Models\ProjectControllerAdapter.cs" />
+    <Compile Include="Models\QueryControllerAdapter.cs" />
+    <Compile Include="QueryExecuteService.svc.cs">
+      <DependentUpon>QueryExecuteService.svc</DependentUpon>
+    </Compile>
+    <Content Include="app_code\Startup.Auth.cs" />
+    <Content Include="app_code\Startup.cs" />
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\DiagramController.cs" />
+    <Compile Include="Controllers\EntityController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\NodeController.cs" />
+    <Compile Include="Controllers\ProjectController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="IQueryExecuteService.cs" />
+    <Compile Include="Models\AccountControllerAdapter.cs" />
+    <Compile Include="Models\DersaUserManager.cs" />
+    <Compile Include="Models\DiagramControllerAdapter.cs" />
+    <Compile Include="Models\EntityControllerAdapter.cs" />
+    <Compile Include="Models\NodeControllerAdapter.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Content Include="config\diagrameditor.xml" />
+    <Content Include="config\editor-commons.xml" />
+    <Content Include="config\keyhandler-commons.xml" />
+    <Content Include="config\keyhandler-minimal.xml" />
+    <Content Include="config\layouteditor.xml" />
+    <Content Include="config\processeditor.xml" />
+    <Content Include="config\wfeditor-commons.xml" />
+    <Content Include="config\wfgraph-commons.xml" />
+    <Content Include="config\wftoolbar-commons.xml" />
+    <Content Include="config\workfloweditor.xml" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Site.css" />
+    <Content Include="demo\basic\dist\jstree.js" />
+    <Content Include="demo\basic\dist\jstree.min.js" />
+    <Content Include="demo\basic\dist\libs\hubs.js" />
+    <None Include="demo\basic\dist\libs\jquery-1.8.2.intellisense.js" />
+    <Content Include="demo\basic\dist\libs\jquery-1.8.2.js" />
+    <Content Include="demo\basic\dist\libs\jquery-1.8.2.min.js" />
+    <Content Include="demo\basic\dist\libs\jquery-ui-1.8.24.js" />
+    <Content Include="demo\basic\dist\libs\jquery-ui-1.8.24.min.js" />
+    <Content Include="demo\basic\dist\libs\jquery.unobtrusive-ajax.js" />
+    <Content Include="demo\basic\dist\libs\jquery.unobtrusive-ajax.min.js" />
+    <None Include="demo\basic\dist\libs\jquery.validate-vsdoc.js" />
+    <Content Include="demo\basic\dist\libs\jquery.validate.js" />
+    <Content Include="demo\basic\dist\libs\jquery.validate.min.js" />
+    <Content Include="demo\basic\dist\libs\jquery.validate.unobtrusive.js" />
+    <Content Include="demo\basic\dist\libs\jquery.validate.unobtrusive.min.js" />
+    <Content Include="demo\basic\dist\libs\knockout-2.2.0.debug.js" />
+    <Content Include="demo\basic\dist\libs\knockout-2.2.0.js" />
+    <Content Include="demo\basic\dist\libs\modernizr-2.6.2.js" />
+    <None Include="demo\basic\dist\libs\_references.js" />
+    <Content Include="demo\basic\dist\themes\default-dark\32px.png" />
+    <Content Include="demo\basic\dist\themes\default-dark\40px.png" />
+    <Content Include="demo\basic\dist\themes\default-dark\style.css" />
+    <Content Include="demo\basic\dist\themes\default-dark\style.min.css" />
+    <Content Include="demo\basic\dist\themes\default-dark\throbber.gif" />
+    <Content Include="demo\basic\dist\themes\default\32px.png" />
+    <Content Include="demo\basic\dist\themes\default\40px.png" />
+    <Content Include="demo\basic\dist\themes\default\style.min.css" />
+    <Content Include="demo\basic\dist\themes\default\throbber.gif" />
+    <Content Include="demo\basic\index.html" />
+    <Content Include="demo\basic\index2.html" />
+    <Content Include="demo\basic\index3.html" />
+    <Content Include="demo\basic\index4.html" />
+    <Content Include="demo\d4.html" />
+    <Content Include="dist\dersatree.js" />
+    <Content Include="dist\jstree.js" />
+    <Content Include="dist\jstree.min.js" />
+    <Content Include="dist\libs\hubs.js" />
+    <Content Include="demo\basic\Handler.ashx" />
+    <Content Include="demo\basic\root.json" />
+    <Content Include="demo\README.md" />
+    <None Include="dist\libs\jquery-1.8.2.intellisense.js" />
+    <Content Include="dist\libs\jquery-1.8.2.js" />
+    <Content Include="dist\libs\jquery-1.8.2.min.js" />
+    <Content Include="dist\libs\jquery-ui-1.8.24.js" />
+    <Content Include="dist\libs\jquery-ui-1.8.24.min.js" />
+    <Content Include="dist\libs\jquery.unobtrusive-ajax.js" />
+    <Content Include="dist\libs\jquery.unobtrusive-ajax.min.js" />
+    <None Include="dist\libs\jquery.validate-vsdoc.js" />
+    <Content Include="dist\libs\jquery.validate.js" />
+    <Content Include="dist\libs\jquery.validate.min.js" />
+    <Content Include="dist\libs\jquery.validate.unobtrusive.js" />
+    <Content Include="dist\libs\jquery.validate.unobtrusive.min.js" />
+    <Content Include="dist\libs\knockout-2.2.0.debug.js" />
+    <Content Include="dist\libs\knockout-2.2.0.js" />
+    <Content Include="dist\libs\modernizr-2.6.2.js" />
+    <None Include="dist\libs\_references.js" />
+    <Content Include="dist\mxgraphsrc\css\common.css" />
+    <Content Include="dist\mxgraphsrc\css\explorer.css" />
+    <Content Include="dist\mxgraphsrc\images\button.gif" />
+    <Content Include="dist\mxgraphsrc\images\close.gif" />
+    <Content Include="dist\mxgraphsrc\images\collapsed.gif" />
+    <Content Include="dist\mxgraphsrc\images\error.gif" />
+    <Content Include="dist\mxgraphsrc\images\expanded.gif" />
+    <Content Include="dist\mxgraphsrc\images\maximize.gif" />
+    <Content Include="dist\mxgraphsrc\images\minimize.gif" />
+    <Content Include="dist\mxgraphsrc\images\normalize.gif" />
+    <Content Include="dist\mxgraphsrc\images\point.gif" />
+    <Content Include="dist\mxgraphsrc\images\resize.gif" />
+    <Content Include="dist\mxgraphsrc\images\separator.gif" />
+    <Content Include="dist\mxgraphsrc\images\submenu.gif" />
+    <Content Include="dist\mxgraphsrc\images\transparent.gif" />
+    <Content Include="dist\mxgraphsrc\images\warning.gif" />
+    <Content Include="dist\mxgraphsrc\images\warning.png" />
+    <Content Include="dist\mxgraphsrc\images\window-title.gif" />
+    <Content Include="dist\mxgraphsrc\images\window.gif" />
+    <Content Include="dist\mxgraphsrc\js\editor\mxDefaultKeyHandler.js" />
+    <Content Include="dist\mxgraphsrc\js\editor\mxDefaultPopupMenu.js" />
+    <Content Include="dist\mxgraphsrc\js\editor\mxDefaultToolbar.js" />
+    <Content Include="dist\mxgraphsrc\js\editor\mxEditor.js" />
+    <Content Include="dist\mxgraphsrc\js\handler\mxCellHighlight.js" />
+    <Content Include="dist\mxgraphsrc\js\handler\mxCellMarker.js" />
+    <Content Include="dist\mxgraphsrc\js\handler\mxCellTracker.js" />
+    <Content Include="dist\mxgraphsrc\js\handler\mxConnectionHandler.js" />
+    <Content Include="dist\mxgraphsrc\js\handler\mxConstraintHandler.js" />
+    <Content Include="dist\mxgraphsrc\js\handler\mxEdgeHandler.js" />
+    <Content Include="dist\mxgraphsrc\js\handler\mxEdgeSegmentHandler.js" />
+    <Content Include="dist\mxgraphsrc\js\handler\mxElbowEdgeHandler.js" />
+    <Content Include="dist\mxgraphsrc\js\handler\mxGraphHandler.js" />
+    <Content Include="dist\mxgraphsrc\js\handler\mxHandle.js" />
+    <Content Include="dist\mxgraphsrc\js\handler\mxKeyHandler.js" />
+    <Content Include="dist\mxgraphsrc\js\handler\mxPanningHandler.js" />
+    <Content Include="dist\mxgraphsrc\js\handler\mxPopupMenuHandler.js" />
+    <Content Include="dist\mxgraphsrc\js\handler\mxRubberband.js" />
+    <Content Include="dist\mxgraphsrc\js\handler\mxSelectionCellsHandler.js" />
+    <Content Include="dist\mxgraphsrc\js\handler\mxTooltipHandler.js" />
+    <Content Include="dist\mxgraphsrc\js\handler\mxVertexHandler.js" />
+    <Content Include="dist\mxgraphsrc\js\index.txt" />
+    <Content Include="dist\mxgraphsrc\js\io\mxCellCodec.js" />
+    <Content Include="dist\mxgraphsrc\js\io\mxChildChangeCodec.js" />
+    <Content Include="dist\mxgraphsrc\js\io\mxCodec.js" />
+    <Content Include="dist\mxgraphsrc\js\io\mxCodecRegistry.js" />
+    <Content Include="dist\mxgraphsrc\js\io\mxDefaultKeyHandlerCodec.js" />
+    <Content Include="dist\mxgraphsrc\js\io\mxDefaultPopupMenuCodec.js" />
+    <Content Include="dist\mxgraphsrc\js\io\mxDefaultToolbarCodec.js" />
+    <Content Include="dist\mxgraphsrc\js\io\mxEditorCodec.js" />
+    <Content Include="dist\mxgraphsrc\js\io\mxGenericChangeCodec.js" />
+    <Content Include="dist\mxgraphsrc\js\io\mxGraphCodec.js" />
+    <Content Include="dist\mxgraphsrc\js\io\mxGraphViewCodec.js" />
+    <Content Include="dist\mxgraphsrc\js\io\mxModelCodec.js" />
+    <Content Include="dist\mxgraphsrc\js\io\mxObjectCodec.js" />
+    <Content Include="dist\mxgraphsrc\js\io\mxRootChangeCodec.js" />
+    <Content Include="dist\mxgraphsrc\js\io\mxStylesheetCodec.js" />
+    <Content Include="dist\mxgraphsrc\js\io\mxTerminalChangeCodec.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\hierarchical\model\mxGraphAbstractHierarchyCell.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\hierarchical\model\mxGraphHierarchyEdge.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\hierarchical\model\mxGraphHierarchyModel.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\hierarchical\model\mxGraphHierarchyNode.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\hierarchical\model\mxSwimlaneModel.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\hierarchical\mxHierarchicalLayout.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\hierarchical\mxSwimlaneLayout.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\hierarchical\stage\mxCoordinateAssignment.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\hierarchical\stage\mxHierarchicalLayoutStage.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\hierarchical\stage\mxMedianHybridCrossingReduction.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\hierarchical\stage\mxMinimumCycleRemover.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\hierarchical\stage\mxSwimlaneOrdering.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\mxCircleLayout.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\mxCompactTreeLayout.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\mxCompositeLayout.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\mxEdgeLabelLayout.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\mxFastOrganicLayout.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\mxGraphLayout.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\mxParallelEdgeLayout.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\mxPartitionLayout.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\mxRadialTreeLayout.js" />
+    <Content Include="dist\mxgraphsrc\js\layout\mxStackLayout.js" />
+    <Content Include="dist\mxgraphsrc\js\model\mxCell.js" />
+    <Content Include="dist\mxgraphsrc\js\model\mxCellPath.js" />
+    <Content Include="dist\mxgraphsrc\js\model\mxGeometry.js" />
+    <Content Include="dist\mxgraphsrc\js\model\mxGraphModel.js" />
+    <Content Include="dist\mxgraphsrc\js\mxClient.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxActor.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxArrow.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxArrowConnector.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxCloud.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxConnector.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxCylinder.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxDoubleEllipse.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxEllipse.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxHexagon.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxImageShape.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxLabel.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxLine.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxMarker.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxPolyline.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxRectangleShape.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxRhombus.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxShape.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxStencil.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxStencilRegistry.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxSwimlane.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxText.js" />
+    <Content Include="dist\mxgraphsrc\js\shape\mxTriangle.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxAbstractCanvas2D.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxAnimation.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxAutoSaveManager.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxClipboard.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxConstants.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxDictionary.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxDivResizer.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxDragSource.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxEffects.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxEvent.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxEventObject.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxEventSource.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxForm.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxGuide.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxImage.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxImageBundle.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxImageExport.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxLog.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxMorphing.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxMouseEvent.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxObjectIdentity.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxPanningManager.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxPoint.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxPopupMenu.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxRectangle.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxResources.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxSvgCanvas2D.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxToolbar.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxUndoableEdit.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxUndoManager.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxUrlConverter.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxUtils.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxVmlCanvas2D.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxWindow.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxXmlCanvas2D.js" />
+    <Content Include="dist\mxgraphsrc\js\util\mxXmlRequest.js" />
+    <Content Include="dist\mxgraphsrc\js\view\mxCellEditor.js" />
+    <Content Include="dist\mxgraphsrc\js\view\mxCellOverlay.js" />
+    <Content Include="dist\mxgraphsrc\js\view\mxCellRenderer.js" />
+    <Content Include="dist\mxgraphsrc\js\view\mxCellState.js" />
+    <Content Include="dist\mxgraphsrc\js\view\mxCellStatePreview.js" />
+    <Content Include="dist\mxgraphsrc\js\view\mxConnectionConstraint.js" />
+    <Content Include="dist\mxgraphsrc\js\view\mxEdgeStyle.js" />
+    <Content Include="dist\mxgraphsrc\js\view\mxGraph.js" />
+    <Content Include="dist\mxgraphsrc\js\view\mxGraphSelectionModel.js" />
+    <Content Include="dist\mxgraphsrc\js\view\mxGraphView.js" />
+    <Content Include="dist\mxgraphsrc\js\view\mxLayoutManager.js" />
+    <Content Include="dist\mxgraphsrc\js\view\mxMultiplicity.js" />
+    <Content Include="dist\mxgraphsrc\js\view\mxOutline.js" />
+    <Content Include="dist\mxgraphsrc\js\view\mxPerimeter.js" />
+    <Content Include="dist\mxgraphsrc\js\view\mxPrintPreview.js" />
+    <Content Include="dist\mxgraphsrc\js\view\mxStyleRegistry.js" />
+    <Content Include="dist\mxgraphsrc\js\view\mxStylesheet.js" />
+    <Content Include="dist\mxgraphsrc\js\view\mxSwimlaneManager.js" />
+    <Content Include="dist\mxgraphsrc\js\view\mxTemporaryCellStates.js" />
+    <Content Include="dist\mxgraphsrc\resources\editor.txt" />
+    <Content Include="dist\mxgraphsrc\resources\editor_de.txt" />
+    <Content Include="dist\mxgraphsrc\resources\editor_zh.txt" />
+    <Content Include="dist\mxgraphsrc\resources\graph.txt" />
+    <Content Include="dist\mxgraphsrc\resources\graph_de.txt" />
+    <Content Include="dist\mxgraphsrc\resources\graph_zh.txt" />
+    <Content Include="dist\themes\default\32px.png" />
+    <Content Include="dist\themes\default\40px.png" />
+    <Content Include="dist\themes\default\Application.gif" />
+    <Content Include="dist\themes\default\Attribute.gif" />
+    <Content Include="dist\themes\default\Const.gif" />
+    <Content Include="dist\themes\default\Document.gif" />
+    <Content Include="dist\themes\default\Entity.gif" />
+    <Content Include="dist\themes\default\Function.gif" />
+    <Content Include="dist\themes\default\Index.gif" />
+    <Content Include="dist\themes\default\Method.gif" />
+    <Content Include="dist\themes\default\Procedure.gif" />
+    <Content Include="dist\themes\default\Property.gif" />
+    <Content Include="dist\themes\default\Ref.gif" />
+    <Content Include="dist\themes\default\Script.gif" />
+    <Content Include="dist\themes\default\StartState.gif" />
+    <Content Include="dist\themes\default\State.gif" />
+    <Content Include="dist\themes\default\StateEngine.gif" />
+    <Content Include="dist\themes\default\StopState.gif" />
+    <Content Include="dist\themes\default\style.css" />
+    <Content Include="dist\themes\default\throbber.gif" />
+    <Content Include="dist\themes\default\Trigger.gif" />
+    <Content Include="dist\themes\default\Type.gif" />
+    <Content Include="dist\themes\default\View.gif" />
+    <Content Include="dist\themes\default\ViewAttribute.gif" />
+    <Content Include="Global.asax" />
+    <Content Include="js\app.js" />
+    <Content Include="js\editor\mxDefaultKeyHandler.js" />
+    <Content Include="js\editor\mxDefaultPopupMenu.js" />
+    <Content Include="js\editor\mxDefaultToolbar.js" />
+    <Content Include="js\editor\mxEditor.js" />
+    <Content Include="js\handler\mxCellHighlight.js" />
+    <Content Include="js\handler\mxCellMarker.js" />
+    <Content Include="js\handler\mxCellTracker.js" />
+    <Content Include="js\handler\mxConnectionHandler.js" />
+    <Content Include="js\handler\mxConstraintHandler.js" />
+    <Content Include="js\handler\mxEdgeHandler.js" />
+    <Content Include="js\handler\mxEdgeSegmentHandler.js" />
+    <Content Include="js\handler\mxElbowEdgeHandler.js" />
+    <Content Include="js\handler\mxGraphHandler.js" />
+    <Content Include="js\handler\mxHandle.js" />
+    <Content Include="js\handler\mxKeyHandler.js" />
+    <Content Include="js\handler\mxPanningHandler.js" />
+    <Content Include="js\handler\mxPopupMenuHandler.js" />
+    <Content Include="js\handler\mxRubberband.js" />
+    <Content Include="js\handler\mxSelectionCellsHandler.js" />
+    <Content Include="js\handler\mxTooltipHandler.js" />
+    <Content Include="js\handler\mxVertexHandler.js" />
+    <Content Include="js\index.txt" />
+    <Content Include="js\io\mxCellCodec.js" />
+    <Content Include="js\io\mxChildChangeCodec.js" />
+    <Content Include="js\io\mxCodec.js" />
+    <Content Include="js\io\mxCodecRegistry.js" />
+    <Content Include="js\io\mxDefaultKeyHandlerCodec.js" />
+    <Content Include="js\io\mxDefaultPopupMenuCodec.js" />
+    <Content Include="js\io\mxDefaultToolbarCodec.js" />
+    <Content Include="js\io\mxEditorCodec.js" />
+    <Content Include="js\io\mxGenericChangeCodec.js" />
+    <Content Include="js\io\mxGraphCodec.js" />
+    <Content Include="js\io\mxGraphViewCodec.js" />
+    <Content Include="js\io\mxModelCodec.js" />
+    <Content Include="js\io\mxObjectCodec.js" />
+    <Content Include="js\io\mxRootChangeCodec.js" />
+    <Content Include="js\io\mxStylesheetCodec.js" />
+    <Content Include="js\io\mxTerminalChangeCodec.js" />
+    <Content Include="js\layout\hierarchical\model\mxGraphAbstractHierarchyCell.js" />
+    <Content Include="js\layout\hierarchical\model\mxGraphHierarchyEdge.js" />
+    <Content Include="js\layout\hierarchical\model\mxGraphHierarchyModel.js" />
+    <Content Include="js\layout\hierarchical\model\mxGraphHierarchyNode.js" />
+    <Content Include="js\layout\hierarchical\model\mxSwimlaneModel.js" />
+    <Content Include="js\layout\hierarchical\mxHierarchicalLayout.js" />
+    <Content Include="js\layout\hierarchical\mxSwimlaneLayout.js" />
+    <Content Include="js\layout\hierarchical\stage\mxCoordinateAssignment.js" />
+    <Content Include="js\layout\hierarchical\stage\mxHierarchicalLayoutStage.js" />
+    <Content Include="js\layout\hierarchical\stage\mxMedianHybridCrossingReduction.js" />
+    <Content Include="js\layout\hierarchical\stage\mxMinimumCycleRemover.js" />
+    <Content Include="js\layout\hierarchical\stage\mxSwimlaneOrdering.js" />
+    <Content Include="js\layout\mxCircleLayout.js" />
+    <Content Include="js\layout\mxCompactTreeLayout.js" />
+    <Content Include="js\layout\mxCompositeLayout.js" />
+    <Content Include="js\layout\mxEdgeLabelLayout.js" />
+    <Content Include="js\layout\mxFastOrganicLayout.js" />
+    <Content Include="js\layout\mxGraphLayout.js" />
+    <Content Include="js\layout\mxParallelEdgeLayout.js" />
+    <Content Include="js\layout\mxPartitionLayout.js" />
+    <Content Include="js\layout\mxRadialTreeLayout.js" />
+    <Content Include="js\layout\mxStackLayout.js" />
+    <Content Include="js\model\mxCell.js" />
+    <Content Include="js\model\mxCellPath.js" />
+    <Content Include="js\model\mxGeometry.js" />
+    <Content Include="js\model\mxGraphModel.js" />
+    <Content Include="js\mxClient.js" />
+    <Content Include="js\shape\mxActor.js" />
+    <Content Include="js\shape\mxArrow.js" />
+    <Content Include="js\shape\mxArrowConnector.js" />
+    <Content Include="js\shape\mxCloud.js" />
+    <Content Include="js\shape\mxConnector.js" />
+    <Content Include="js\shape\mxCylinder.js" />
+    <Content Include="js\shape\mxDoubleEllipse.js" />
+    <Content Include="js\shape\mxEllipse.js" />
+    <Content Include="js\shape\mxHexagon.js" />
+    <Content Include="js\shape\mxImageShape.js" />
+    <Content Include="js\shape\mxLabel.js" />
+    <Content Include="js\shape\mxLine.js" />
+    <Content Include="js\shape\mxMarker.js" />
+    <Content Include="js\shape\mxPolyline.js" />
+    <Content Include="js\shape\mxRectangleShape.js" />
+    <Content Include="js\shape\mxRhombus.js" />
+    <Content Include="js\shape\mxShape.js" />
+    <Content Include="js\shape\mxStencil.js" />
+    <Content Include="js\shape\mxStencilRegistry.js" />
+    <Content Include="js\shape\mxSwimlane.js" />
+    <Content Include="js\shape\mxText.js" />
+    <Content Include="js\shape\mxTriangle.js" />
+    <Content Include="js\util\mxAbstractCanvas2D.js" />
+    <Content Include="js\util\mxAnimation.js" />
+    <Content Include="js\util\mxAutoSaveManager.js" />
+    <Content Include="js\util\mxClipboard.js" />
+    <Content Include="js\util\mxConstants.js" />
+    <Content Include="js\util\mxDictionary.js" />
+    <Content Include="js\util\mxDivResizer.js" />
+    <Content Include="js\util\mxDragSource.js" />
+    <Content Include="js\util\mxEffects.js" />
+    <Content Include="js\util\mxEvent.js" />
+    <Content Include="js\util\mxEventObject.js" />
+    <Content Include="js\util\mxEventSource.js" />
+    <Content Include="js\util\mxForm.js" />
+    <Content Include="js\util\mxGuide.js" />
+    <Content Include="js\util\mxImage.js" />
+    <Content Include="js\util\mxImageBundle.js" />
+    <Content Include="js\util\mxImageExport.js" />
+    <Content Include="js\util\mxLog.js" />
+    <Content Include="js\util\mxMorphing.js" />
+    <Content Include="js\util\mxMouseEvent.js" />
+    <Content Include="js\util\mxObjectIdentity.js" />
+    <Content Include="js\util\mxPanningManager.js" />
+    <Content Include="js\util\mxPoint.js" />
+    <Content Include="js\util\mxPopupMenu.js" />
+    <Content Include="js\util\mxRectangle.js" />
+    <Content Include="js\util\mxResources.js" />
+    <Content Include="js\util\mxSvgCanvas2D.js" />
+    <Content Include="js\util\mxToolbar.js" />
+    <Content Include="js\util\mxUndoableEdit.js" />
+    <Content Include="js\util\mxUndoManager.js" />
+    <Content Include="js\util\mxUrlConverter.js" />
+    <Content Include="js\util\mxUtils.js" />
+    <Content Include="js\util\mxVmlCanvas2D.js" />
+    <Content Include="js\util\mxWindow.js" />
+    <Content Include="js\util\mxXmlCanvas2D.js" />
+    <Content Include="js\util\mxXmlRequest.js" />
+    <Content Include="js\view\mxCellEditor.js" />
+    <Content Include="js\view\mxCellOverlay.js" />
+    <Content Include="js\view\mxCellRenderer.js" />
+    <Content Include="js\view\mxCellState.js" />
+    <Content Include="js\view\mxCellStatePreview.js" />
+    <Content Include="js\view\mxConnectionConstraint.js" />
+    <Content Include="js\view\mxEdgeStyle.js" />
+    <Content Include="js\view\mxGraph.js" />
+    <Content Include="js\view\mxGraphSelectionModel.js" />
+    <Content Include="js\view\mxGraphView.js" />
+    <Content Include="js\view\mxLayoutManager.js" />
+    <Content Include="js\view\mxMultiplicity.js" />
+    <Content Include="js\view\mxOutline.js" />
+    <Content Include="js\view\mxPerimeter.js" />
+    <Content Include="js\view\mxPrintPreview.js" />
+    <Content Include="js\view\mxStyleRegistry.js" />
+    <Content Include="js\view\mxStylesheet.js" />
+    <Content Include="js\view\mxSwimlaneManager.js" />
+    <Content Include="js\view\mxTemporaryCellStates.js" />
+    <Content Include="QueryExecuteService.svc" />
+    <Content Include="Views\Home\About.cshtml" />
+    <Content Include="Views\Home\Contact.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\Account\Settings.cshtml" />
+    <Content Include="Views\Home\d.cshtml" />
+    <None Include="Views\Home\index.cshtml" />
+    <Content Include="Views\Home\HelpPage.html" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Home\LicenceMIT.cshtml" />
+    <Content Include="Views\Home\LicenceAPACHE.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Project\Student.cshtml" />
+    <Content Include="Views\Project\Index.cshtml" />
+    <Content Include="Views\Project\Table.cshtml" />
+    <Content Include="Views\Project\EditStudent.cshtml" />
+    <Content Include="Views\Node\UploadContent.cshtml" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>12663</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:12663/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

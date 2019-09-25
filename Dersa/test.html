@@ -1,0 +1,11 @@
+<html>
+<body>
+    <script>
+        function Test() {
+            var val=prompt('Введите значение параметров');var obj=JSON.parse(val);var arr=new Array();var i=0;for(var key in obj){var x=new Object();x['Name']=key;x['Value']=obj[key];arr[i++] = x;}var url='/Query/Report?proc_name=ENTITY$GetInfo&parameters='+JSON.stringify(arr);window.open(url);
+            //'/Query/Report?proc_name=ENTITY$GetInfo&parameters=[{Name:%22entity%22,Value:' + val + '}]';
+        }
+    </script>
+    <button onclick="eval(Test());">Test</button>
+</body>
+</html>
