@@ -12,7 +12,7 @@ namespace Dersa.Common
 {
     public class Util
     {
-        public static string SetAttributeValue(DersaSqlManager DM, string userName, AttributeOwnerType ownerType, string entityId, string attrName, int attrType, object attrValue)
+        public static string SetAttributeValue(DersaSqlManager DM, string userName, AttributeOwnerType ownerType, string entityId, string attrName, int attrType, string attrValue)
         {
             string procName = "";
             switch(ownerType)
@@ -24,7 +24,20 @@ namespace Dersa.Common
                     procName = "RELATION$SetAttribute";
                     break;
             }
-            DM.ExecuteSPWithParams(procName, new object[] { entityId, attrName, attrValue, userName, Util.GetPassword(userName) });
+            IParameterCollection Params = new ParameterCollection();
+            Params.Add("@entity", entityId);
+            Params.Add("@attr_name", attrName);
+            Params.Add("@attr_value", attrValue);
+            Params.Add("@login", userName);
+            Params.Add("@password", Util.GetPassword(userName));
+            Params.Add("@attr_type", attrType);
+            int res = DM.ExecuteSPWithResult(procName, false, Params);
+            if(res == 5)
+            {
+                Params["@attr_type"].Value = 5;
+                Params["@attr_value"].Value = Cryptor.Encrypt(attrValue, userName);
+                res = DM.ExecuteSPWithResult(procName, false, Params);
+            }
             return "";
         }
         public static string GetAttributeValue(string userName, int entityId, string attrName, int attrType)

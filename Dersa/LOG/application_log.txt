@@ -1266,3 +1266,6 @@ Conversion failed when converting the varchar value '******' to data type int.
 
 28.09.2019 19:49:29
 Conversion failed when converting the varchar value '******' to data type int.
+
+30.09.2019 22:33:19
+@attr_type is not a parameter for procedure ENTITY$SetAttribute.

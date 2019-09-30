@@ -429,7 +429,7 @@ namespace Dersa.Models
             return "";
         }
 
-        public static void SetAttribute(DersaSqlManager DM, AttributeOwnerType ownerType, string entityId, string paramName, object paramValue, int attrType)
+        public static void SetAttribute(DersaSqlManager DM, AttributeOwnerType ownerType, string entityId, string paramName, string paramValue, int attrType)
         {
             string userName = HttpContext.Current.User.Identity.Name;
             Util.SetAttributeValue(DM, userName, ownerType, entityId, paramName, attrType, paramValue);
@@ -471,7 +471,7 @@ namespace Dersa.Models
                         string strVal = Param.Value.ToString().Replace("$lt$", "<").Replace("$gt$", ">");
                         Param.Value = strVal;
                     }
-                    SetAttribute(DM, ownerType, key, Param.Name, Param.Value, 0);
+                    SetAttribute(DM, ownerType, key, Param.Name, Param.Value?.ToString(), 0);
                 }
                 catch
                 {
