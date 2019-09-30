@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -339,26 +340,39 @@ namespace Dersa.Models
                 return "";
             }
         }
-        public string PropertyForm(int id, string prop_name)
+        public string PropertyForm(int id, string prop_name, int prop_type)
         {
-            DersaSqlManager DM = new DersaSqlManager();
+            //DersaSqlManager DM = new DersaSqlManager();
             string userName = HttpContext.Current.User.Identity.Name;
-            System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$GetAttribute", new object[] { id, prop_name, userName, Util.GetPassword(userName) });
+            //System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$GetAttribute", new object[] { id, prop_name, userName, Util.GetPassword(userName) });
             //if (T.Rows.Count < 1)
             //    return null;
-            var query =
-                from System.Data.DataRow R in T.Rows
-                select new
+            string attrValue = Util.GetAttributeValue(userName, id, prop_name, prop_type);
+            //var query =
+            //    from System.Data.DataRow R in T.Rows
+            //    select new
+            //    {
+            //        Name = R["Name"],
+            //        Value = prop_type == 4 ? "*****" : R["Value"],
+            //        DisplayValue = prop_type == 4? "*****" : R["Value"],
+            //        ControlType = "textarea",
+            //        Height = 300,
+            //        Width = 300,
+            //        InfoLink = ""
+            //    };
+            var resObj = new object[] {
+                new
                 {
-                    Name = R["Name"],
-                    Value = R["Value"],
-                    DisplayValue = R["Value"],
+                    Name = prop_name,
+                    Value = attrValue,
+                    DisplayValue = attrValue,
                     ControlType = "textarea",
                     Height = 300,
                     Width = 300,
                     InfoLink = ""
-                };
-            string result = JsonConvert.SerializeObject(query);
+                }
+            };
+            string result = JsonConvert.SerializeObject(resObj);
             return result;
         }
         public string PropertiesForm(int id)
@@ -383,7 +397,7 @@ namespace Dersa.Models
                             Height = 900,
                             Width = 600,
                             DisplayValue = (int)R["Type"] == 1 ? R["Value"] : "...",
-                            InfoLink = (int)R["Type"] == 1 ? "" : "Node/PropertyForm?id=" + id.ToString() + "&prop_name=" + R["Name"].ToString()
+                            InfoLink = (int)R["Type"] == 1 ? "" : "Node/PropertyForm?id=" + id.ToString() + "&prop_name=" + R["Name"].ToString() + "&prop_type=" + R["Type"].ToString()
                         }
                     };
                 string result = JsonConvert.SerializeObject(query);
@@ -415,10 +429,11 @@ namespace Dersa.Models
             return "";
         }
 
-        public static void SetAttribute(DersaSqlManager DM, string procName, string entityId, string paramName, object paramValue)
+        public static void SetAttribute(DersaSqlManager DM, AttributeOwnerType ownerType, string entityId, string paramName, object paramValue, int attrType)
         {
             string userName = HttpContext.Current.User.Identity.Name;
-            DM.ExecuteSPWithParams(procName, new object[] { entityId, paramName, paramValue, userName, Util.GetPassword(userName) });
+            Util.SetAttributeValue(DM, userName, ownerType, entityId, paramName, attrType, paramValue);
+            //DM.ExecuteSPWithParams(procName, new object[] { entityId, paramName, paramValue, userName, Util.GetPassword(userName) });
         }
 
         public string SetProperties(string json_params)
@@ -426,11 +441,13 @@ namespace Dersa.Models
             Dersa.Common.CachedObjects.ClearCache();
             IParameterCollection Params = Util.DeserializeParams(json_params);
             string key = "-1";
-            string procName = "";
+            //string procName = "";
+            AttributeOwnerType ownerType = AttributeOwnerType.Entity;
             if (Params.Contains("entity"))
             {
                 key = Params["entity"].Value.ToString();
-                procName = "ENTITY$SetAttribute";
+                //procName = "ENTITY$SetAttribute";
+                ownerType = AttributeOwnerType.Entity;
                 Params.Remove("entity");
                 if (Params.Count < 1)
                     return "no data";
@@ -438,7 +455,8 @@ namespace Dersa.Models
             if (Params.Contains("relation"))
             {
                 key = Params["relation"].Value.ToString();
-                procName = "RELATION$SetAttribute";
+                //procName = "RELATION$SetAttribute";
+                ownerType = AttributeOwnerType.Relation;
                 Params.Remove("relation");
                 if (Params.Count < 1)
                     return "no data";
@@ -453,7 +471,7 @@ namespace Dersa.Models
                         string strVal = Param.Value.ToString().Replace("$lt$", "<").Replace("$gt$", ">");
                         Param.Value = strVal;
                     }
-                    SetAttribute(DM, procName, key, Param.Name, Param.Value);
+                    SetAttribute(DM, ownerType, key, Param.Name, Param.Value, 0);
                 }
                 catch
                 {
@@ -635,7 +653,15 @@ namespace Dersa.Models
                 object parent = null;
                 if (!id.Contains("#"))
                     parent = id;
-                string result = JsonConvert.SerializeObject(DM.ExecuteSPWithParams("ENTITY$JTreeList", new object[] { parent, userName, Util.GetPassword(userName) }));
+                string result = "[]";
+                if(id == "STEREOTYPES")
+                {
+                    result = Util.GetUserSetting(userName, "root stereotypes");
+                    Regex removeDigitsEx = new Regex("[0-9]");
+                    result = removeDigitsEx.Replace(result, "*");
+                }
+                else
+                    result = JsonConvert.SerializeObject(DM.ExecuteSPWithParams("ENTITY$JTreeList", new object[] { parent, userName, Util.GetPassword(userName) }));
                 return result;
             }
             catch(Exception exc)

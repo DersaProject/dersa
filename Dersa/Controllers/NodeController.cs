@@ -103,11 +103,12 @@ namespace Dersa.Controllers
                 Rename(resultId, entityName);
             }
             Common.DersaSqlManager DM = new Common.DersaSqlManager();
-            if (resultId != "" && attrs.Length > 0)
+            if (resultId != "" && attrs != null && attrs.Length > 0)
             {
                 for (int a = 0; a < attrs.Length; a++)
                 {
-                    NodeControllerAdapter.SetAttribute(DM, "ENTITY$SetAttribute", resultId, attrs[a].Name, attrs[a].Value);
+                    //NodeControllerAdapter.SetAttribute(DM, "ENTITY$SetAttribute", resultId, attrs[a].Name, attrs[a].Value);
+                    NodeControllerAdapter.SetAttribute(DM, Common.AttributeOwnerType.Entity, resultId, attrs[a].Name, attrs[a].Value, 0);
                 }
             }
             return resultId;
@@ -175,9 +176,9 @@ namespace Dersa.Controllers
             return (new NodeControllerAdapter()).PropertiesForm(id);
         }
 
-        public string PropertyForm(int id, string prop_name)
+        public string PropertyForm(int id, string prop_name, int prop_type)
         {
-            return (new NodeControllerAdapter()).PropertyForm(id, prop_name);
+            return (new NodeControllerAdapter()).PropertyForm(id, prop_name, prop_type);
         }
 
         public string MethodsForm(int id)

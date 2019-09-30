@@ -9,6 +9,7 @@ using System.Runtime.Serialization;
 /// Summary description for Attribute.
 namespace Dersa.Common
 {
+    public enum AttributeOwnerType : int { Entity = 0, Relation = 1}
     /// </summary>
     public class Attribute : BaseObject, IAttribute, ICodeObject
     {

@@ -12,6 +12,39 @@ namespace Dersa.Common
 {
     public class Util
     {
+        public static string SetAttributeValue(DersaSqlManager DM, string userName, AttributeOwnerType ownerType, string entityId, string attrName, int attrType, object attrValue)
+        {
+            string procName = "";
+            switch(ownerType)
+            {
+                case AttributeOwnerType.Entity:
+                    procName = "ENTITY$SetAttribute";
+                    break;
+                case AttributeOwnerType.Relation:
+                    procName = "RELATION$SetAttribute";
+                    break;
+            }
+            DM.ExecuteSPWithParams(procName, new object[] { entityId, attrName, attrValue, userName, Util.GetPassword(userName) });
+            return "";
+        }
+        public static string GetAttributeValue(string userName, int entityId, string attrName, int attrType)
+        {
+            DersaSqlManager DM = new DersaSqlManager();
+            System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$GetAttribute", new object[] { entityId, attrName, userName, Util.GetPassword(userName) });
+            if (T == null || T.Rows.Count < 1)
+                return null;
+            string result = T.Rows[0]["Value"].ToString();
+            if (attrType == 5)
+            {
+                try
+                {
+                    result = Cryptor.Decrypt(result, userName);
+                }
+                catch { }
+            }
+            return result;
+        }
+
         public static int GetUserPermissions(string userName)
         {
             DersaSqlManager M = new DersaSqlManager();
