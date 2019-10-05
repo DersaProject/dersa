@@ -38,6 +38,10 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DbManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\DbManager.dll</HintPath>
+    </Reference>
     <Reference Include="Dios.Common">
       <HintPath>..\bin\Dios.Common.dll</HintPath>
     </Reference>

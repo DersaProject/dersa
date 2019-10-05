@@ -417,7 +417,7 @@ namespace Dersa.Models
             try
             {
                 System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$SetAttribute", new object[] { entity, prop_name, prop_value, userName, Util.GetPassword(userName) });
-                if (T.Rows.Count > 0)
+                if (T != null && T.Rows.Count > 0)
                 {
                     return T.Rows[0][0].ToString();
                 }

@@ -7,6 +7,9 @@ using DIOS.Common;
 using DIOS.Common.Interfaces;
 using Dersa.Common;
 using System.IO;
+using System.Reflection;
+using Dersa.Interfaces;
+using DersaStereotypes;
 
 namespace Dersa.Models
 {
@@ -17,6 +20,47 @@ namespace Dersa.Models
             return "OK";
         }
 
+        public static void SetImagePath(int id, string fileName)
+        {
+            string userName = HttpContext.Current.User.Identity.Name;
+            string path = "/user_resources/" + userName + "/" + fileName;
+            StereotypeBaseE target = StereotypeBaseE.GetSimpleInstance(id);
+            CachedObjects.CachedEntities[id] = null;
+            DersaSqlManager M = new DersaSqlManager();
+            System.Data.DataTable t = M.GetEntity(id.ToString());
+            if (t == null)
+                throw new Exception(string.Format("Table is null for entity {0}", id));
+            if (t.Rows.Count < 1)
+                throw new Exception(string.Format("Table is empty for entity {0}", id));
+            Entity ent = new Entity(t, M);
+            CachedObjects.CachedCompiledInstances[ent.StereotypeName + id.ToString()] = null;
+            foreach (Entity child in ent.Children)
+            {
+                CachedObjects.CachedCompiledInstances[child.StereotypeName + child.Id.ToString()] = null;
+            }
+
+            ICompiled cInst = ent.GetCompiledInstance();
+            MethodInfo mi = cInst.GetType().GetMethod("SetPath");
+            if (mi == null)
+            {
+                string excMessage = "Method SetPath not found ";
+                Logger.LogStatic(excMessage);
+                throw new Exception(excMessage);
+            }
+            object[] callParams = new object[2];
+            callParams[0] = userName;
+            callParams[1] = path;
+            mi.Invoke(cInst, callParams);
+        }
+
+        public static System.Tuple<string, string> GetPath(string clientPath)
+        {
+            string userName = HttpContext.Current.User.Identity.Name;
+            string[] fileNameParts = clientPath.Split('\\');
+            string fileName = fileNameParts[fileNameParts.Length - 1];
+            string path = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "user_resources", userName, fileName);
+            return new Tuple<string, string>(path, fileName);
+        }
 
         public string CreateTextFile(string json_params)
         {

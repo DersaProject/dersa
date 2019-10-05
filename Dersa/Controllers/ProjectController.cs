@@ -34,16 +34,38 @@ namespace Dersa.Controllers
         }
 
         [HttpPost]
-        public ActionResult UploadFile(string path, IEnumerable<HttpPostedFileBase> fileUpload)
+        public void UploadFile(IEnumerable<HttpPostedFileBase> fileUpload, int entityId)
+        {
+            foreach (var file in fileUpload)
+            {
+                if (file == null) continue;
+                if (!file.ContentType.Contains("image/"))
+                    throw new System.Exception("Файл не является изображением");
+                byte[] fileContent = new byte[file.InputStream.Length];
+                file.InputStream.Read(fileContent, 0, fileContent.Length);
+                System.Tuple<string, string> fileNameInfo = ProjectControllerAdapter.GetPath(file.FileName); 
+                System.IO.File.WriteAllBytes(fileNameInfo.Item1, fileContent);
+                try
+                {
+                    ProjectControllerAdapter.SetImagePath(entityId, fileNameInfo.Item2);
+                }
+                catch(System.Exception exc)
+                { }
+            }
+        }
+
+        [HttpPost]
+        public ActionResult UploadFileFromForm(IEnumerable<HttpPostedFileBase> fileUpload)
         {
             foreach (var file in fileUpload)
             {
                 if (file == null) continue;
                 byte[] fileContent = new byte[file.InputStream.Length];
                 file.InputStream.Read(fileContent, 0, fileContent.Length);
+                string path = ProjectControllerAdapter.GetPath(file.FileName).Item1;
+                System.IO.File.WriteAllBytes(path, fileContent);
             }
             return View("Close");
-
         }
 
         public ActionResult Display(string class_name)
