@@ -54,13 +54,18 @@ namespace Dersa.Models
         }
         public static string PutString(string src)
         {
+            string userName = "";
+            if(HttpContext.Current != null)
+                userName = HttpContext.Current.User.Identity.Name;
             string Id = Guid.NewGuid().ToString();
-            hashTable[Id] = src;
+            hashTable[userName+Id] = src;
             return Id;
         }
-        public static string GetString(string Id, bool viewSource)
+        public static string GetString(string Id, bool viewSource, string userName = null)
         {
-            string result = hashTable[Id].ToString();
+            if (userName == null && HttpContext.Current != null)
+                userName = HttpContext.Current.User.Identity.Name;
+            string result = hashTable[userName+Id].ToString();
             if(!viewSource)
                 result = result.Replace("$lt$", "<").Replace("$gt$", ">");
             hashTable.Remove(Id);
@@ -91,9 +96,10 @@ namespace Dersa.Models
             }
             else if (Params.Contains("entity") && Params.Contains("attr_name"))
             {
+                string userName = HttpContext.Current.User.Identity.Name;
                 string entityId = Params["entity"].Value.ToString();
                 string attrName = Params["attr_name"].Value.ToString();
-                string attrValue = (new QueryExecuteService()).GetAttrValue(attrName, entityId);
+                string attrValue = (new QueryExecuteService()).GetAttrValue(attrName, entityId, userName);
                 var result = new
                 {
                     entityId = entityId,

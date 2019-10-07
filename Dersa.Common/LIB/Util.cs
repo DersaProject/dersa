@@ -46,6 +46,8 @@ namespace Dersa.Common
             System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$GetAttribute", new object[] { entityId, attrName, userName, Util.GetPassword(userName) });
             if (T == null || T.Rows.Count < 1)
                 return null;
+            if (attrType <= 0)
+                attrType = (int)T.Rows[0]["Type"];
             string result = T.Rows[0]["Value"].ToString();
             if (attrType == 5)
             {

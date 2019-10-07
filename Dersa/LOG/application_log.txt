@@ -1269,3 +1269,27 @@ Conversion failed when converting the varchar value '******' to data type int.
 
 30.09.2019 22:33:19
 @attr_type is not a parameter for procedure ENTITY$SetAttribute.
+
+05.10.2019 22:01:57
+Could not find stored procedure 'ENTITY$SetAttribute'.
+
+05.10.2019 22:02:22
+Could not find stored procedure 'ENTITY$SetAttribute'.
+
+05.10.2019 22:03:01
+@attr_type is not a parameter for procedure ENTITY$SetAttribute.
+
+05.10.2019 22:03:28
+@attr_type is not a parameter for procedure ENTITY$SetAttribute.
+
+05.10.2019 22:05:41
+@attr_type is not a parameter for procedure ENTITY$SetAttribute.
+
+05.10.2019 22:07:22
+@attr_type is not a parameter for procedure ENTITY$SetAttribute.
+
+05.10.2019 22:08:24
+@attr_type is not a parameter for procedure ENTITY$SetAttribute.
+
+05.10.2019 22:17:55
+@attr_type is not a parameter for procedure ENTITY$SetAttribute.

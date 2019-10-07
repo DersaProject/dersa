@@ -16,9 +16,10 @@ namespace Dersa
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
     public class QueryExecuteService : IQueryExecuteService
     {
-        public string GetText(string TextId)
+        public string GetText(string TextId, string token)
         {
-            return QueryControllerAdapter.GetString(TextId, false);//._query;
+            string userName = Cryptor.Decrypt(token, "DERSA");
+            return QueryControllerAdapter.GetString(TextId, false, userName);//._query;
         }
         public string GetUserToken(string name, string password)
         {
@@ -28,17 +29,19 @@ namespace Dersa
         {
             return Cryptor.Encrypt(name, "DERSA");
         }
-        public string GetAttrValue(string attr_name, string entity_id)
+        public string GetAttrValue(string attrName, string entityId, string userName = null)
         {
             try
             {
                 DersaSqlManager DM = new DersaAnonimousSqlManager();
-                string userName = "ServiceUser";
-                System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$GetAttribute", new object[] { entity_id, attr_name, userName, Util.GetPassword(userName) });
-                string result = "";
-                if (T.Rows.Count > 0)
-                    result = T.Rows[0]["Value"].ToString();
-                return result;
+                if(userName == null)
+                    userName = "ServiceUser";
+                return Util.GetAttributeValue(userName, int.Parse(entityId), attrName, -1);
+                //System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$GetAttribute", new object[] { entityId, attrName, userName, Util.GetPassword(userName) });
+                //string result = "";
+                //if (T.Rows.Count > 0)
+                //    result = T.Rows[0]["Value"].ToString();
+                //return result;
             }
             catch(Exception exc)
             {
@@ -50,7 +53,8 @@ namespace Dersa
             try 
             {
                 string userName = Cryptor.Decrypt(token, "DERSA");
-                NodeControllerAdapter.SetTextProperty(int.Parse(entity_id), attr_name, attr_value, userName);
+                Util.SetAttributeValue(new DersaAnonimousSqlManager(), userName, AttributeOwnerType.Entity, entity_id, attr_name, -1, attr_value);
+                //NodeControllerAdapter.SetTextProperty(int.Parse(entity_id), attr_name, attr_value, userName);
                 return "";
             }
             catch(Exception exc)
