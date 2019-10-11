@@ -207,7 +207,9 @@ namespace Dersa.Models
             object result = mi.Invoke(cInst, new object[] { callParams });
             if (result == null)
                 return null;
-            return result.ToString();
+            if(result is string)
+                return result.ToString();
+            return JsonConvert.SerializeObject(result);
         }
         public static string GetQueryId(string query)
         {

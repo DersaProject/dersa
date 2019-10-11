@@ -92,7 +92,7 @@ namespace Dersa.Controllers
 
         }
 
-        private string CreateEntity(string stereotypeName, string parentId, string entityName, NodeControllerAdapter.SchemaAttribute[] attrs)
+        private string CreateEntity(string stereotypeName, string parentId, string entityName, NodeControllerAdapter.SchemaAttribute[] attrs, string guid = null)
         {
             string entityCreateResult = DnD(stereotypeName, parentId, 0);  //"[{\"id\":10000361,\"text\":\"Entity\",\"icon\":\"Entity\",\"name\":\"Entity\"}]"; 
             dynamic ES = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(entityCreateResult);
@@ -101,6 +101,8 @@ namespace Dersa.Controllers
             {
                 resultId = ES[0].id.ToString();
                 Rename(resultId, entityName);
+                if (guid != null)
+                    Dersa.Common.Util.SetGuid(HttpContext.User.Identity.Name, resultId, guid);
             }
             Common.DersaSqlManager DM = new Common.DersaSqlManager();
             if (resultId != "" && attrs != null && attrs.Length > 0)

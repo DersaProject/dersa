@@ -14,6 +14,38 @@ namespace Dersa.Controllers
 {
     public class QueryController : Controller
     {
+        public void DownloadContent(string urlId, string fileName="result.html") 
+        {
+            try
+            {
+                string url = QueryControllerAdapter.GetString(urlId, true);
+                System.Net.HttpWebRequest req = System.Net.HttpWebRequest.CreateHttp(url);
+                req.Method = "GET";
+                req.CookieContainer = new System.Net.CookieContainer();
+                System.Net.Cookie cookie = new System.Net.Cookie(".AspNet.ApplicationCookie", Request.Cookies[".AspNet.ApplicationCookie"].Value, "/", Request.UrlReferrer.Host);
+                req.CookieContainer.Add(cookie);
+                var resp = req.GetResponse();
+                var respStream = resp.GetResponseStream();
+                var SR = new System.IO.StreamReader(respStream);
+                string result = SR.ReadToEnd();
+                Response.ContentType = "application/force-download";
+                string Header = "Attachment; Filename=" + fileName;
+                Response.AppendHeader("Content-Disposition", Header);
+                var SW = new System.IO.StreamWriter(Response.OutputStream);
+                SW.Write(result);
+                SW.Flush();
+                SW.Close();
+                Response.End();
+            }
+            catch (Exception exc)
+            {
+                Response.OutputStream.Flush();
+                Response.OutputStream.Close();
+                Response.ContentType = "TEXT/HTML";
+                Response.ClearHeaders();
+                Response.Write(exc.Message);
+            }
+        }
 
         public ActionResult GetViewByName(string view_name, string json_params)
         {

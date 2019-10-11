@@ -12,6 +12,20 @@ namespace Dersa.Common
 {
     public class Util
     {
+        public static string SetGuid(string userName, string entityId, string guid)
+        {
+            try
+            {
+                DersaSqlManager DM = new DersaSqlManager();
+                DM.ExecuteSPWithParams("ENTITY$SetGuid", new object[] { entityId, guid, Util.GetPassword(userName) });
+                return "";
+            }
+            catch(Exception exc)
+            {
+                return exc.Message;
+            }
+        }
+
         public static string SetAttributeValue(DersaSqlManager DM, string userName, AttributeOwnerType ownerType, string entityId, string attrName, int attrType, string attrValue)
         {
             string procName = "";
