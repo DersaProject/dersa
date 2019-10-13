@@ -15,3 +15,5 @@ Dersa/user_resources/
 Dersa/UploadedFiles/
 *.suo
 *.ide-wal
+Dersa/.vs/config/applicationhost.config
+Dersa/.vs/Dersa/v15/Server/sqlite3/storage.ide-shm
