@@ -9,20 +9,27 @@ using System.Runtime.Serialization;
 
 namespace Dersa.Common
 {
-    public class Stereotype : BaseClass, IStereotype
+    public class Stereotype :/* BaseClass,*/ IStereotype
     {
         public Stereotype()
         {
         }
-        public Stereotype(ObjectClass objectClass) : base(objectClass)
-        {
-        }
+        //public Stereotype(ObjectClass objectClass) : base(objectClass)
+        //{
+        //}
 
-        public Stereotype(System.Data.DataTable t)
-            : this(ObjectClass.GetObjectClass(t))
-        {
-        }
-
+        //public Stereotype(System.Data.DataTable t)
+        //    : this(ObjectClass.GetObjectClass(t))
+        //{
+        //}
+        //private string _name;
+        //public string Name
+        //{
+        //    get
+        //    {
+        //        return _name;
+        //    }
+        //}
         private const string delimiters = " \t\n\r\f\"\'\\+-*/.,;:[]{}?<>()~!%^&$";
 
         private Parser[] _parsedFormat;
@@ -40,44 +47,44 @@ namespace Dersa.Common
         protected string _extends;
         protected int _rank;
 
-        public ChildrenCollection Operations
-        {
-            get
-            {
-                if (!_operations.AutoSorting)
-                {
-                    _operations.Sort();
-                    _operations.AutoSorting = true;
-                }
-                return _operations;
-            }
+        //public ChildrenCollection Operations
+        //{
+        //    get
+        //    {
+        //        if (!_operations.AutoSorting)
+        //        {
+        //            _operations.Sort();
+        //            _operations.AutoSorting = true;
+        //        }
+        //        return _operations;
+        //    }
 
-        }
-        public byte[] ImageBytes
-        {
-            get
-            {
-                if (ReturnBackupProperty())
-                {
-                    return (byte[])GetBackUpProperty("ImageBytes");
-                }
-                return _imageBytes;
-            }
-            set
-            {
-                _imageBytes = value;
-            }
-        }
+        //}
+        //public byte[] ImageBytes
+        //{
+        //    get
+        //    {
+        //        if (ReturnBackupProperty())
+        //        {
+        //            return (byte[])GetBackUpProperty("ImageBytes");
+        //        }
+        //        return _imageBytes;
+        //    }
+        //    set
+        //    {
+        //        _imageBytes = value;
+        //    }
+        //}
 
         #region StereotypeType
         public StereotypeType StereotypeType
         {
             get
             {
-                if (ReturnBackupProperty())
-                {
-                    return (StereotypeType)GetBackUpProperty("StereotypeType");
-                }
+                //if (ReturnBackupProperty())
+                //{
+                //    return (StereotypeType)GetBackUpProperty("StereotypeType");
+                //}
                 return _stereotypeType;
             }
             set { _stereotypeType = value; }
@@ -94,10 +101,10 @@ namespace Dersa.Common
         {
             get
             {
-                if (ReturnBackupProperty())
-                {
-                    return (ArrowType)GetBackUpProperty("ArrowTypeA");
-                }
+                //if (ReturnBackupProperty())
+                //{
+                //    return (ArrowType)GetBackUpProperty("ArrowTypeA");
+                //}
                 return _arrowTypeA;
             }
             set { _arrowTypeA = value; }
@@ -114,10 +121,10 @@ namespace Dersa.Common
         {
             get
             {
-                if (ReturnBackupProperty())
-                {
-                    return (ArrowType)GetBackUpProperty("ArrowTypeB");
-                }
+                //if (ReturnBackupProperty())
+                //{
+                //    return (ArrowType)GetBackUpProperty("ArrowTypeB");
+                //}
                 return _arrowTypeB;
             }
             set { _arrowTypeB = value; }
@@ -129,90 +136,90 @@ namespace Dersa.Common
         }
         #endregion
 
-        public Stereotype Parent
-        {
-            get
-            {
-                if (ReturnBackupProperty())
-                {
-                    return (Stereotype)GetBackUpProperty("Parent");
-                }
-                //if ((_parent == null) || (_parent == Manager.RootStereotype)) return null;
-                return _parent;
-            }
-            set
-            {
-                if ((_parent != null) && (_parent._children.Contains(this)))
-                {
-                    _parent._children.Remove(this);
-                }
-                //if (value == null)
-                //    _parent = Manager.RootStereotype;
-                //else
-                    _parent = value;
-                if (_parent != null)
-                {
-                    _parent._children.Add(this);
-                }
-            }
-        }
-        public int ParentId
-        {
-            get
-            {
-                if (ReturnBackupProperty())
-                {
-                    return (int)GetBackUpProperty("ParentId");
-                }
-                if (Parent != null) return Parent.Id;
-                return 0;
-            }
-            //set { Parent = Manager.GetObject("STEREOTYPE", value) as Stereotype; }
-        }
-        public ChildrenCollection Children
-        {
-            get
-            {
-                if (!_children.AutoSorting)
-                {
-                    _children.Sort();
-                    _children.AutoSorting = true;
-                }
-                return _children;
-            }
-        }
-        IChildrenCollection IStereotype.Children
-        {
-            get
-            {
-                return this.Children;
-            }
-        }
-        public virtual ChildrenCollection PublicAttributes
-        {
-            get
-            {
-                ChildrenCollection stereotypeAttrs = new ChildrenCollection();
-                ChildrenCollection baseAttrs = base.Attributes;
-                for (int i = 0; i < baseAttrs.Count; i++)
-                {
-                    Attribute a = (Attribute)baseAttrs[i];
-                    if (a.AccessModifier == "public")
-                    {
-                        stereotypeAttrs.Add(a);
-                    }
-                }
-                return stereotypeAttrs;
-            }
-        }
+        //public Stereotype Parent
+        //{
+        //    get
+        //    {
+        //        //if (ReturnBackupProperty())
+        //        //{
+        //        //    return (Stereotype)GetBackUpProperty("Parent");
+        //        //}
+        //        //if ((_parent == null) || (_parent == Manager.RootStereotype)) return null;
+        //        return _parent;
+        //    }
+        //    set
+        //    {
+        //        if ((_parent != null) && (_parent._children.Contains(this)))
+        //        {
+        //            _parent._children.Remove(this);
+        //        }
+        //        //if (value == null)
+        //        //    _parent = Manager.RootStereotype;
+        //        //else
+        //            _parent = value;
+        //        if (_parent != null)
+        //        {
+        //            _parent._children.Add(this);
+        //        }
+        //    }
+        //}
+        //public int ParentId
+        //{
+        //    get
+        //    {
+        //        //if (ReturnBackupProperty())
+        //        //{
+        //        //    return (int)GetBackUpProperty("ParentId");
+        //        //}
+        //        if (Parent != null) return Parent.Id;
+        //        return 0;
+        //    }
+        //    //set { Parent = Manager.GetObject("STEREOTYPE", value) as Stereotype; }
+        //}
+        //public ChildrenCollection Children
+        //{
+        //    get
+        //    {
+        //        if (!_children.AutoSorting)
+        //        {
+        //            _children.Sort();
+        //            _children.AutoSorting = true;
+        //        }
+        //        return _children;
+        //    }
+        //}
+        //IChildrenCollection IStereotype.Children
+        //{
+        //    get
+        //    {
+        //        return this.Children;
+        //    }
+        //}
+        //public virtual ChildrenCollection PublicAttributes
+        //{
+        //    get
+        //    {
+        //        ChildrenCollection stereotypeAttrs = new ChildrenCollection();
+        //        ChildrenCollection baseAttrs = base.Attributes;
+        //        for (int i = 0; i < baseAttrs.Count; i++)
+        //        {
+        //            Attribute a = (Attribute)baseAttrs[i];
+        //            if (a.AccessModifier == "public")
+        //            {
+        //                stereotypeAttrs.Add(a);
+        //            }
+        //        }
+        //        return stereotypeAttrs;
+        //    }
+        //}
         public string ViewFormat
         {
             get
             {
-                if (ReturnBackupProperty())
-                {
-                    return (string)GetBackUpProperty("ViewFormat");
-                }
+                //if (ReturnBackupProperty())
+                //{
+                //    return (string)GetBackUpProperty("ViewFormat");
+                //}
                 if (_viewFormat == null) return "";
                 return _viewFormat;
             }
@@ -226,10 +233,10 @@ namespace Dersa.Common
         {
             get
             {
-                if (ReturnBackupProperty())
-                {
-                    return (string)GetBackUpProperty("DiagramViewFormat");
-                }
+                //if (ReturnBackupProperty())
+                //{
+                //    return (string)GetBackUpProperty("DiagramViewFormat");
+                //}
                 if (_diagramViewFormat == null) return "";
                 return _diagramViewFormat;
             }
@@ -243,10 +250,10 @@ namespace Dersa.Common
         {
             get
             {
-                if (ReturnBackupProperty())
-                {
-                    return (string)GetBackUpProperty("Extends");
-                }
+                //if (ReturnBackupProperty())
+                //{
+                //    return (string)GetBackUpProperty("Extends");
+                //}
                 if (_extends == null) return "";
                 return _extends;
             }
@@ -259,10 +266,10 @@ namespace Dersa.Common
         {
             get
             {
-                if (ReturnBackupProperty())
-                {
-                    return (int)GetBackUpProperty("Rank");
-                }
+                //if (ReturnBackupProperty())
+                //{
+                //    return (int)GetBackUpProperty("Rank");
+                //}
                 return _rank;
             }
             set
@@ -351,43 +358,43 @@ namespace Dersa.Common
         //    }
         //    return operation;
         //}
-        private void Move(Stereotype parent)
-        {
-            if ((parent.Equals(this)) || (parent.Equals(Parent))) return;
-            //Manager.NotifyRemove(this);
-            Parent = parent;
-            /*if (Parent != null) 
-			{
-				for (int i = 0; i < Parent.Attributes.Count; i++)
-				{
-					Attribute a = GetAttribute(((Attribute)Parent.Attributes[i]).Name);
-					if (a == null) 
-					{
-						a = (Attribute)((Attribute)Parent.Attributes[i]).Clone();
-						a.Owner = this;
-						a.Post();
-					}
-				}
-			} */
-        }
-        public ChildrenCollection GetPath()
-        {
-            ChildrenCollection entities = new ChildrenCollection();
-            return this.GetPath(entities);
-        }
-        IChildrenCollection IStereotype.GetPath()
-        {
-            return this.GetPath();
-        }
-        private ChildrenCollection GetPath(ChildrenCollection stereotypes)
-        {
-            stereotypes.Insert(0, this);
-            if (this.Parent != null)
-            {
-                stereotypes = Parent.GetPath(stereotypes);
-            }
-            return stereotypes;
-        }
+   //     private void Move(Stereotype parent)
+   //     {
+   //         if ((parent.Equals(this)) || (parent.Equals(Parent))) return;
+   //         //Manager.NotifyRemove(this);
+   //         Parent = parent;
+   //         /*if (Parent != null) 
+			//{
+			//	for (int i = 0; i < Parent.Attributes.Count; i++)
+			//	{
+			//		Attribute a = GetAttribute(((Attribute)Parent.Attributes[i]).Name);
+			//		if (a == null) 
+			//		{
+			//			a = (Attribute)((Attribute)Parent.Attributes[i]).Clone();
+			//			a.Owner = this;
+			//			a.Post();
+			//		}
+			//	}
+			//} */
+   //     }
+        //public ChildrenCollection GetPath()
+        //{
+        //    ChildrenCollection entities = new ChildrenCollection();
+        //    return this.GetPath(entities);
+        //}
+        //IChildrenCollection IStereotype.GetPath()
+        //{
+        //    return this.GetPath();
+        //}
+        //private ChildrenCollection GetPath(ChildrenCollection stereotypes)
+        //{
+        //    stereotypes.Insert(0, this);
+        //    if (this.Parent != null)
+        //    {
+        //        stereotypes = Parent.GetPath(stereotypes);
+        //    }
+        //    return stereotypes;
+        //}
         public static new SqlProperty[] InitializeProperties(string keyName)
         {
             SqlProperty[] tempProperty = BaseClass.InitializeProperties(keyName);
@@ -493,20 +500,20 @@ namespace Dersa.Common
         //        }
         //    }
         //}
-        protected override void OnClone(Object o)
-        {
-            base.OnClone(o);
-            /*Stereotype s = (Stereotype)o;
-			s._operations = new ChildrenCollection();
-			if (this.Operations.Count > 0) 
-			{
-				for (int i = 0; i < this._operations.Count; i++) 
-				{
-					Operation op = (Operation)((Operation)this._operations[i]).Clone();
-					op.Stereotype = s;
-				}
-			}*/
-        }
+   //     protected override void OnClone(Object o)
+   //     {
+   //         base.OnClone(o);
+   //         /*Stereotype s = (Stereotype)o;
+			//s._operations = new ChildrenCollection();
+			//if (this.Operations.Count > 0) 
+			//{
+			//	for (int i = 0; i < this._operations.Count; i++) 
+			//	{
+			//		Operation op = (Operation)((Operation)this._operations[i]).Clone();
+			//		op.Stereotype = s;
+			//	}
+			//}*/
+   //     }
 
         //public Operation GetOperation(int ID)
         //{
@@ -571,52 +578,52 @@ namespace Dersa.Common
         //        return Operations;
         //    }
         //}
-        IStereotype IStereotype.Parent
-        {
-            get
-            {
-                return (IStereotype)Parent;
-            }
-        }
+        //IStereotype IStereotype.Parent
+        //{
+        //    get
+        //    {
+        //        return (IStereotype)Parent;
+        //    }
+        //}
         //IOperation IStereotype.GetOperation(string theName)
         //{
         //    return (IOperation)GetOperation(theName);
         //}
-        protected override void LoacateAfterPost()
-        {
-            base.LoacateAfterPost();
-            this._parent._children.Sort();
-        }
+        //protected override void LoacateAfterPost()
+        //{
+        //    base.LoacateAfterPost();
+        //    this._parent._children.Sort();
+        //}
         //protected override void OnNew()
         //{
         //    base.OnNew();
         //    Parent = null;
         //}
-        protected override void BeforeDrop()
-        {
-            if (_children.Count > 0) throw new Exception("Сначала удалите объекты нижнего уровня");
-            if (attributes.Count > 0) throw new Exception("Сначала удалите аттрибуты");
-            if (_operations.Count > 0) throw new Exception("Сначала удалите операции");
-            base.BeforeDrop();
-        }
-        public void Dispose()
-        {
-            if ((_parent != null) && (_parent.Children.Contains(this)))
-            {
-                _parent.Children.Remove(this);
-            }
-            _parent = null;
-            //if (_operations != null)
-            //{
-            //    while (_operations.Count > 0)
-            //    {
-            //        ((Operation)_operations[0]).Dispose();
-            //    }
-            //    //_operations = null;
-            //}
-            _imageBytes = null;
-            base.Dispose();
-        }
+        //protected override void BeforeDrop()
+        //{
+        //    if (_children.Count > 0) throw new Exception("Сначала удалите объекты нижнего уровня");
+        //    if (attributes.Count > 0) throw new Exception("Сначала удалите аттрибуты");
+        //    if (_operations.Count > 0) throw new Exception("Сначала удалите операции");
+        //    base.BeforeDrop();
+        //}
+        //public void Dispose()
+        //{
+        //    if ((_parent != null) && (_parent.Children.Contains(this)))
+        //    {
+        //        _parent.Children.Remove(this);
+        //    }
+        //    _parent = null;
+        //    //if (_operations != null)
+        //    //{
+        //    //    while (_operations.Count > 0)
+        //    //    {
+        //    //        ((Operation)_operations[0]).Dispose();
+        //    //    }
+        //    //    //_operations = null;
+        //    //}
+        //    _imageBytes = null;
+        //    base.Dispose();
+        //}
         private Parser[] GetParsedFormat(string str)
         {
             if (str == null) return null;

@@ -57,38 +57,38 @@ namespace Dersa.Common
         private System.Collections.Hashtable Stereotypes;
         public System.Data.DataTable GetEntity(string ID)
         {
-            return GetSqlObject("ENTITY", "entity", ID);
+            return GetSqlObject("ENTITY_VIEW", "entity", ID);
         }
         public System.Data.DataTable GetEntityChildren(string ID)
         {
-            return GetSqlObject("ENTITY", "parent", ID);
+            return GetSqlObject("ENTITY_VIEW", "parent", ID);
         }
 
         public System.Data.DataTable GetEntityARelations(string ID)
         {
-            return GetSqlObject("RELATION", "a", ID);
+            return GetSqlObject("RELATION_VIEW", "a", ID);
         }
 
         public System.Data.DataTable GetEntityBRelations(string ID)
         {
-            return GetSqlObject("RELATION", "b", ID);
+            return GetSqlObject("RELATION_VIEW", "b", ID);
         }
 
-        public Stereotype GetStereotype(string ID)
-        {
-            if (Stereotypes.ContainsKey(ID))
-                return Stereotypes[ID] as Stereotype;
-            else
-            {
-                System.Data.DataTable t = GetSqlObject("STEREOTYPE", "stereotype", ID);
-                Stereotype S = new Stereotype(ObjectClass.GetObjectClass(t));
-                Stereotypes.Add(ID, S);
-                return S;
-            }
-        }
+        //public Stereotype GetStereotype(string ID)
+        //{
+        //    if (Stereotypes.ContainsKey(ID))
+        //        return Stereotypes[ID] as Stereotype;
+        //    else
+        //    {
+        //        System.Data.DataTable t = GetSqlObject("STEREOTYPE", "stereotype", ID);
+        //        Stereotype S = new Stereotype(t);// (ObjectClass.GetObjectClass(t));
+        //        Stereotypes.Add(ID, S);
+        //        return S;
+        //    }
+        //}
         public System.Data.DataTable GetRelation(string ID)
         {
-            return GetSqlObject("RELATION", "relation", ID);
+            return GetSqlObject("RELATION_VIEW", "relation", ID);
         }
 
         public System.Data.DataTable GetAttribute(string ID)

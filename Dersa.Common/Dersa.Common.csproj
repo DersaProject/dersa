@@ -40,13 +40,18 @@
   <ItemGroup>
     <Reference Include="DbManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\DbManager.dll</HintPath>
+      <HintPath>..\DIOS\DIOS.Server\common\DbManager.dll</HintPath>
+    </Reference>
+    <Reference Include="Dersa.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Dersa\bin\Dersa.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="Dios.Common">
       <HintPath>..\bin\Dios.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Dios.Interfaces">
-      <HintPath>..\bin\Dios.Interfaces.dll</HintPath>
+    <Reference Include="Dios.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Dersa\bin\Dios.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="Dios.SqlManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -80,21 +85,14 @@
     <Compile Include="Interfaces\CommonStructs.cs" />
     <Compile Include="Interfaces\ICacheProvider.cs" />
     <Compile Include="Interfaces\IFilterControl.cs" />
-    <Compile Include="LIB\Account.cs" />
-    <Compile Include="LIB\Attribute.cs" />
-    <Compile Include="LIB\BaseClass.cs" />
-    <Compile Include="LIB\BaseObject.cs" />
     <Compile Include="LIB\CachedObjects.cs" />
     <Compile Include="LIB\ChildrenCollection.cs" />
     <Compile Include="LIB\DersaSqlManager.cs" />
     <Compile Include="LIB\DersaUserStatus.cs" />
     <Compile Include="LIB\Entity.cs" />
     <Compile Include="LIB\EntityChildrenCollection.cs" />
-    <Compile Include="LIB\Object.cs" />
-    <Compile Include="LIB\ObjectClass.cs" />
     <Compile Include="LIB\Relation.cs" />
     <Compile Include="LIB\SqlProperty.cs" />
-    <Compile Include="LIB\Stereotype.cs" />
     <Compile Include="LIB\StereotypeBaseE.cs" />
     <Compile Include="LIB\StereotypedObject.cs" />
     <Compile Include="LIB\Util.cs" />

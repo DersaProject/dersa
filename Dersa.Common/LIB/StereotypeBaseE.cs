@@ -17,14 +17,12 @@ namespace DersaStereotypes
             DataTable ET = M.GetEntity(id.ToString());
             if (ET == null || ET.Rows.Count < 1)
                 return null;
-            Stereotype S = M.GetStereotype(ET.Rows[0]["stereotype"].ToString());
-            if(S == null)
-                return null;
-            string typeName = "DersaStereotypes." + S.Name;
+            string typeName = "DersaStereotypes." + ET.Rows[0]["stereotype_name"].ToString();
             Type dType = Util.GetDynamicType(typeName);
             if (dType == null)
                 return null;
-            StereotypeBaseE res = Activator.CreateInstance(dType, new object[] { }) as StereotypeBaseE;
+            object inst = Activator.CreateInstance(dType, new object[] { });
+            StereotypeBaseE res = inst as StereotypeBaseE;
             res._id = id;
             if (ET.Rows[0]["parent"] != DBNull.Value)
             {
@@ -163,7 +161,7 @@ namespace DersaStereotypes
 
         public void ClearCache()
         {
-            CachedObjects.CachedCompiledInstances[this.Object.Stereotype.Name + this.Id.ToString()] = null;
+            CachedObjects.CachedCompiledInstances[this.Object.StereotypeName + this.Id.ToString()] = null;
             CachedObjects.CachedCompiledInstances[this.Id] = null;
         }
 

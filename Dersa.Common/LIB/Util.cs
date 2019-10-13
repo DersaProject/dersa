@@ -10,6 +10,7 @@ using System.Reflection;
 
 namespace Dersa.Common
 {
+    public enum AttributeOwnerType : int { Entity = 0, Relation = 1 }
     public class Util
     {
         public static string SetGuid(string userName, string entityId, string guid)
@@ -287,11 +288,11 @@ namespace Dersa.Common
         {
             if (obj == null)
                 throw new Exception("obj == null");
-            if (CachedObjects.CachedCompiledInstances[obj.Stereotype.Name + obj.Id.ToString()] != null)
-                return (ICompiled)CachedObjects.CachedCompiledInstances[obj.Stereotype.Name + obj.Id.ToString()];
-            if (obj.Stereotype == null)
-                throw new Exception("obj.Stereotype == null, obj.name = " + obj.Name);
-            Type nType = GetDynamicType("DersaStereotypes." + obj.Stereotype.Name);
+            if (CachedObjects.CachedCompiledInstances[obj.StereotypeName + obj.Id.ToString()] != null)
+                return (ICompiled)CachedObjects.CachedCompiledInstances[obj.StereotypeName + obj.Id.ToString()];
+            //if (obj.Stereotype == null)
+            //    throw new Exception("obj.Stereotype == null, obj.name = " + obj.Name);
+            Type nType = GetDynamicType("DersaStereotypes." + obj.StereotypeName);
             ICompiled res = (ICompiled)Activator.CreateInstance(nType, new object[] { obj });
             System.Data.DataTable t = null;
             if (res is ICompiledRelation)
@@ -326,7 +327,7 @@ namespace Dersa.Common
                     }
                 }
             }
-            CachedObjects.CachedCompiledInstances[obj.Stereotype.Name + obj.Id.ToString()] = res;
+            CachedObjects.CachedCompiledInstances[obj.StereotypeName + obj.Id.ToString()] = res;
             return res;
 
             /*

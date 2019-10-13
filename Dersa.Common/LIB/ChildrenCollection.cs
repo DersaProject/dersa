@@ -53,11 +53,11 @@ namespace Dersa.Common
 				_autoSorting = value;
 			}
 		}
-		public virtual IObject this[int i] 
+		public virtual IStereotypedObject this[int i] 
 		{
 			get 
 			{
-				return (IObject)_list[i];
+				return (IStereotypedObject)_list[i];
 			}
 			set
 			{
@@ -67,7 +67,7 @@ namespace Dersa.Common
 				}
 			}
 		}
-		public virtual int Add(IObject o)
+		public virtual int Add(IStereotypedObject o)
 		{
 			if (_list.Contains(o)) return _list.IndexOf(o);
 			lock (this.SyncRoot)
@@ -87,7 +87,7 @@ namespace Dersa.Common
 				_list.AddRange(collection);
 			}
 		}
-		public virtual void Insert(int index, IObject o)
+		public virtual void Insert(int index, IStereotypedObject o)
 		{
 			if (_list.Contains(o))
 			{
@@ -98,7 +98,7 @@ namespace Dersa.Common
 				_list.Insert(index, o);
 			}
 		}
-		public virtual void Remove(IObject o)
+		public virtual void Remove(IStereotypedObject o)
 		{
 			lock (this.SyncRoot)
 			{
@@ -112,11 +112,11 @@ namespace Dersa.Common
 				_list.RemoveAt(index);
 			}
 		}
-		public virtual int IndexOf(IObject o)
+		public virtual int IndexOf(IStereotypedObject o)
 		{
 			return _list.IndexOf(o);
 		}
-		public virtual bool Contains(IObject o)
+		public virtual bool Contains(IStereotypedObject o)
 		{
 			return _list.Contains(o);
 		}
@@ -171,33 +171,33 @@ namespace Dersa.Common
 			}
 			set
 			{
-				this[index] = (IObject)value;
+				this[index] = (IStereotypedObject)value;
 			}
 		}
 
 		void System.Collections.IList.Insert(int index, object value)
 		{
-			this.Insert(index, (IObject)value);
+			this.Insert(index, (IStereotypedObject)value);
 		}
 
 		void System.Collections.IList.Remove(object value)
 		{
-			this.Remove((IObject)value);
+			this.Remove((IStereotypedObject)value);
 		}
 
 		bool System.Collections.IList.Contains(object value)
 		{
-			return this.Contains((IObject)value);
+			return this.Contains((IStereotypedObject)value);
 		}
 
 		int System.Collections.IList.IndexOf(object value)
 		{
-			return this.IndexOf((IObject)value);
+			return this.IndexOf((IStereotypedObject)value);
 		}
 
 		int System.Collections.IList.Add(object value)
 		{
-			return this.Add((IObject)value);
+			return this.Add((IStereotypedObject)value);
 		}
 
 		public bool IsFixedSize
