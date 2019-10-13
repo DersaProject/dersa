@@ -76,13 +76,7 @@ namespace Dersa.Controllers
                 for (int i = 0; i < schemaContent.Length; i++)
                 {
                     NodeControllerAdapter.SchemaEntity schemaEntity = schemaContent[i];
-                    string entId = CreateEntity(schemaEntity.StereotypeName, id.ToString(), schemaEntity.Name, schemaEntity.schemaAttributes);
-                    NodeControllerAdapter.SchemaEntity[] childEntities = schemaEntity.childEntities;
-                    for (int c = 0; c < childEntities.Length; c++)
-                    {
-                        NodeControllerAdapter.SchemaEntity childEntity = childEntities[c];
-                        CreateEntity(childEntity.StereotypeName, entId, childEntity.Name, childEntity.schemaAttributes);
-                    }
+                    string entId = CreateEntity(schemaEntity, id.ToString());
                 }
             }
             if (closeWindow)
@@ -92,8 +86,12 @@ namespace Dersa.Controllers
 
         }
 
-        private string CreateEntity(string stereotypeName, string parentId, string entityName, NodeControllerAdapter.SchemaAttribute[] attrs, string guid = null)
+        //private string CreateEntity(string stereotypeName, string parentId, string entityName, NodeControllerAdapter.SchemaAttribute[] attrs, string guid = null)
+        private string CreateEntity(NodeControllerAdapter.SchemaEntity schemaEntity, string parentId, string guid = null) 
         {
+            string stereotypeName = schemaEntity.StereotypeName;
+            string entityName = schemaEntity.Name;
+            NodeControllerAdapter.SchemaAttribute[] attrs = schemaEntity.schemaAttributes;
             string entityCreateResult = DnD(stereotypeName, parentId, 0);  //"[{\"id\":10000361,\"text\":\"Entity\",\"icon\":\"Entity\",\"name\":\"Entity\"}]"; 
             dynamic ES = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(entityCreateResult);
             string resultId = "";
@@ -113,6 +111,13 @@ namespace Dersa.Controllers
                     NodeControllerAdapter.SetAttribute(DM, Common.AttributeOwnerType.Entity, resultId, attrs[a].Name, attrs[a].Value, 0);
                 }
             }
+            NodeControllerAdapter.SchemaEntity[] childEntities = schemaEntity.childEntities;
+            for (int c = 0; c < childEntities.Length; c++)
+            {
+                NodeControllerAdapter.SchemaEntity childEntity = childEntities[c];
+                CreateEntity(childEntity, resultId);
+            }
+
             return resultId;
 
         }
