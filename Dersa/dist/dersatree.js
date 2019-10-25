@@ -95,7 +95,6 @@ function AddSubmenu(items, dest) {
         }
 
     }
-    console.log(dest.submenu);
 }
 
 function CanDnD(src, dstNode, data)
