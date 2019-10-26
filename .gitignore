@@ -18,3 +18,4 @@ Dersa/UploadedFiles/
 Dersa/.vs/config/applicationhost.config
 Dersa/.vs/Dersa/v15/Server/sqlite3/storage.ide-shm
 *.ide
+Dersa/LOG/application_log.txt
