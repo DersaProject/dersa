@@ -142,7 +142,8 @@ namespace Dersa.Controllers
 
         public string List(string id)
         {
-            return (new NodeControllerAdapter()).List(id);
+            return NodeControllerAdapter.ListNodes(id);
+            //return (new NodeControllerAdapter()).List(id);
         }
 
         public string Remove(int id, string diagram_id = null, int options = 0)

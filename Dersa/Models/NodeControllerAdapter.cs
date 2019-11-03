@@ -644,6 +644,20 @@ namespace Dersa.Models
                 return "";
             }
         }
+        public static string ListNodes(string id)
+        {
+
+            IObjectCollection col = DersaEntity.List(null);
+            var query = from Dersa.Common.Entity ent in col
+                        select new
+                        {
+                            id = ent.entity,
+                            text = ent.name,
+                            icon = ent.icon
+                        };
+            string result = JsonConvert.SerializeObject(query);
+            return result;
+        }
         public string List(string id)
         {
             try

@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using Dersa.Interfaces;
+using DIOS.Common.Interfaces;
+using DIOS.Common;
+
 
 namespace Dersa.Common
 {
@@ -142,6 +145,15 @@ namespace Dersa.Common
                 }
             }
             CachedObjects.CachedEntities[this.Id] = this;
+        }
+
+        public static IObjectCollection List(IParameterCollection Params)
+        {
+            if (Params == null)
+            {
+                Params = new ParameterCollection();
+            }
+            return Entity.GetFactory().List(Params);            
         }
 
         public static List<ICompiledEntity> Range(string[] ids_str, DersaSqlManager M)
