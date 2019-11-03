@@ -13,34 +13,34 @@ namespace Dersa.Common
 		public EntityChildrenCollection(): base()
 		{
 		}
-		public new IEntity this[int i] 
+		public new IDersaEntity this[int i] 
 		{
 			get 
 			{
-				return (IEntity)base[i];
+				return (IDersaEntity)base[i];
 			}
 			set
 			{
 				base[i] = value;
 			}
 		}
-		public int Add(IEntity e)
+		public int Add(IDersaEntity e)
 		{
 			return base.Add(e);
 		}
-		public void Insert(int index, IEntity e)
+		public void Insert(int index, IDersaEntity e)
 		{
 			base.Insert(index, e);
 		}
-		public void Remove(IEntity e)
+		public void Remove(IDersaEntity e)
 		{
 			base.Remove(e);
 		}
-		public int IndexOf(IEntity e)
+		public int IndexOf(IDersaEntity e)
 		{
 			return base.IndexOf(e);
 		}
-		public bool Contains(IEntity e)
+		public bool Contains(IDersaEntity e)
 		{
 			return base.Contains(e);
 		}

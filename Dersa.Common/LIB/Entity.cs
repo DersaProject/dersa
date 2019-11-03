@@ -50,23 +50,23 @@ namespace Dersa.Common
         }
 
     }
-    public class Entity : TreeNode, IEntity, ITreeNode
+    public class DersaEntity : TreeNode, IDersaEntity, ITreeNode
     {
 
-        public Entity()
+        public DersaEntity()
         {
         }
-        public Entity(DersaSqlManager sm):base(sm)
+        public DersaEntity(DersaSqlManager sm):base(sm)
         {
         }
 
-        public Entity(System.Data.DataTable t, DersaSqlManager sm)
+        public DersaEntity(System.Data.DataTable t, DersaSqlManager sm)
             : this(t, null, sm, AddChildrenMode.Always, true)
         {
         }
 
 
-        public Entity(System.Data.DataTable t, Entity _Parent, DersaSqlManager M, AddChildrenMode AddChildren, bool AddRelations)
+        public DersaEntity(System.Data.DataTable t, DersaEntity _Parent, DersaSqlManager M, AddChildrenMode AddChildren, bool AddRelations)
             : this(M)
         {
             if (t != null && t.Rows.Count > 0)
@@ -83,9 +83,9 @@ namespace Dersa.Common
                     if (ParentID != "")
                     {
                         if (CachedObjects.CachedEntities[r["parent"]] != null)
-                            this.Parent = (Entity)CachedObjects.CachedEntities[r["parent"]];
+                            this.Parent = (DersaEntity)CachedObjects.CachedEntities[r["parent"]];
                         else
-                            this.Parent = new Entity(M.GetEntity(ParentID), null, M, AddChildrenMode.NotPackage, false);
+                            this.Parent = new DersaEntity(M.GetEntity(ParentID), null, M, AddChildrenMode.NotPackage, false);
                     }
                 }
                 string StereotypeID = r["stereotype"].ToString();
@@ -105,7 +105,7 @@ namespace Dersa.Common
                         {
                             foreach (System.Data.DataRow cr in ChildrenTable.Rows)
                             {
-                                this._children.Add(new Entity(M.GetEntity(cr["entity"].ToString()), this, M, AddChildrenMode.NotPackage, false));
+                                this._children.Add(new DersaEntity(M.GetEntity(cr["entity"].ToString()), this, M, AddChildrenMode.NotPackage, false));
                             }
                         }
                     }
@@ -157,18 +157,18 @@ namespace Dersa.Common
                     throw new Exception(string.Format("Table is null for entity {0}", ids_str[i]));
                 if (t.Rows.Count < 1)
                     throw new Exception(string.Format("Table is empty for entity {0}", ids_str[i]));
-                Entity ent = new Entity(t, M);
+                DersaEntity ent = new DersaEntity(t, M);
                 CachedObjects.CachedCompiledInstances[ent.StereotypeName + ids_str[i]] = null;
                 ICompiledEntity cInst = (ICompiledEntity)ent.GetCompiledInstance();
                 eArr[i] = cInst;
                 entities.Add(cInst);
             }
-            Type sUtilType =  Util.GetDynamicType("DersaStereotypes.StereotypeUtil");//typeof(DersaStereotypes.StereotypeUtil);
+            Type sUtilType = DersaUtil.GetDynamicType("DersaStereotypes.StereotypeUtil");//typeof(DersaStereotypes.StereotypeUtil);
             if (sUtilType == null)
                 throw new Exception("Class StereotypeUtil not found");
             IEntityComparerProvider CP = System.Activator.CreateInstance(sUtilType) as IEntityComparerProvider;
             if(CP == null)
-                throw new Exception("Class StereotypeUtil is not IEntityComparerProvider");
+                throw new Exception("Class StereotypeUtil is not IDersaEntityComparerProvider");
             IComparer<ICompiledEntity> eCmpr = CP.GetEntityComparer();
             //entities.Sort(eCmpr);
             //entities.Sort(new EntityComparer());  //быстрая сортировка иногда дает сбой, т.к. не проверяет все сочетания, заменяем ее на "пузырек"
@@ -198,7 +198,7 @@ namespace Dersa.Common
         //public static Hashtable cachedCompiledInstances = new Hashtable();
 
         //private bool insertByStereotype = false;
-        protected Entity _parent = null;
+        protected DersaEntity _parent = null;
 
         private ChildrenCollection _diagrams = new ChildrenCollection();
         private ChildrenCollection _aRelations = new ChildrenCollection();
@@ -207,7 +207,7 @@ namespace Dersa.Common
 
         protected int _rank;
 
-        public Entity Parent
+        public DersaEntity Parent
         {
             get
             {
@@ -300,7 +300,7 @@ namespace Dersa.Common
                 return 0;
             }
         }
-        int IEntity.Index
+        int IDersaEntity.Index
         {
             get
             {
@@ -335,7 +335,7 @@ namespace Dersa.Common
                 return aRoles;
             }
         }
-        IChildrenCollection IEntity.ARoles
+        IChildrenCollection IDersaEntity.ARoles
         {
             get
             {
@@ -355,7 +355,7 @@ namespace Dersa.Common
                 return bRoles;
             }
         }
-        IChildrenCollection IEntity.BRoles
+        IChildrenCollection IDersaEntity.BRoles
         {
             get
             {
@@ -364,8 +364,8 @@ namespace Dersa.Common
         }
         public/* override*/ int CompareTo(Object y)
         {
-            if (!(y is Entity)) return 0;
-            return this.Name.CompareTo(((Entity)y).Name);
+            if (!(y is DersaEntity)) return 0;
+            return this.Name.CompareTo(((DersaEntity)y).Name);
         }
         public void Dispose()
         {
@@ -375,54 +375,54 @@ namespace Dersa.Common
             }
             _parent = null;
         }
-        IEntity IEntity.Parent
+        IDersaEntity IDersaEntity.Parent
         {
             get
             {
-                return (IEntity)Parent;
+                return (IDersaEntity)Parent;
             }
         }
-        IChildrenCollection IEntity.ARelations
+        IChildrenCollection IDersaEntity.ARelations
         {
             get
             {
                 return ARelations;
             }
         }
-        IChildrenCollection IEntity.BRelations
+        IChildrenCollection IDersaEntity.BRelations
         {
             get
             {
                 return BRelations;
             }
         }
-        IChildrenCollection IEntity.Children
+        IChildrenCollection IDersaEntity.Children
         {
             get
             {
                 return Children;
             }
         }
-        IChildrenCollection IEntity.Diagrams
+        IChildrenCollection IDersaEntity.Diagrams
         {
             get
             {
                 return Diagrams;
             }
         }
-        ICompiledEntity IEntity.GetInstance()
+        ICompiledEntity IDersaEntity.GetInstance()
         {
             return (ICompiledEntity)base.GetCompiledInstance();
         }
-        IList IEntity.ARelationsInstance()
+        IList IDersaEntity.ARelationsInstance()
         {
             return ARelations.GetInstance();
         }
-        IList IEntity.BRelationsInstance()
+        IList IDersaEntity.BRelationsInstance()
         {
             return BRelations.GetInstance();
         }
-        IList IEntity.ChildrenInstance()
+        IList IDersaEntity.ChildrenInstance()
         {
             return Children.GetInstance();
         }

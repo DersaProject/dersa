@@ -58,7 +58,7 @@ namespace Dersa.Common
         }
         public ICompiled GetCompiledInstance()
         {
-            return Dersa.Common.Util.CreateInstance(this, this.SM);
+            return DersaUtil.CreateInstance(this, this.SM);
             //return null;
         }
         string IStereotypedObject.StereotypeName

@@ -11,14 +11,14 @@ using System.Reflection;
 namespace Dersa.Common
 {
     public enum AttributeOwnerType : int { Entity = 0, Relation = 1 }
-    public class Util
+    public class DersaUtil
     {
         public static string SetGuid(string userName, string entityId, string guid)
         {
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
-                DM.ExecuteSPWithParams("ENTITY$SetGuid", new object[] { entityId, guid, Util.GetPassword(userName) });
+                DM.ExecuteSPWithParams("ENTITY$SetGuid", new object[] { entityId, guid, DersaUtil.GetPassword(userName) });
                 return "";
             }
             catch(Exception exc)
@@ -44,7 +44,7 @@ namespace Dersa.Common
             Params.Add("@attr_name", attrName);
             Params.Add("@attr_value", attrValue);
             Params.Add("@login", userName);
-            Params.Add("@password", Util.GetPassword(userName));
+            Params.Add("@password", DersaUtil.GetPassword(userName));
             Params.Add("@attr_type", attrType);
             int res = DM.ExecuteSPWithResult(procName, false, Params);
             if(res == 5)
@@ -58,7 +58,7 @@ namespace Dersa.Common
         public static string GetAttributeValue(string userName, int entityId, string attrName, int attrType)
         {
             DersaSqlManager DM = new DersaSqlManager();
-            System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$GetAttribute", new object[] { entityId, attrName, userName, Util.GetPassword(userName) });
+            System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$GetAttribute", new object[] { entityId, attrName, userName, DersaUtil.GetPassword(userName) });
             if (T == null || T.Rows.Count < 1)
                 return null;
             if (attrType <= 0)
@@ -80,7 +80,7 @@ namespace Dersa.Common
             DersaSqlManager M = new DersaSqlManager();
             IParameterCollection UserParams = new ParameterCollection();
             UserParams.Add("@login", userName);
-            UserParams.Add("@password", Util.GetPassword(userName));
+            UserParams.Add("@password", DersaUtil.GetPassword(userName));
             return M.ExecuteSPWithResult("DERSA_USER$GetPermissions", false, UserParams);
         }
 
@@ -89,7 +89,7 @@ namespace Dersa.Common
             DersaSqlManager DM = new DersaSqlManager();
             IParameterCollection UserParams = new ParameterCollection();
             UserParams.Add("@login", userName);
-            UserParams.Add("@password", Util.GetPassword(userName));
+            UserParams.Add("@password", DersaUtil.GetPassword(userName));
             UserParams.Add("@user_setting_name", settingName);
             System.Data.DataTable VT = DM.ExecuteSPWithParams("DERSA_USER$GetUserSetting", UserParams);
             if (VT == null || VT.Rows.Count < 1)
@@ -102,7 +102,7 @@ namespace Dersa.Common
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
-                System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$SetAttribute", new object[] { entity, prop_name, prop_value, userName, Util.GetPassword(userName) });
+                System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$SetAttribute", new object[] { entity, prop_name, prop_value, userName, DersaUtil.GetPassword(userName) });
                 if (T.Rows.Count > 0)
                 {
                     return T.Rows[0][0].ToString();
@@ -120,7 +120,7 @@ namespace Dersa.Common
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
-                DM.ExecuteSPWithParams("ENTITY$SetStereotype", new object[] { entity, stereotype_name, userName, Util.GetPassword(userName) });
+                DM.ExecuteSPWithParams("ENTITY$SetStereotype", new object[] { entity, stereotype_name, userName, DersaUtil.GetPassword(userName) });
             }
             catch
             {
@@ -132,7 +132,7 @@ namespace Dersa.Common
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
-                System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$AddRelation", new object[] { entity, entity_b, stereotype_name, relation_name, source_class, source_ref, userName, Util.GetPassword(userName) });
+                System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$AddRelation", new object[] { entity, entity_b, stereotype_name, relation_name, source_class, source_ref, userName, DersaUtil.GetPassword(userName) });
                 if (T.Rows.Count > 0)
                 {
                     return T.Rows[0][0].ToString();
@@ -172,32 +172,32 @@ namespace Dersa.Common
             return System.Text.Encoding.Default.GetString(h);
         }
 
-        public static IParameterCollection DeserializeParams(string json_params)
-        {
-            IParameterCollection Params = new ParameterCollection();
-            if (json_params != null && json_params != "")
-            {
-                DIOS.Common.Parameter[] res = JsonConvert.DeserializeObject(json_params, typeof(DIOS.Common.Parameter[])) as DIOS.Common.Parameter[];
-                for (int p = 0; p < res.Length; p++)
-                {
-                    if (res[p].Predicate != null && res[p].Predicate.ToLower() == "in")
-                    {
-                        Newtonsoft.Json.Linq.JArray jarrayValue = (Newtonsoft.Json.Linq.JArray)res[p].Value;
-                        object[] paramValue = new object[jarrayValue.Count];
-                        int i = 0;
-                        foreach (object val in jarrayValue)
-                        {
-                            paramValue[i++] = val;
-                        }
-                        res[p].Value = paramValue;
-                        res[p].Predicate = "in";
-                    }
-                    if (res[p].Name != "id")
-                        Params.Add(res[p]);
-                }
-            }
-            return Params;
-        }
+        //public static IParameterCollection DeserializeParams(string json_params)
+        //{
+        //    IParameterCollection Params = new ParameterCollection();
+        //    if (json_params != null && json_params != "")
+        //    {
+        //        DIOS.Common.Parameter[] res = JsonConvert.DeserializeObject(json_params, typeof(DIOS.Common.Parameter[])) as DIOS.Common.Parameter[];
+        //        for (int p = 0; p < res.Length; p++)
+        //        {
+        //            if (res[p].Predicate != null && res[p].Predicate.ToLower() == "in")
+        //            {
+        //                Newtonsoft.Json.Linq.JArray jarrayValue = (Newtonsoft.Json.Linq.JArray)res[p].Value;
+        //                object[] paramValue = new object[jarrayValue.Count];
+        //                int i = 0;
+        //                foreach (object val in jarrayValue)
+        //                {
+        //                    paramValue[i++] = val;
+        //                }
+        //                res[p].Value = paramValue;
+        //                res[p].Predicate = "in";
+        //            }
+        //            if (res[p].Name != "id")
+        //                Params.Add(res[p]);
+        //        }
+        //    }
+        //    return Params;
+        //}
 
         public static object[] GetMethodCallParameterValues(string Parameters)
         {
@@ -229,7 +229,7 @@ namespace Dersa.Common
             if (T == null)
                 throw new System.Exception("No type for type name " + typeName);
 
-            return Dersa.Common.Util.Convert(descrVal, T);
+            return DersaUtil.Convert(descrVal, T);
         }
 
         public static object Convert(object value, Type conversionType)
@@ -336,7 +336,7 @@ namespace Dersa.Common
                 Type nType = Type.GetType("DersaStereotypes." + obj.Stereotype.Name);
                 //Type type = typeof(DersaStereotypes.Attribute);
                 SqlManager M = new SqlManager();
-                DersaStereotypes.Attribute res = new DersaStereotypes.Attribute((IEntity)obj);
+                DersaStereotypes.Attribute res = new DersaStereotypes.Attribute((IDersaEntity)obj);
                 System.Data.DataTable t = M.GetAttributesForEntity(obj.Id.ToString());
                 foreach (System.Data.DataRow r in t.Rows)
                 {
@@ -361,7 +361,7 @@ namespace Dersa.Common
             {
                 Type type = typeof(DersaStereotypes.Entity);
                 SqlManager M = new SqlManager();
-                DersaStereotypes.Entity res = new DersaStereotypes.Entity((IEntity)obj);
+                DersaStereotypes.Entity res = new DersaStereotypes.Entity((IDersaEntity)obj);
                 System.Data.DataTable t = M.GetAttributesForEntity(obj.Id.ToString());
                 foreach (System.Data.DataRow r in t.Rows)
                 {

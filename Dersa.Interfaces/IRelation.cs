@@ -4,8 +4,8 @@ namespace Dersa.Interfaces
 {
 	public interface IRelation: IStereotypedObject
 	{
-		IEntity A{get;}
-		IEntity B{get;}
+		IDersaEntity A{get;}
+		IDersaEntity B{get;}
 		ICompiledRelation GetInstance();
 		//void FinishCreation(int bId);
 		//IDiagramRelation CreateDiagramRelation(int diagramId, int diagramEntityID);

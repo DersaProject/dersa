@@ -16,7 +16,7 @@ namespace Dersa.Interfaces
 		//IChildrenCollection GetPath();
 		ArrowType ArrowTypeA{get;}
 		ArrowType ArrowTypeB{get;}
-		//IEntity CreateEntity(int parentId);
+		//IDersaEntity CreateEntity(int parentId);
 		//IRelation CreateRelation(int aID);
 		//IAttribute CreateAttribute();
 		//IOperation CreateOperation();

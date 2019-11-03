@@ -18,7 +18,7 @@ namespace Dersa.Models
             object rootArg = null;
             if (root_entity > 0)
                 rootArg = root_entity;
-            System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$FindNext", new object[] { entity, srchval, rootArg, 8, userName, Util.GetPassword(userName) });
+            System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$FindNext", new object[] { entity, srchval, rootArg, 8, userName, DersaUtil.GetPassword(userName) });
             System.Data.DataRow lastRow = null;
             if (T.Rows.Count > 0)
                 lastRow = T.Rows[T.Rows.Count - 1];
@@ -85,7 +85,7 @@ namespace Dersa.Models
             DersaSqlManager M = new DersaSqlManager();
             //M.SetDatabaseName("1gb_d-ersa", true);
             string[] ids_str = ids.Split(',');
-            List<ICompiledEntity> entities = Entity.Range(ids_str, M);
+            List<ICompiledEntity> entities = DersaEntity.Range(ids_str, M);
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             foreach (ICompiled e in entities)
             {
@@ -103,7 +103,7 @@ namespace Dersa.Models
                 throw new Exception(string.Format("Table is null for entity {0}", id));
             if (t.Rows.Count < 1)
                 throw new Exception(string.Format("Table is empty for entity {0}", id));
-            Entity ent = new Entity(t, M);
+            DersaEntity ent = new DersaEntity(t, M);
             ICompiled cInst = ent.GetCompiledInstance();
             string MethodName = "sql_Generate";
             MethodInfo mi = /*typeof(DersaStereotypes.Entity)*/cInst.GetType().GetMethod(MethodName);

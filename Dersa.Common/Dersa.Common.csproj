@@ -44,10 +44,14 @@
     </Reference>
     <Reference Include="Dersa.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dersa\bin\Dersa.Interfaces.dll</HintPath>
+      <HintPath>bin\Dersa.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Dios.Common">
-      <HintPath>..\bin\Dios.Common.dll</HintPath>
+    <Reference Include="Dios">
+      <HintPath>..\Dersa\bin\Dios.dll</HintPath>
+    </Reference>
+    <Reference Include="Dios.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Dersa\bin\Dios.Common.dll</HintPath>
     </Reference>
     <Reference Include="Dios.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -67,6 +71,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -95,7 +100,7 @@
     <Compile Include="LIB\SqlProperty.cs" />
     <Compile Include="LIB\StereotypeBaseE.cs" />
     <Compile Include="LIB\StereotypedObject.cs" />
-    <Compile Include="LIB\Util.cs" />
+    <Compile Include="LIB\DersaUtil.cs" />
     <Compile Include="LIB\WebClasses.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

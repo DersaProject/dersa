@@ -3,9 +3,9 @@ using System.Collections;
 
 namespace Dersa.Interfaces
 {
-	public interface IEntity: IStereotypedObject
+	public interface IDersaEntity: IStereotypedObject
 	{
-		IEntity Parent{get;}
+		IDersaEntity Parent{get;}
 		IChildrenCollection ARelations{get;}
 		IChildrenCollection BRelations{get;}
 		IChildrenCollection Children{get;} 
@@ -26,7 +26,7 @@ namespace Dersa.Interfaces
 		//void Move(int parentID, bool toParent);
 		//IDiagram CreateDiagram();
 		//bool HasSubItems{get;}
-		//IEntity CloneWithChildren(int parentId);
+		//IDersaEntity CloneWithChildren(int parentId);
 		//void DropWithChildren();
 	}
 }

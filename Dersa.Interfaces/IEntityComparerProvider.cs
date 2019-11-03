@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dersa.Interfaces
 {
-    public interface IEntityComparerProvider
+    public interface IDersaEntityComparerProvider
     {
         IComparer<ICompiledEntity> GetEntityComparer();
 

@@ -32,9 +32,9 @@ namespace Dersa.Models
                 throw new Exception(string.Format("Table is null for entity {0}", id));
             if (t.Rows.Count < 1)
                 throw new Exception(string.Format("Table is empty for entity {0}", id));
-            Entity ent = new Entity(t, M);
+            DersaEntity ent = new DersaEntity(t, M);
             CachedObjects.CachedCompiledInstances[ent.StereotypeName + id.ToString()] = null;
-            foreach (Entity child in ent.Children)
+            foreach (DersaEntity child in ent.Children)
             {
                 CachedObjects.CachedCompiledInstances[child.StereotypeName + child.Id.ToString()] = null;
             }

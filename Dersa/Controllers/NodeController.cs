@@ -2,6 +2,7 @@ using System.Data;
 using System.Linq;
 using System.Web.Mvc;
 using Dersa.Models;
+using Dersa.Common;
 using System.Web;
 using System;
 using System.Collections.Generic;
@@ -100,7 +101,7 @@ namespace Dersa.Controllers
                 resultId = ES[0].id.ToString();
                 Rename(resultId, entityName);
                 if (guid != null)
-                    Dersa.Common.Util.SetGuid(HttpContext.User.Identity.Name, resultId, guid);
+                    DersaUtil.SetGuid(HttpContext.User.Identity.Name, resultId, guid);
             }
             Common.DersaSqlManager DM = new Common.DersaSqlManager();
             if (resultId != "" && attrs != null && attrs.Length > 0)

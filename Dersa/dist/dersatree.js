@@ -498,7 +498,7 @@ $('#dersa')
         }
     },
 
-    "plugins": ["contextmenu", "dnd"]
+    "plugins": ["contextmenu", "dnd", "state"]
 })
     .on("changed.jstree", function (e, data) {
         if(data && data.event)

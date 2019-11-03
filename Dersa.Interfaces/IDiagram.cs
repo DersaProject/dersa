@@ -9,7 +9,7 @@ namespace Dersa.Interfaces
 	{
 		IChildrenCollection DiagramEntities{get;}
 		IChildrenCollection DiagramRelations{get;}
-		IEntity Entity{get;}
+		IDersaEntity Entity{get;}
 		IChildrenCollection CreateRelationsForDiagramEntity(int diagramEntityId);
 		IDiagramEntity CreateDiagramEntity(int entityId, int diagramEntityID, int X, int Y);
 		IDiagramEntity CreateUpLevelDiagramEntity(int entityId, int X, int Y);

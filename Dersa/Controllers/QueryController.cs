@@ -49,7 +49,7 @@ namespace Dersa.Controllers
 
         public ActionResult GetViewByName(string view_name, string json_params)
         {
-            IParameterCollection Params = Util.DeserializeParams(json_params);
+            IParameterCollection Params = DIOS.Common.Util.DeserializeParams(json_params);
             return GetViewByName(view_name, Params, false);
         }
 
