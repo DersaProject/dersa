@@ -35,14 +35,14 @@ namespace Dersa.Common
     }
     public class DersaSqlManager: DIOS.Common.SqlManager
     {
-        protected override void LogSqlActivity(string query, string methodName)
-        {
-            dbManager.ExecuteSPWithParams("ACTIVITY_LOG$Log", new object[] { query.Replace("'", "''"), methodName});
-        }
+        //protected override void LogSqlActivity(string query, string methodName)
+        //{
+        //    dbManager.ExecuteSPWithParams("ACTIVITY_LOG$Log", new object[] { query.Replace("'", "''"), methodName});
+        //}
 
         static DersaSqlManager()
         {
-            SqlBrand = DIOS.Common.SqlBrand.MSSqlServer;
+            SqlBrand = DIOS.Common.SqlBrand.ORACLE;
         }
         public DersaSqlManager()
         {

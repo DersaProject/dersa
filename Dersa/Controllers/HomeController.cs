@@ -21,12 +21,19 @@ namespace Dersa.Controllers
                     return RedirectToAction("Login", "Account");
                 string userName = System.Web.HttpContext.Current.User.Identity.Name;
                 ViewBag.Login = userName;
-                DersaSqlManager DM = new DersaSqlManager();
-                System.Data.DataTable T = DM.ExecuteSPWithParams("DERSA_USER$GetTextUserSetting", new object[] { userName, DersaUtil.GetPassword(userName), "toolbox JSON" });
-                if (T != null && T.Rows.Count > 0)
-                    ViewBag.ToolBoxData = T.Rows[0][0];
-                else
-                    ViewBag.ToolBoxData = "[]";
+                try
+                {
+                    DersaSqlManager DM = new DersaSqlManager();
+                    System.Data.DataTable T = DM.ExecuteSPWithParams("DERSA_USER$GetTextUserSetting", new object[] { userName, DersaUtil.GetPassword(userName), "toolbox JSON" });
+                    if (T != null && T.Rows.Count > 0)
+                        ViewBag.ToolBoxData = T.Rows[0][0];
+                    else
+                        ViewBag.ToolBoxData = "[]";
+                }
+                catch(System.Exception exc)
+                {
+
+                }
                 return View();
             }
             else

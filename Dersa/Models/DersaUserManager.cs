@@ -106,7 +106,7 @@ namespace Dersa.Models
                 int checkresult = M.ExecuteSPWithResult("DERSA_USER$Exists", false, Params);
                 return checkresult > 0;
             }
-            catch
+            catch(Exception exc)
             {
                 return false;
             }
