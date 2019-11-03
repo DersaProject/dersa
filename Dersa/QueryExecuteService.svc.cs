@@ -8,6 +8,7 @@ using System.Text;
 using DIOS.Common;
 using Dersa.Models;
 using Dersa.Common;
+using DIOS.WCF.Core;
 
 namespace Dersa
 {
@@ -27,16 +28,19 @@ namespace Dersa
         }
         public static string GetToken(string name)
         {
-            return Cryptor.Encrypt(name, "DERSA");
+            return WcfCoreUtil.GetToken(name, "", false);
+            //return Cryptor.Encrypt(name, "DERSA");
         }
-        public string GetAttrValue(string attrName, string entityId, string userName = null)
+        public string GetAttrValue(string attrName, string entityId, string userToken = null)
         {
             try
             {
-                DersaSqlManager DM = new DersaAnonimousSqlManager();
-                if(userName == null)
+                string userName = WcfCoreUtil.VerifyUser(userToken);
+                if (userName == null)
                     userName = "ServiceUser";
-                return Util.GetAttributeValue(userName, int.Parse(entityId), attrName, -1);
+                string result = Util.GetAttributeValue(userName, int.Parse(entityId), attrName, -1);
+                DIOS.WCF.Core.WcfCoreUtil.RemoveUserFromUserTable();
+                return result;
                 //System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$GetAttribute", new object[] { entityId, attrName, userName, Util.GetPassword(userName) });
                 //string result = "";
                 //if (T.Rows.Count > 0)
