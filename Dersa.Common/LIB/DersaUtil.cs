@@ -29,18 +29,19 @@ namespace Dersa.Common
 
         public static string SetAttributeValue(DersaSqlManager DM, string userName, AttributeOwnerType ownerType, string entityId, string attrName, int attrType, string attrValue)
         {
+            IParameterCollection Params = new ParameterCollection();
             string procName = "";
-            switch(ownerType)
+            switch (ownerType)
             {
                 case AttributeOwnerType.Entity:
                     procName = "ENTITY$SetAttribute";
+                    Params.Add("@entity", entityId);
                     break;
                 case AttributeOwnerType.Relation:
                     procName = "RELATION$SetAttribute";
+                    Params.Add("@relation", entityId);
                     break;
             }
-            IParameterCollection Params = new ParameterCollection();
-            Params.Add("@entity", entityId);
             Params.Add("@attr_name", attrName);
             Params.Add("@attr_value", attrValue);
             Params.Add("@login", userName);
