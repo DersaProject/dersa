@@ -44,7 +44,7 @@
     </Reference>
     <Reference Include="Dersa.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dersa\bin\Dersa.Interfaces.dll</HintPath>
+      <HintPath>bin\Dersa.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="Dios.Common">
       <HintPath>..\bin\Dios.Common.dll</HintPath>
