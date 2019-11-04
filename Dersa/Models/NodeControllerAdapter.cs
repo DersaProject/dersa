@@ -90,27 +90,37 @@ namespace Dersa.Models
                         is_submenu = true
                     }
                 }));
-            DersaSqlManager DM = new DersaSqlManager();
-            string userName = HttpContext.Current.User.Identity.Name;
-            DataTable childStereotypes = DM.ExecuteSPWithParams("ENTITY$GetChildStereotypes", new object[] { id, userName, DersaUtil.GetPassword(userName) });
-            var result = from DataRow RL in menuLevels.Rows
-                         where RL["level"].ToString() == "1" && (childStereotypes.Select("name = '" + RL["name"].ToString() + "'").Length > 0 || (bool)RL["is_submenu"])//аналог exists
-                              select
-                              new
-                              {
-                                  label = RL["name"],
-                                  icon = RL["icon"],
-                                  children = from DataRow RS in childStereotypes.Rows
-                                             where menuLevels.Select("name = '" + RS["name"].ToString() + "'").Length == 0 && (bool)RL["is_submenu"]
-                                             select
-                                             new
-                                             {
+            try
+            {
+                DersaSqlManager DM = new DersaSqlManager();
+                string userName = HttpContext.Current.User.Identity.Name;
+                DataTable childStereotypes = DM.ExecuteSPWithParams("ENTITY$GetChildStereotypes", new object[] { id, userName, DersaUtil.GetPassword(userName) });
+                var result = from DataRow RL in menuLevels.Rows
+                             where RL["level"].ToString() == "1" && (childStereotypes.Select("name = '" + RL["name"].ToString() + "'").Length > 0 || (bool)RL["is_submenu"])//аналог exists
+                             select
+                             new
+                             {
+                                 label = RL["name"],
+                                 icon = RL["icon"],
+                                 children = from DataRow RS in childStereotypes.Rows
+                                            where menuLevels.Select("name = '" + RS["name"].ToString() + "'").Length == 0 && (bool)RL["is_submenu"]
+                                            select
+                                            new
+                                            {
                                                 label = RS["name"],
                                                 icon = RS["icon_path"]
-                                             }
-                              };
-                
-            return JsonConvert.SerializeObject(result);
+                                            }
+                             };
+
+                return JsonConvert.SerializeObject(result);
+            }
+            catch(Exception exc)
+            {
+                return JsonConvert.SerializeObject(new object[]{new {
+                    label = "Package",
+                    icon = "Package"
+                } });
+            }
         }
 
         public int CanDnD(string src, int dst)
@@ -144,7 +154,7 @@ namespace Dersa.Models
             }
             catch
             {
-                return "";
+                return "[stereotype:3, name:\"Package\", icon_path:\"Package\"]";
             }
         }
 
@@ -528,7 +538,8 @@ namespace Dersa.Models
                 intDst = int.Parse(dst);
                 objTo = StereotypeBaseE.GetSimpleInstance(intDst);
             }
-            catch { }
+            catch(Exception exc)
+            { }
             if (objFrom != null && objTo != null)//copy or move node
             {
                 if ((options & 3) == 0)//move
@@ -646,14 +657,23 @@ namespace Dersa.Models
         }
         public static string ListNodes(string id)
         {
-
-            IObjectCollection col = DersaEntity.List(null);
+            IParameterCollection Params = new ParameterCollection();
+            if(id == "#")
+            {
+                Params.Add("parent", null);
+            }
+            else
+            {
+                Params.Add("parent", id);
+            }
+            IObjectCollection col = DersaEntity.List(Params);
             var query = from Dersa.Common.Entity ent in col
                         select new
                         {
                             id = ent.entity,
                             text = ent.name,
-                            icon = ent.icon
+                            ent.icon,
+                            children = true
                         };
             string result = JsonConvert.SerializeObject(query);
             return result;
