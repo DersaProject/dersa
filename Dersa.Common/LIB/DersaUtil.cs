@@ -29,18 +29,19 @@ namespace Dersa.Common
 
         public static string SetAttributeValue(DersaSqlManager DM, string userName, AttributeOwnerType ownerType, string entityId, string attrName, int attrType, string attrValue)
         {
+            IParameterCollection Params = new ParameterCollection();
             string procName = "";
-            switch(ownerType)
+            switch (ownerType)
             {
                 case AttributeOwnerType.Entity:
                     procName = "ENTITY$SetAttribute";
+                    Params.Add("@entity", entityId);
                     break;
                 case AttributeOwnerType.Relation:
                     procName = "RELATION$SetAttribute";
+                    Params.Add("@relation", entityId);
                     break;
             }
-            IParameterCollection Params = new ParameterCollection();
-            Params.Add("@entity", entityId);
             Params.Add("@attr_name", attrName);
             Params.Add("@attr_value", attrValue);
             Params.Add("@login", userName);
@@ -150,7 +151,15 @@ namespace Dersa.Common
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
-                DataTable T = DM.ExecuteSPWithParams("ENTITY$OnDnD", new object[] { src, dst, options, userName, GetPassword(userName) });
+                IParameterCollection Params = new ParameterCollection();
+                Params.Add("dnd_source", src);
+                Params.Add("dnd_target", dst);
+                Params.Add("options", options);
+                Params.Add("login", userName);
+                Params.Add("password", GetPassword(userName));
+                DataTable T = DM.ExecuteSPWithParams("ENTITY$OnDnD", Params);
+
+//                DataTable T = DM.ExecuteSPWithParams("ENTITY$OnDnD", new object[] { src, dst, options, userName, GetPassword(userName) });
                 string result = JsonConvert.SerializeObject(T);
                 return result;
             }
