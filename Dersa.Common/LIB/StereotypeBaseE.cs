@@ -4,6 +4,8 @@ using Dersa.Common;
 using System.Data;
 using System.Reflection;
 using Newtonsoft.Json;
+using DIOS.Common;
+using DIOS.Common.Interfaces;
 
 namespace DersaStereotypes
 {
@@ -232,7 +234,13 @@ namespace DersaStereotypes
                 if (this.Parent != null && !(this.Parent as StereotypeBaseE).AllowModifyChildren())
                     return "";
                 DersaSqlManager DM = new DersaSqlManager();
-                string result = JsonConvert.SerializeObject(DM.ExecuteSPWithParams("ENTITY$Rename", new object[] { this.Id, objectName, userName, DersaUtil.GetPassword(userName) }));
+                IParameterCollection Params = new ParameterCollection();
+                Params.Add("entity", this.Id);
+                Params.Add("name", objectName);
+                Params.Add("login", userName);
+                Params.Add("password", DersaUtil.GetPassword(userName));
+                string result = JsonConvert.SerializeObject(DM.ExecuteSPWithParams("ENTITY$Rename", Params));
+//                string result = JsonConvert.SerializeObject(DM.ExecuteSPWithParams("ENTITY$Rename", new object[] { this.Id, objectName, userName, DersaUtil.GetPassword(userName) }));
                 return result;
             }
             catch
