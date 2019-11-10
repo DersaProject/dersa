@@ -152,6 +152,8 @@ namespace Dersa.Common
             {
                 DersaSqlManager DM = new DersaSqlManager();
                 IParameterCollection Params = new ParameterCollection();
+                if(DM.sqlBrand == SqlBrand.ORACLE)
+                    Params.Add("Return Cursor", true, "retcursor");
                 Params.Add("dnd_source", src);
                 Params.Add("dnd_target", dst);
                 Params.Add("options", options);
