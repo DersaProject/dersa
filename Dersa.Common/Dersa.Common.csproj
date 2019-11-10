@@ -59,7 +59,7 @@
     </Reference>
     <Reference Include="Dios.SqlManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\DIOS\DIOS.Server\common\Dios.SqlManager.dll</HintPath>
+      <HintPath>..\Dersa\bin\Dios.SqlManager.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\bin\ICSharpCode.SharpZipLib.dll</HintPath>
