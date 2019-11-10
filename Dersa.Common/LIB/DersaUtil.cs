@@ -151,7 +151,15 @@ namespace Dersa.Common
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
-                DataTable T = DM.ExecuteSPWithParams("ENTITY$OnDnD", new object[] { src, dst, options, userName, GetPassword(userName) });
+                IParameterCollection Params = new ParameterCollection();
+                Params.Add("dnd_source", src);
+                Params.Add("dnd_target", dst);
+                Params.Add("options", options);
+                Params.Add("login", userName);
+                Params.Add("password", GetPassword(userName));
+                DataTable T = DM.ExecuteSPWithParams("ENTITY$OnDnD", Params);
+
+//                DataTable T = DM.ExecuteSPWithParams("ENTITY$OnDnD", new object[] { src, dst, options, userName, GetPassword(userName) });
                 string result = JsonConvert.SerializeObject(T);
                 return result;
             }
