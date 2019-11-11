@@ -6,7 +6,7 @@ using Dersa.Common;
 using System.Web;
 using System;
 using System.Collections.Generic;
-
+using System.Web.Configuration;
 
 namespace Dersa.Controllers
 {
@@ -142,8 +142,11 @@ namespace Dersa.Controllers
 
         public string List(string id)
         {
-            return NodeControllerAdapter.ListNodes(id);
-            //return (new NodeControllerAdapter()).List(id);
+            string useDIOS = WebConfigurationManager.AppSettings["useDIOS"];
+            if (useDIOS.ToLower() == "true")
+                return NodeControllerAdapter.ListNodes(id);
+            else
+                return (new NodeControllerAdapter()).List(id);
         }
 
         public string Remove(int id, string diagram_id = null, int options = 0)
