@@ -35,129 +35,21 @@ namespace Dersa.Common
             }
         }
         #endregion
-        #region parent
-        protected SqlInt32 _parent;
+        #region active
+        protected SqlBoolean _active;
         [DataMember]
-        [ObjectPropertyAttribute("entity", false, false, 0, false, false)]
-        public SqlInt32 parent
+        [ObjectPropertyAttribute("active", false, false, 0, false, false)]
+        public SqlBoolean active
         {
             get
             {
-                return _parent;
+                return _active;
             }
             set
             {
-                if (!this.changedFields.Contains("_parent") && this._parent != value)
-                    this.changedFields.Add("_parent", this._parent);
-                _parent = value;
-            }
-        }
-        #endregion
-        #region occur
-        protected SqlDateTime _occur;
-        [DataMember]
-        [ObjectPropertyAttribute("occur", false, false, 0, false, false)]
-        public SqlDateTime occur
-        {
-            get
-            {
-                return _occur;
-            }
-            set
-            {
-                if (!this.changedFields.Contains("_occur") && this._occur != value)
-                    this.changedFields.Add("_occur", this._occur);
-                _occur = value;
-            }
-        }
-        #endregion
-        #region changer
-        protected SqlString _changer;
-        [DataMember]
-        [ObjectPropertyAttribute("changer", false, false, 128, false, false)]
-        public SqlString changer
-        {
-            get
-            {
-                return _changer;
-            }
-            set
-            {
-                if (!this.changedFields.Contains("_changer") && this._changer != value)
-                    this.changedFields.Add("_changer", this._changer);
-                _changer = value;
-            }
-        }
-        #endregion
-        #region owner_account
-        protected SqlInt32 _owner_account;
-        [DataMember]
-        [ObjectPropertyAttribute("account", true, false, 0, false, false)]
-        public SqlInt32 owner_account
-        {
-            get
-            {
-                return _owner_account;
-            }
-            set
-            {
-                if (!this.changedFields.Contains("_owner_account") && this._owner_account != value)
-                    this.changedFields.Add("_owner_account", this._owner_account);
-                _owner_account = value;
-            }
-        }
-        #endregion
-        #region stereotype
-        protected SqlInt32 _stereotype;
-        [DataMember]
-        [ObjectPropertyAttribute("stereotype", true, false, 0, false, false)]
-        public SqlInt32 stereotype
-        {
-            get
-            {
-                return _stereotype;
-            }
-            set
-            {
-                if (!this.changedFields.Contains("_stereotype") && this._stereotype != value)
-                    this.changedFields.Add("_stereotype", this._stereotype);
-                _stereotype = value;
-            }
-        }
-        #endregion
-        #region permissions
-        protected SqlInt32 _permissions;
-        [DataMember]
-        [ObjectPropertyAttribute("permissions", false, false, 0, false, false)]
-        public SqlInt32 permissions
-        {
-            get
-            {
-                return _permissions;
-            }
-            set
-            {
-                if (!this.changedFields.Contains("_permissions") && this._permissions != value)
-                    this.changedFields.Add("_permissions", this._permissions);
-                _permissions = value;
-            }
-        }
-        #endregion
-        #region rank
-        protected SqlInt32 _rank;
-        [DataMember]
-        [ObjectPropertyAttribute("rank", false, false, 0, false, false)]
-        public SqlInt32 rank
-        {
-            get
-            {
-                return _rank;
-            }
-            set
-            {
-                if (!this.changedFields.Contains("_rank") && this._rank != value)
-                    this.changedFields.Add("_rank", this._rank);
-                _rank = value;
+                if (!this.changedFields.Contains("_active") && this._active != value)
+                    this.changedFields.Add("_active", this._active);
+                _active = value;
             }
         }
         #endregion
@@ -179,82 +71,63 @@ namespace Dersa.Common
             }
         }
         #endregion
-        #region active
-        protected SqlBoolean _active;
+        #region parent
+        protected SqlInt32 _parent;
         [DataMember]
-        [ObjectPropertyAttribute("active", false, false, 0, false, false)]
-        public SqlBoolean active
+        [ObjectPropertyAttribute("parent", false, false, 0, false, false)]
+        public SqlInt32 parent
         {
             get
             {
-                return _active;
+                return _parent;
             }
             set
             {
-                if (!this.changedFields.Contains("_active") && this._active != value)
-                    this.changedFields.Add("_active", this._active);
-                _active = value;
+                if (!this.changedFields.Contains("_parent") && this._parent != value)
+                    this.changedFields.Add("_parent", this._parent);
+                _parent = value;
             }
         }
         #endregion
-        #region guid
-        protected SqlGuid _guid;
+        #region stereotype
+        protected SqlInt32 _stereotype;
         [DataMember]
-        [ObjectPropertyAttribute("guid", false, false, 0, false, false)]
-        public SqlGuid guid
+        [ObjectPropertyAttribute("stereotype", false, false, 0, false, false)]
+        public SqlInt32 stereotype
         {
             get
             {
-                return _guid;
+                return _stereotype;
             }
             set
             {
-                if (!this.changedFields.Contains("_guid") && this._guid != value)
-                    this.changedFields.Add("_guid", this._guid);
-                _guid = value;
+                if (!this.changedFields.Contains("_stereotype") && this._stereotype != value)
+                    this.changedFields.Add("_stereotype", this._stereotype);
+                _stereotype = value;
             }
         }
         #endregion
-        #region author
-        protected SqlString _author;
+        #region icon
+        protected SqlString _icon;
         [DataMember]
-        [ObjectPropertyAttribute("author", false, false, 255, false, false)]
-        public SqlString author
+        [ObjectPropertyAttribute("icon", false, false, 255, false, false)]
+        public SqlString icon
         {
             get
             {
-                return _author;
+                return _icon;
             }
             set
             {
-                if (!this.changedFields.Contains("_author") && this._author != value)
-                    this.changedFields.Add("_author", this._author);
-                _author = value;
+                if (!this.changedFields.Contains("_icon") && this._icon != value)
+                    this.changedFields.Add("_icon", this._icon);
+                _icon = value;
             }
         }
         #endregion
         #region Константы
         #endregion
         #region RefObjects
-        #region parentObject
-        [ObjectPropertyAttribute("ENTITY", false, false)]
-        [ClassKeyName("ENTITY", "entity")]
-        public Dersa.Common.Entity parentObject
-        {
-            get
-            {
-                if (this.parent.IsNull) return null;
-                return (Dersa.Common.Entity)GetObject("ENTITY", this.parent);
-            }
-            set
-            {
-                if (value != null)
-                    parent = value.entity;
-                else
-                    this.parent = System.DBNull.Value;
-            }
-        }
-        #endregion
         #endregion
         #region Методы
 
@@ -275,17 +148,11 @@ namespace Dersa.Common
             object[] dataStore = new object[props.Count];
             int i = 0;
             dataStore[i++] = entity;
-            dataStore[i++] = parent;
-            dataStore[i++] = occur;
-            dataStore[i++] = changer;
-            dataStore[i++] = owner_account;
-            dataStore[i++] = stereotype;
-            dataStore[i++] = permissions;
-            dataStore[i++] = rank;
-            dataStore[i++] = name;
             dataStore[i++] = active;
-            dataStore[i++] = guid;
-            dataStore[i++] = author;
+            dataStore[i++] = name;
+            dataStore[i++] = parent;
+            dataStore[i++] = stereotype;
+            dataStore[i++] = icon;
             for (int k = i; k < props.Count; k++)
             {
                 dataStore[k] = this[props[k].Name];

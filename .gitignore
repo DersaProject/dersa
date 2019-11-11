@@ -1,4 +1,3 @@
-*.dll
 *.user
 *.pdb
 Dersa.Common/bin/Debug/Microsoft.Web.Infrastructure.xml
@@ -21,3 +20,5 @@ Dersa/.vs/Dersa/v15/Server/sqlite3/storage.ide-shm
 Dersa/LOG/application_log.txt
 Dersa.Stereotypes/bin/Debug/
 Dersa.Stereotypes/obj/Debug/
+Dersa/UpgradeLog.htm
+*.cache
