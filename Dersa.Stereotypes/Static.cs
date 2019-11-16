@@ -83,8 +83,8 @@ bool HasBase64Code = description.Contains("=B64\"");
 			                              "System.Core.dll",
 			                              "System.Data.dll",
 			                              "System.XML.dll",
-			                              AppDomain.CurrentDomain.BaseDirectory + "bin\\" + "Dios.Interfaces.dll",
-			                              AppDomain.CurrentDomain.BaseDirectory + "bin\\" + "Dersa.Interfaces.dll"
+			                              AppDomain.CurrentDomain.BaseDirectory + "bin\\" + "Dersa.Interfaces.dll",
+			                              AppDomain.CurrentDomain.BaseDirectory + "bin\\" + "Dios.Interfaces.dll"
 			                };
 			
 					additionalReferences.AddRange(referencedAssemblies);
@@ -389,10 +389,8 @@ return CompileAndExecuteAditionalMethod(owner, returnType, methodName, code, par
 														"System.Drawing.dll",
 														"System.Windows.Forms.dll",
 														"System.XML.dll",
-			                                            AppDomain.CurrentDomain.BaseDirectory + "bin\\" + "Dios.Interfaces.dll"
-														//System.Windows.Forms.Application.StartupPath + "\\" + stereotypesAssembly + ".dll",
-			                                            //System.Windows.Forms.Application.StartupPath + "\\Dersa.Interfaces.dll",
-			                                            //System.Windows.Forms.Application.StartupPath + "\\Modeler.Editor.dll"
+			                                                        AppDomain.CurrentDomain.BaseDirectory + "bin\\" + "Dios.Interfaces.dll",
+			                                                        AppDomain.CurrentDomain.BaseDirectory + "bin\\" + "Dersa.Interfaces.dll"
 			        };
 					additionalReferences.AddRange(referencedAssemblies);
 					referencedAssemblies = new string[additionalReferences.Count];
