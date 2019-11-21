@@ -47,7 +47,8 @@ namespace Dersa.Controllers
             try
             {
 
-                Response.ContentType = "APPLICATION/OCTET-STREAM";
+                Response.ContentType = "application/force-download";
+                //Response.ContentType = "APPLICATION/OCTET-STREAM";
                 string Header = "Attachment; Filename=" + file_name;
                 Response.AppendHeader("Content-Disposition", Header);
                 Response.OutputStream.Write(bts, 0, bts.Length);

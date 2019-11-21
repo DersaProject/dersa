@@ -413,7 +413,7 @@ namespace Dersa.Models
                 string result = JsonConvert.SerializeObject(query);
                 return result;
             }
-            catch
+            catch(Exception exc)
             {
                 return "";
             }
