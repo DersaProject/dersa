@@ -112,7 +112,7 @@ namespace Dersa.Models
                     return result;
                 }
             }
-            catch
+            catch(Exception exc)
             {
                 return "";
             }

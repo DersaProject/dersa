@@ -251,13 +251,24 @@ namespace Dersa.Models
                     else
                     {
                         string queryId = GetQueryId(sql);
-                        (UserParams["@user_setting_name"] as IParameter).Value = "Функция вызова локального клиента SQL";
-                        System.Data.DataTable VT = M.ExecuteSPWithParams("DERSA_USER$GetTextUserSetting", UserParams);
-                        if (VT == null || VT.Rows.Count < 1)
-                            throw new Exception("Функция вызова локального клиента SQL не определена");
-                        string functionBody = VT.Rows[0][0].ToString();
-                        var result = new { action = functionBody, arg_name = "queryId", arg = queryId };
-                        return JsonConvert.SerializeObject(result);
+                        UserParams.Clear();
+                        UserParams.Add("@login", userName);
+                        UserParams.Add("@password", DersaUtil.GetPassword(userName));
+                        UserParams.Add("@user_setting_name", "Функция вызова локального клиента SQL");
+//                        (UserParams["@user_setting_name"] as IParameter).Value = "Функция вызова локального клиента SQL";
+                        try
+                        {
+                            System.Data.DataTable VT = M.ExecuteSPWithParams("DERSA_USER$GetTextUserSetting", UserParams);
+                            if (VT == null || VT.Rows.Count < 1)
+                                throw new Exception("Функция вызова локального клиента SQL не определена");
+                            string functionBody = VT.Rows[0][0].ToString();
+                            var result = new { action = functionBody, arg_name = "queryId", arg = queryId };
+                            return JsonConvert.SerializeObject(result);
+                        }
+                        catch(Exception exc)
+                        {
+                            throw;
+                        }
                     }
                 }
 
