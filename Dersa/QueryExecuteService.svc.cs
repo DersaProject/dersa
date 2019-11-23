@@ -9,6 +9,7 @@ using DIOS.Common;
 using Dersa.Models;
 using Dersa.Common;
 using DIOS.WCF.Core;
+using Newtonsoft.Json;
 
 namespace Dersa
 {
@@ -21,7 +22,11 @@ namespace Dersa
         {
             string userName = WcfCoreUtil.VerifyUser(token);
             //string userName = Cryptor.Decrypt(token, "DERSA");
-            return QueryControllerAdapter.GetString(TextId, false, userName);//._query;
+            var result = new
+            {
+                query_text = QueryControllerAdapter.GetString(TextId, false, userName)//._query;
+            };
+            return JsonConvert.SerializeObject(result);
         }
         public string GetUserToken(string name, string password)
         {

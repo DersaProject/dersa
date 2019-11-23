@@ -688,14 +688,25 @@ namespace Dersa.Models
                 if (!id.Contains("#"))
                     parent = id;
                 string result = "[]";
-                if(id == "STEREOTYPES")
+                if (id == "STEREOTYPES")
                 {
                     result = DersaUtil.GetUserSetting(userName, "root stereotypes");
                     Regex removeDigitsEx = new Regex("[0-9]");
                     result = removeDigitsEx.Replace(result, "*");
                 }
                 else
-                    result = JsonConvert.SerializeObject(DM.ExecuteSPWithParams("ENTITY$JTreeList", new object[] { parent, userName, DersaUtil.GetPassword(userName) }));
+                {
+                    DataTable T = DM.ExecuteSPWithParams("ENTITY$JTreeList", new object[] { parent, userName, DersaUtil.GetPassword(userName) });
+                    var query = from DataRow R in T.Rows
+                                select new
+                                {
+                                    id = R["id"],
+                                    text = R["text"],
+                                    icon = R["icon"],
+                                    children = Convert.ToBoolean(R["children"])
+                                };
+                    result = JsonConvert.SerializeObject(query);
+                }
                 return result;
             }
             catch(Exception exc)
