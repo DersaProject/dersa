@@ -214,14 +214,21 @@ namespace Dersa.Models
         }
         public static string GetQueryId(string query)
         {
+            var queryStruct = new
+            {
+                dersa_entity = 0xde,
+                object_name = "RELATION_VIEW",
+                object_type = "VIEW",
+                query_text = query
+            };
             string UserName = HttpContext.Current.User.Identity.Name;
             if (string.IsNullOrEmpty(UserName))
                 return null;
             string token = QueryExecuteService.GetToken(UserName);
-            string encodedQuery = Cryptor.Encrypt(query, token);
+            string encodedQueryStruct = Cryptor.Encrypt(JsonConvert.SerializeObject(queryStruct), token);
             //_query = encodedQuery;
             //return Guid.NewGuid().ToString();
-            return PutString(encodedQuery);
+            return PutString(encodedQueryStruct);
         }
 
         public string ExecSql(string json_params)

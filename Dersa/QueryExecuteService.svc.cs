@@ -22,11 +22,8 @@ namespace Dersa
         {
             string userName = WcfCoreUtil.VerifyUser(token);
             //string userName = Cryptor.Decrypt(token, "DERSA");
-            var result = new
-            {
-                query_text = QueryControllerAdapter.GetString(TextId, false, userName)//._query;
-            };
-            return JsonConvert.SerializeObject(result);
+
+            return QueryControllerAdapter.GetString(TextId, false, userName);//._query;
         }
         public string GetUserToken(string name, string password)
         {
