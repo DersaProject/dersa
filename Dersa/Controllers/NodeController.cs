@@ -95,8 +95,12 @@ namespace Dersa.Controllers
             string entityName = schemaEntity.Name;
             NodeControllerAdapter.SchemaAttribute[] attrs = schemaEntity.schemaAttributes;
             string entityCreateResult = DnD(stereotypeName, parentId, 0);  //"[{\"id\":10000361,\"text\":\"Entity\",\"icon\":\"Entity\",\"name\":\"Entity\"}]"; 
-            dynamic ES = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(entityCreateResult);
             string resultId = "";
+            if (string.IsNullOrEmpty(entityCreateResult))
+                return resultId;
+            dynamic ES = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(entityCreateResult);
+            if (ES == null)
+                return resultId;
             if (ES.Count > 0)
             {
                 resultId = ES[0].id.ToString();
