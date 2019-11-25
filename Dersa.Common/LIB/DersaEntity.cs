@@ -31,7 +31,7 @@ namespace Dersa.Common
         }
         protected EntityChildrenCollection _children = new EntityChildrenCollection();
 
-        public EntityChildrenCollection Children
+        public virtual EntityChildrenCollection Children
         {
             get
             {
@@ -55,6 +55,7 @@ namespace Dersa.Common
     }
     public class DersaEntity : TreeNode, IDersaEntity, ITreeNode
     {
+        private bool childrenInitialized = false;
 
         public DersaEntity()
         {
@@ -97,21 +98,12 @@ namespace Dersa.Common
                 this._stereotype_name = (string)r["stereotype_name"];
 
 
+                if (this._children == null)
+                    this._children = new EntityChildrenCollection();
+
                 if (AddChildren == AddChildrenMode.Always || (AddChildren == AddChildrenMode.NotPackage && this.StereotypeName != "Package"))
                 {
-                    if (this._children == null)
-                        this._children = new EntityChildrenCollection();
-                    if (this._children.Count < 1)
-                    {
-                        System.Data.DataTable ChildrenTable = M.GetEntityChildren(this.Id.ToString());
-                        if (ChildrenTable.Rows.Count > 0)
-                        {
-                            foreach (System.Data.DataRow cr in ChildrenTable.Rows)
-                            {
-                                this._children.Add(new DersaEntity(M.GetEntity(cr["entity"].ToString()), this, M, AddChildrenMode.NotPackage, false));
-                            }
-                        }
-                    }
+                    this.InitializeChildren(M);
                 }
                 if (AddRelations)
                 {
@@ -145,6 +137,24 @@ namespace Dersa.Common
                 }
             }
             CachedObjects.CachedEntities[this.Id] = this;
+        }
+
+        public void InitializeChildren(DersaSqlManager M)
+        {
+            if (M == null)
+                M = new DersaSqlManager();
+            if (this._children.Count < 1)
+            {
+                System.Data.DataTable ChildrenTable = M.GetEntityChildren(this.Id.ToString());
+                if (ChildrenTable.Rows.Count > 0)
+                {
+                    foreach (System.Data.DataRow cr in ChildrenTable.Rows)
+                    {
+                        this._children.Add(new DersaEntity(M.GetEntity(cr["entity"].ToString()), this, M, AddChildrenMode.NotPackage, false));
+                    }
+                }
+            }
+            this.childrenInitialized = true;
         }
 
         public static IObjectCollection List(IParameterCollection Params)
@@ -258,6 +268,16 @@ namespace Dersa.Common
             set
             {
             //    Parent = Manager.GetObject("ENTITY", value) as Entity;
+            }
+        }
+
+        public override EntityChildrenCollection Children
+        {
+            get
+            {
+                if (!this.childrenInitialized)
+                    InitializeChildren(null);
+                return base.Children;
             }
         }
 
