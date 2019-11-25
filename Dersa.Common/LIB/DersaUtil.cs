@@ -163,7 +163,7 @@ namespace Dersa.Common
                 string result = JsonConvert.SerializeObject(T);
                 return result;
             }
-            catch
+            catch(Exception exc)
             {
                 return "";
             }
