@@ -125,6 +125,8 @@ namespace Dersa.Models
 
         public int CanDnD(string src, int dst)
         {
+            if (src == dst.ToString())
+                return 0;
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
@@ -703,6 +705,7 @@ namespace Dersa.Models
                                     id = R["id"],
                                     text = R["text"],
                                     icon = R["icon"],
+                                    data = R["data"],
                                     children = Convert.ToBoolean(R["children"])
                                 };
                     result = JsonConvert.SerializeObject(query);
