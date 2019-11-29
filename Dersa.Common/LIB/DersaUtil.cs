@@ -5,6 +5,7 @@ using System.Text;
 using Dersa.Interfaces;
 using DIOS.Common;
 using DIOS.Common.Interfaces;
+using DIOS.ObjectLib;
 using Newtonsoft.Json;
 using System.Reflection;
 
@@ -13,6 +14,24 @@ namespace Dersa.Common
     public enum AttributeOwnerType : int { Entity = 0, Relation = 1 }
     public class DersaUtil
     {
+        public static string ObjectList(string class_name, string json_params, string order, int limit, int offset, out int rowcount)
+        {
+            DiosSqlManager M = new DiosSqlManager();
+            ObjectFactory F = null;
+            try
+            {
+                F = M.GetFactory(class_name);
+            }
+            catch(Exception exc)
+            {
+                throw new Exception("Object type " + class_name + " not found");
+            }
+            IParameterCollection Params = Util.DeserializeParams(json_params);
+            string result = F.ListJson(Params, order, limit, offset);
+            rowcount = F.RowCount;
+            return result;
+        }
+
         public static string SetGuid(string userName, string entityId, string guid)
         {
             try
