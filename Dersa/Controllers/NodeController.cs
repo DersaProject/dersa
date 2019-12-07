@@ -25,7 +25,7 @@ namespace Dersa.Controllers
 
         public void DownloadMethodResult(int id, string method_name)
         {
-            object execResult = (new NodeControllerAdapter()).ExecMethodResult(id, method_name);
+            object execResult = DersaUtil.ExecMethodResult(id, method_name);
             string file_name = "emptyfile.txt";
             byte[] bts = new byte[0];
             if (execResult is string)

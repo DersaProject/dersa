@@ -14,6 +14,48 @@ namespace Dersa.Common
     public enum AttributeOwnerType : int { Entity = 0, Relation = 1 }
     public class DersaUtil
     {
+        public static object ExecMethodResult(int id, string method_name)
+        {
+            CachedObjects.CachedEntities[id] = null;
+            DersaSqlManager M = new DersaSqlManager();
+            System.Data.DataTable t = M.GetEntity(id.ToString());
+            if (t == null)
+                throw new Exception(string.Format("Table is null for entity {0}", id));
+            if (t.Rows.Count < 1)
+                throw new Exception(string.Format("Table is empty for entity {0}", id));
+            DersaEntity ent = new DersaEntity(t, M);
+            CachedObjects.CachedCompiledInstances[ent.StereotypeName + id.ToString()] = null;
+            foreach (DersaEntity child in ent.Children)
+            {
+                CachedObjects.CachedCompiledInstances[child.StereotypeName + child.Id.ToString()] = null;
+            }
+            Logger.LogStatic("ExecMethodResult clear cache Entity" + ent.Id.ToString());
+            //Type nType = Type.GetType("DersaStereotypes." + ent.Stereotype.Name);
+
+            ICompiled cInst = ent.GetCompiledInstance();
+            MethodInfo mi = cInst.GetType().GetMethod(method_name);
+            if (mi == null)
+            {
+                string excMessage = "Method " + method_name + " not found ";
+                Logger.LogStatic(excMessage);
+                throw new Exception(excMessage);
+            }
+            //string userName = HttpContext.Current.User.Identity.Name;
+            //System.Data.DataTable T = M.ExecuteSPWithParams("dbo.ENTITY$GetMethodParams", new object[] { id, method_name, userName, DersaUtil.GetPassword(userName) });
+            //string Params = "";
+            //if (T.Rows.Count > 0)
+            //    Params = T.Rows[0][0].ToString();
+            //object[] ParamValues = Util.GetMethodCallParameterValues(Params);
+            //return mi.Invoke(cInst, ParamValues);
+            return mi.Invoke(cInst, new object[] { });
+            //object res = mi.Invoke(cInst, ParamValues);
+            //string resultText = "";
+            //if (res != null)
+            //    resultText = res.ToString();
+            //return resultText;
+        }
+
+
         public static string ObjectList(string class_name, string json_params, string order, int limit, int offset, out int rowcount)
         {
             DiosSqlManager M = new DiosSqlManager();
@@ -77,6 +119,13 @@ namespace Dersa.Common
         }
         public static string GetAttributeValue(string userName, int entityId, string attrName, int attrType)
         {
+            if(attrName.Contains("()"))
+            {
+                object res = ExecMethodResult(entityId, attrName.Replace("()", ""));
+                if (res == null)
+                    return "";
+                return res.ToString();
+            }
             DersaSqlManager DM = new DersaSqlManager();
             System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$GetAttribute", new object[] { entityId, attrName, userName, DersaUtil.GetPassword(userName) });
             if (T == null || T.Rows.Count < 1)

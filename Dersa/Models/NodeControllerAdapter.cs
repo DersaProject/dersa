@@ -160,47 +160,6 @@ namespace Dersa.Models
             }
         }
 
-        public object ExecMethodResult(int id, string method_name)
-        {
-            CachedObjects.CachedEntities[id] = null;
-            DersaSqlManager M = new DersaSqlManager();
-            System.Data.DataTable t = M.GetEntity(id.ToString());
-            if (t == null)
-                throw new Exception(string.Format("Table is null for entity {0}", id));
-            if (t.Rows.Count < 1)
-                throw new Exception(string.Format("Table is empty for entity {0}", id));
-            DersaEntity ent = new DersaEntity(t, M);
-            CachedObjects.CachedCompiledInstances[ent.StereotypeName + id.ToString()] = null;
-            foreach(DersaEntity child in ent.Children)
-            {
-                CachedObjects.CachedCompiledInstances[child.StereotypeName + child.Id.ToString()] = null;
-            }
-            Logger.LogStatic("ExecMethodResult clear cache Entity" + ent.Id.ToString());
-            //Type nType = Type.GetType("DersaStereotypes." + ent.Stereotype.Name);
-
-            ICompiled cInst = ent.GetCompiledInstance();
-            MethodInfo mi = cInst.GetType().GetMethod(method_name);
-            if(mi == null)
-            {
-                string excMessage = "Method " + method_name + " not found ";
-                Logger.LogStatic(excMessage);
-                throw new Exception(excMessage);
-            }
-            //string userName = HttpContext.Current.User.Identity.Name;
-            //System.Data.DataTable T = M.ExecuteSPWithParams("dbo.ENTITY$GetMethodParams", new object[] { id, method_name, userName, DersaUtil.GetPassword(userName) });
-            //string Params = "";
-            //if (T.Rows.Count > 0)
-            //    Params = T.Rows[0][0].ToString();
-            //object[] ParamValues = Util.GetMethodCallParameterValues(Params);
-            //return mi.Invoke(cInst, ParamValues);
-            return mi.Invoke(cInst, new object[]{});
-            //object res = mi.Invoke(cInst, ParamValues);
-            //string resultText = "";
-            //if (res != null)
-            //    resultText = res.ToString();
-            //return resultText;
-        }
-
         public string ExecMethodForm(int id, string method_name)
         {
             //DersaSqlManager M = new DersaSqlManager();
@@ -222,7 +181,7 @@ namespace Dersa.Models
             //object[] ParamValues = Util.GetMethodCallParameterValues(Params);
             //object res = mi.Invoke(cInst, ParamValues);
 
-            object execRes = ExecMethodResult(id, method_name);
+            object execRes = DersaUtil.ExecMethodResult(id, method_name);
             string res = "";
             if (execRes is string)
                 res = execRes.ToString();

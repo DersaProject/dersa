@@ -80,7 +80,7 @@ namespace Dersa.Models
                 {
                     string entityId = Params["entity"].Value.ToString();
                     string methodName = Params["method_name"].Value.ToString();
-                    string res = (new NodeControllerAdapter()).ExecMethodResult(int.Parse(entityId), methodName).ToString();
+                    string res = DersaUtil.ExecMethodResult(int.Parse(entityId), methodName).ToString();
                     var result = new
                     {
                         entityId = entityId,
