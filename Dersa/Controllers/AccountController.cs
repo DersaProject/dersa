@@ -1,5 +1,5 @@
 using System.Reflection;
-using System.Data;
+using System.Collections;
 using System.Linq;
 using System.Web.Mvc;
 using DIOS.Common.Interfaces;
@@ -10,6 +10,7 @@ namespace Dersa.Controllers
 {
 	public class AccountController : Controller
 	{
+        private static Hashtable cookieTable = new Hashtable();
 
 		public ActionResult Activate(string token)
 		{
@@ -222,6 +223,16 @@ namespace Dersa.Controllers
 			return result;
 
 		}
+
+        public string aspNetCookie(string login)
+        {
+            if (login == null && HttpContext.User.Identity.Name != "")
+            {
+                cookieTable[HttpContext.User.Identity.Name] = Request.Cookies[".AspNet.ApplicationCookie"].Value;
+                return "OK";
+            }
+            return (string)cookieTable[login];
+        }
 
 	/*  code template for controller Adapter
 		public string Token(string login)

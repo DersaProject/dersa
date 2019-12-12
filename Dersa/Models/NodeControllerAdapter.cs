@@ -442,7 +442,7 @@ namespace Dersa.Models
                         string strVal = Param.Value.ToString().Replace("$lt$", "<").Replace("$gt$", ">");
                         Param.Value = strVal;
                     }
-                    SetAttribute(DM, ownerType, key, Param.Name, Param.Value?.ToString(), 0);
+                    SetAttribute(DM, ownerType, key, Param.Name, Param.Value == null? null : Param.Value.ToString(), 0);
                 }
                 catch
                 {
