@@ -11,7 +11,7 @@ namespace Dersa.Common
         public Relation(DersaSqlManager sm) : base(sm)
         {
         }
-        public Relation(System.Data.DataRow r, Entity _AEntity, Entity _BEntity, DersaSqlManager M)
+        public Relation(System.Data.DataRow r, DersaEntity _AEntity, DersaEntity _BEntity, DersaSqlManager M)
             : this(M)
         {
             if (r != null)
@@ -27,7 +27,7 @@ namespace Dersa.Common
                 {
                     if (a_id != "")
                     {
-                        this.A = new Entity(M.GetEntity(a_id), null, M, AddChildrenMode.Never, false);
+                        this.A = new DersaEntity(M.GetEntity(a_id), null, M, AddChildrenMode.Never, false);
                     }
                 }
                 if (_BEntity != null)
@@ -40,9 +40,9 @@ namespace Dersa.Common
                     {
                         //throw new Exception(b_id);
                         if (CachedObjects.CachedEntities[r["b"]] != null)
-                            this.B = (Entity)CachedObjects.CachedEntities[r["b"]];
+                            this.B = (DersaEntity)CachedObjects.CachedEntities[r["b"]];
                         else
-                            this.B = new Entity(M.GetEntity(b_id), null, M, AddChildrenMode.Always, a_id != b_id);
+                            this.B = new DersaEntity(M.GetEntity(b_id), null, M, AddChildrenMode.Always, a_id != b_id);
                     }
                 }
                 this._stereotype_name = (string)r["stereotype_name"];
@@ -52,8 +52,8 @@ namespace Dersa.Common
 
 
         protected int _type;
-        protected Entity _a;
-        protected Entity _b;
+        protected DersaEntity _a;
+        protected DersaEntity _b;
         protected ChildrenCollection _diagramRelations = new ChildrenCollection();
 
         public int Type
@@ -68,7 +68,7 @@ namespace Dersa.Common
             }
         }
 
-        public Entity A
+        public DersaEntity A
         {
             get
             {
@@ -81,7 +81,7 @@ namespace Dersa.Common
                 if (_a != null) _a.ARelations.Add(this);
             }
         }
-        public Entity B
+        public DersaEntity B
         {
             get
             {
@@ -112,18 +112,18 @@ namespace Dersa.Common
             _a = null;
             _b = null;
         }
-        IEntity IRelation.A
+        IDersaEntity IRelation.A
         {
             get
             {
-                return (IEntity)A;
+                return (IDersaEntity)A;
             }
         }
-        IEntity IRelation.B
+        IDersaEntity IRelation.B
         {
             get
             {
-                return (IEntity)B;
+                return (IDersaEntity)B;
             }
         }
         public ICompiledRelation GetInstance()

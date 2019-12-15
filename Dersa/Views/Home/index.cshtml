@@ -70,7 +70,9 @@
     </div>
     <div id="tool_box" style="top: 120px; left: 5px; width: 20px; height: 100px; position: absolute;">
         @{
-            DataTable T = JsonConvert.DeserializeObject<DataTable>(ViewBag.ToolBoxData.ToString());
+            DataTable T = null;
+            if (ViewBag.ToolBoxData != null)
+            { T = JsonConvert.DeserializeObject<DataTable>(ViewBag.ToolBoxData.ToString()); }
         }
         @if (T != null)
         {

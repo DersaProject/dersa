@@ -46,8 +46,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Dersa.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Dios.Common">
-      <HintPath>..\bin\Dios.Common.dll</HintPath>
+    <Reference Include="Dios">
+      <HintPath>..\Dersa\bin\Dios.dll</HintPath>
+    </Reference>
+    <Reference Include="Dios.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Dersa\bin\Dios.Common.dll</HintPath>
     </Reference>
     <Reference Include="Dios.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -55,7 +59,7 @@
     </Reference>
     <Reference Include="Dios.SqlManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\DIOS\DIOS.Server\common\Dios.SqlManager.dll</HintPath>
+      <HintPath>..\Dersa\bin\Dios.SqlManager.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\bin\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -67,6 +71,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -89,13 +94,14 @@
     <Compile Include="LIB\ChildrenCollection.cs" />
     <Compile Include="LIB\DersaSqlManager.cs" />
     <Compile Include="LIB\DersaUserStatus.cs" />
+    <Compile Include="LIB\DersaEntity.cs" />
     <Compile Include="LIB\Entity.cs" />
     <Compile Include="LIB\EntityChildrenCollection.cs" />
     <Compile Include="LIB\Relation.cs" />
     <Compile Include="LIB\SqlProperty.cs" />
     <Compile Include="LIB\StereotypeBaseE.cs" />
     <Compile Include="LIB\StereotypedObject.cs" />
-    <Compile Include="LIB\Util.cs" />
+    <Compile Include="LIB\DersaUtil.cs" />
     <Compile Include="LIB\WebClasses.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

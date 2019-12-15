@@ -55,7 +55,7 @@
     <Compile Include="IDiagramEntity.cs" />
     <Compile Include="IDiagramObject.cs" />
     <Compile Include="IDiagramRelation.cs" />
-    <Compile Include="IEntity.cs" />
+    <Compile Include="IDersaEntity.cs" />
     <Compile Include="IEntityComparerProvider.cs" />
     <Compile Include="IObject.cs" />
     <Compile Include="IPoint.cs" />

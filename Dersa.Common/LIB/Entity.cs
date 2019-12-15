@@ -1,213 +1,81 @@
-using System;
-using System.Collections.Generic;
-using System.Collections;
-using Dersa.Interfaces;
+п»їusing System;
+using DIOS.Common;
+using DIOS.Common.Interfaces;
+using DIOS.ObjectLib;
+using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace Dersa.Common
 {
-    public enum AddChildrenMode : int { Always = 0, NotPackage = 1, Never = 2 } 
-    public class TreeNode: StereotypedObject, ITreeNode
+    [LocalizedName("ENTITY")]
+    [DataContract]
+    public class Entity : DIOS.ObjectLib.Object
     {
-        public static TreeNode Copy(TreeNode src)
-        {
-            TreeNode N = new TreeNode();// (src.ObjectClass, null);
-            N._id = src.Id;
-            N._name = src.Name;
-            N._stereotype_name = src.StereotypeName;
-            N._children = new EntityChildrenCollection();
-            foreach (TreeNode ch in src.Children)
-                N._children.Add(Copy(ch));
-            return N;
 
-        }
-        public TreeNode()
-        {
-        }
-        public TreeNode(DersaSqlManager sm) : base(sm)
-        {
-        }
-        protected EntityChildrenCollection _children = new EntityChildrenCollection();
+        public Entity() : base() { }
 
-        public EntityChildrenCollection Children
+        public Entity(UniStructView v, ObjectFactory f) : base(v, f) { }
+
+        public const string EntityClassName = "ENTITY";
+        #region entity
+        protected SqlInt32 _entity;
+        [DataMember]
+        [ObjectPropertyAttribute("#", true, false, 0, false, true)]
+        public SqlInt32 entity
         {
             get
             {
-                if (!_children.AutoSorting)
-                {
-                    _children.Sort();
-                    _children.AutoSorting = true;
-                }
-                return _children;
+                return _entity;
+            }
+            set
+            {
+                if (!this.changedFields.Contains("_entity") && this._entity != value)
+                    this.changedFields.Add("_entity", this._entity);
+                _entity = value;
             }
         }
-
-        IChildrenCollection ITreeNode.Children
+        #endregion
+        #region active
+        protected SqlBoolean _active;
+        [DataMember]
+        [ObjectPropertyAttribute("active", false, false, 0, false, false)]
+        public SqlBoolean active
         {
             get
             {
-                return Children;
+                return _active;
             }
-        }
-
-    }
-    public class Entity : TreeNode, IEntity, ITreeNode
-    {
-
-        public Entity()
-        {
-        }
-        public Entity(DersaSqlManager sm):base(sm)
-        {
-        }
-
-        public Entity(System.Data.DataTable t, DersaSqlManager sm)
-            : this(t, null, sm, AddChildrenMode.Always, true)
-        {
-        }
-
-
-        public Entity(System.Data.DataTable t, Entity _Parent, DersaSqlManager M, AddChildrenMode AddChildren, bool AddRelations)
-            : this(M)
-        {
-            if (t != null && t.Rows.Count > 0)
+            set
             {
-                // = new DersaSqlManager();
-                System.Data.DataRow r = t.Rows[0];
-                if (_Parent != null)
-                {
-                    this.Parent = _Parent;
-                }
-                else
-                {
-                    string ParentID = r["parent"].ToString();
-                    if (ParentID != "")
-                    {
-                        if (CachedObjects.CachedEntities[r["parent"]] != null)
-                            this.Parent = (Entity)CachedObjects.CachedEntities[r["parent"]];
-                        else
-                            this.Parent = new Entity(M.GetEntity(ParentID), null, M, AddChildrenMode.NotPackage, false);
-                    }
-                }
-                string StereotypeID = r["stereotype"].ToString();
-                this._id = (int)r["entity"];
-                this._name = (string)r["name"];
-                this._stereotype_name = (string)r["stereotype_name"];
-
-
-                if (AddChildren == AddChildrenMode.Always || (AddChildren == AddChildrenMode.NotPackage && this.StereotypeName != "Package"))
-                {
-                    if (this._children == null)
-                        this._children = new EntityChildrenCollection();
-                    if (this._children.Count < 1)
-                    {
-                        System.Data.DataTable ChildrenTable = M.GetEntityChildren(this.Id.ToString());
-                        if (ChildrenTable.Rows.Count > 0)
-                        {
-                            foreach (System.Data.DataRow cr in ChildrenTable.Rows)
-                            {
-                                this._children.Add(new Entity(M.GetEntity(cr["entity"].ToString()), this, M, AddChildrenMode.NotPackage, false));
-                            }
-                        }
-                    }
-                }
-                if (AddRelations)
-                {
-                    if (this._aRelations == null)
-                        this._aRelations = new ChildrenCollection();
-                    if (this._aRelations.Count < 1)
-                    {
-                        System.Data.DataTable ARelationsTable = M.GetEntityARelations(this.Id.ToString());
-                        if (ARelationsTable.Rows.Count > 0)
-                        {
-                            foreach (System.Data.DataRow cr in ARelationsTable.Rows)
-                            {
-                                this._aRelations.Add(new Relation(cr, this, null, M));
-                            }
-                        }
-                    }
-                    if (this._bRelations == null)
-                        this._bRelations = new ChildrenCollection();
-                    if (this._bRelations.Count < 1)
-                    {
-                        System.Data.DataTable BRelationsTable = M.GetEntityBRelations(this.Id.ToString());
-                        if (BRelationsTable.Rows.Count > 0)
-                        {
-                            foreach (System.Data.DataRow cr in BRelationsTable.Rows)
-                            {
-                                this._bRelations.Add(new Relation(cr, null, this, M));
-                            }
-                        }
-                    }
-
-                }
+                if (!this.changedFields.Contains("_active") && this._active != value)
+                    this.changedFields.Add("_active", this._active);
+                _active = value;
             }
-            CachedObjects.CachedEntities[this.Id] = this;
         }
-
-        public static List<ICompiledEntity> Range(string[] ids_str, DersaSqlManager M)
+        #endregion
+        #region name
+        protected SqlString _name;
+        [DataMember]
+        [ObjectPropertyAttribute("name", false, false, 128, false, false)]
+        public SqlString name
         {
-            List<ICompiledEntity> entities = new List<ICompiledEntity>();
-            ICompiledEntity[] eArr = new ICompiledEntity[ids_str.Length];
-            for (int i = 0; i < ids_str.Length; i++)
+            get
             {
-                int entId = int.Parse(ids_str[i]);
-                CachedObjects.CachedEntities[entId] = null;
-                System.Data.DataTable t = M.GetEntity(ids_str[i]);
-                if (t == null)
-                    throw new Exception(string.Format("Table is null for entity {0}", ids_str[i]));
-                if (t.Rows.Count < 1)
-                    throw new Exception(string.Format("Table is empty for entity {0}", ids_str[i]));
-                Entity ent = new Entity(t, M);
-                CachedObjects.CachedCompiledInstances[ent.StereotypeName + ids_str[i]] = null;
-                ICompiledEntity cInst = (ICompiledEntity)ent.GetCompiledInstance();
-                eArr[i] = cInst;
-                entities.Add(cInst);
+                return _name;
             }
-            Type sUtilType =  Util.GetDynamicType("DersaStereotypes.StereotypeUtil");//typeof(DersaStereotypes.StereotypeUtil);
-            if (sUtilType == null)
-                throw new Exception("Class StereotypeUtil not found");
-            IEntityComparerProvider CP = System.Activator.CreateInstance(sUtilType) as IEntityComparerProvider;
-            if(CP == null)
-                throw new Exception("Class StereotypeUtil is not IEntityComparerProvider");
-            IComparer<ICompiledEntity> eCmpr = CP.GetEntityComparer();
-            //entities.Sort(eCmpr);
-            //entities.Sort(new EntityComparer());  //быстрая сортировка иногда дает сбой, т.к. не проверяет все сочетания, заменяем ее на "пузырек"
-            IComparer<ICompiledEntity> cmp = CP.GetEntityComparer();
-            for (int i = 0; i < eArr.Length; i++)
+            set
             {
-                for (int j = i; j < eArr.Length; j++)
-                {
-                    if (cmp.Compare(eArr[i], eArr[j]) > 0)
-                    {
-                        ICompiledEntity tmp = eArr[i];
-                        eArr[i] = eArr[j];
-                        eArr[j] = tmp;
-                    }
-                }
+                if (!this.changedFields.Contains("_name") && this._name != value)
+                    this.changedFields.Add("_name", this._name);
+                _name = value;
             }
-
-            entities.Clear();
-            for (int i = 0; i < ids_str.Length; i++)
-            {
-                entities.Add(eArr[i]);
-            }
-            return entities;
         }
-
-        //public static Hashtable cachedEntities = new Hashtable();
-        //public static Hashtable cachedCompiledInstances = new Hashtable();
-
-        //private bool insertByStereotype = false;
-        protected Entity _parent = null;
-
-        private ChildrenCollection _diagrams = new ChildrenCollection();
-        private ChildrenCollection _aRelations = new ChildrenCollection();
-        private ChildrenCollection _bRelations = new ChildrenCollection();
-        protected ChildrenCollection _diagramEntities = new ChildrenCollection();
-
-        protected int _rank;
-
-        public Entity Parent
+        #endregion
+        #region parent
+        protected SqlInt32 _parent;
+        [DataMember]
+        [ObjectPropertyAttribute("parent", false, false, 0, false, false)]
+        public SqlInt32 parent
         {
             get
             {
@@ -215,224 +83,87 @@ namespace Dersa.Common
             }
             set
             {
-                if ((_parent != null) && (_parent._children.Contains(this)))
-                {
-                    _parent._children.Remove(this);
-                }
-                    _parent = value;
-                if (_parent != null)
-                {
-                    _parent._children.Add(this);
-                }
+                if (!this.changedFields.Contains("_parent") && this._parent != value)
+                    this.changedFields.Add("_parent", this._parent);
+                _parent = value;
             }
         }
-        public bool HasSubItems
+        #endregion
+        #region stereotype
+        protected SqlInt32 _stereotype;
+        [DataMember]
+        [ObjectPropertyAttribute("stereotype", false, false, 0, false, false)]
+        public SqlInt32 stereotype
         {
             get
             {
-                if (_children.Count > 0) return true;
-                if (_diagrams.Count > 0) return true;
-                if (ARelations.Count > 0) return true;
-                return false;
-            }
-        }
-        public int ParentId
-        {
-            get
-            {
-                if (Parent != null) return Parent.Id;
-                return 0;
+                return _stereotype;
             }
             set
             {
-            //    Parent = Manager.GetObject("ENTITY", value) as Entity;
+                if (!this.changedFields.Contains("_stereotype") && this._stereotype != value)
+                    this.changedFields.Add("_stereotype", this._stereotype);
+                _stereotype = value;
             }
         }
-
-        public ChildrenCollection Diagrams
+        #endregion
+        #region icon
+        protected SqlString _icon;
+        [DataMember]
+        [ObjectPropertyAttribute("icon", false, false, 255, false, false)]
+        public SqlString icon
         {
             get
             {
-                if (!_diagrams.AutoSorting)
-                {
-                    _diagrams.Sort();
-                    _diagrams.AutoSorting = true;
-                }
-                return _diagrams;
-            }
-        }
-        public ChildrenCollection ARelations
-        {
-            get
-            {
-                if (!_aRelations.AutoSorting)
-                {
-                    _aRelations.Sort();
-                    _aRelations.AutoSorting = true;
-                }
-                return _aRelations;
-            }
-        }
-        public ChildrenCollection BRelations
-        {
-            get
-            {
-                if (!_bRelations.AutoSorting)
-                {
-                    _bRelations.Sort();
-                    _bRelations.AutoSorting = true;
-                }
-                return _bRelations;
-            }
-        }
-        public ChildrenCollection DiagramEntities
-        {
-            get
-            {
-                return _diagramEntities;
-            }
-        }
-        public int Index
-        {
-            get
-            {
-                if (_parent != null) return _parent._children.IndexOf(this);
-                return 0;
-            }
-        }
-        int IEntity.Index
-        {
-            get
-            {
-                return this.Index;
-            }
-        }
-        public int Rank
-        {
-            get
-            {
-                return _rank;
+                return _icon;
             }
             set
             {
-                if (_rank != value)
-                {
-                    _rank = value;
-                }
+                if (!this.changedFields.Contains("_icon") && this._icon != value)
+                    this.changedFields.Add("_icon", this._icon);
+                _icon = value;
             }
         }
+        #endregion
+        #region РљРѕРЅСЃС‚Р°РЅС‚С‹
+        #endregion
+        #region RefObjects
+        #endregion
+        #region РњРµС‚РѕРґС‹
 
-        public ChildrenCollection ARoles
+        #region GetFactory
+        public static ObjectFactory GetFactory()
         {
-            get
+            DiosSqlManager M = new DiosSqlManager();
+            ObjectFactory F = M.GetFactory(EntityClassName);
+            M.IsOccupied = false;
+            return F;
+        }
+        #endregion
+        #endregion
+        #region GetUniView()
+        protected override UniStructView GetUniView()
+        {
+            IndexerPropertyDescriptorCollection props = this.GetObjectProperties();
+            object[] dataStore = new object[props.Count];
+            int i = 0;
+            dataStore[i++] = entity;
+            dataStore[i++] = active;
+            dataStore[i++] = name;
+            dataStore[i++] = parent;
+            dataStore[i++] = stereotype;
+            dataStore[i++] = icon;
+            for (int k = i; k < props.Count; k++)
             {
-                ChildrenCollection bRelations = this.BRelations;
-                ChildrenCollection aRoles = new ChildrenCollection();
-                for (int i = 0; i < bRelations.Count; i++)
-                {
-                    aRoles.Add(((Relation)bRelations[i]).A);
-                }
-                return aRoles;
+                dataStore[k] = this[props[k].Name];
             }
+            UniStructView result = new UniStructView(dataStore, props);
+            return result;
         }
-        IChildrenCollection IEntity.ARoles
-        {
-            get
-            {
-                return this.ARoles;
-            }
-        }
-        public ChildrenCollection BRoles
-        {
-            get
-            {
-                ChildrenCollection aRelations = this.ARelations;
-                ChildrenCollection bRoles = new ChildrenCollection();
-                for (int i = 0; i < aRelations.Count; i++)
-                {
-                    bRoles.Add(((Relation)aRelations[i]).B);
-                }
-                return bRoles;
-            }
-        }
-        IChildrenCollection IEntity.BRoles
-        {
-            get
-            {
-                return this.BRoles;
-            }
-        }
-        public/* override*/ int CompareTo(Object y)
-        {
-            if (!(y is Entity)) return 0;
-            return this.Name.CompareTo(((Entity)y).Name);
-        }
-        public void Dispose()
-        {
-            if ((_parent != null) && (_parent._children.Contains(this)))
-            {
-                _parent.Children.Remove(this);
-            }
-            _parent = null;
-        }
-        IEntity IEntity.Parent
-        {
-            get
-            {
-                return (IEntity)Parent;
-            }
-        }
-        IChildrenCollection IEntity.ARelations
-        {
-            get
-            {
-                return ARelations;
-            }
-        }
-        IChildrenCollection IEntity.BRelations
-        {
-            get
-            {
-                return BRelations;
-            }
-        }
-        IChildrenCollection IEntity.Children
-        {
-            get
-            {
-                return Children;
-            }
-        }
-        IChildrenCollection IEntity.Diagrams
-        {
-            get
-            {
-                return Diagrams;
-            }
-        }
-        ICompiledEntity IEntity.GetInstance()
-        {
-            return (ICompiledEntity)base.GetCompiledInstance();
-        }
-        IList IEntity.ARelationsInstance()
-        {
-            return ARelations.GetInstance();
-        }
-        IList IEntity.BRelationsInstance()
-        {
-            return BRelations.GetInstance();
-        }
-        IList IEntity.ChildrenInstance()
-        {
-            return Children.GetInstance();
-        }
-        IChildrenCollection ITreeNode.Children
-        {
-            get
-            {
-                return Children;
-            }
-        }
+        #endregion
+        #region Refs
+        #endregion
+        #region Properties
+        #endregion
     }
-
 }

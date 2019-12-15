@@ -2,10 +2,11 @@ using System.Data;
 using System.Linq;
 using System.Web.Mvc;
 using Dersa.Models;
+using Dersa.Common;
 using System.Web;
 using System;
 using System.Collections.Generic;
-
+using System.Web.Configuration;
 
 namespace Dersa.Controllers
 {
@@ -24,7 +25,7 @@ namespace Dersa.Controllers
 
         public void DownloadMethodResult(int id, string method_name)
         {
-            object execResult = (new NodeControllerAdapter()).ExecMethodResult(id, method_name);
+            object execResult = DersaUtil.ExecMethodResult(id, method_name);
             string file_name = "emptyfile.txt";
             byte[] bts = new byte[0];
             if (execResult is string)
@@ -46,7 +47,8 @@ namespace Dersa.Controllers
             try
             {
 
-                Response.ContentType = "APPLICATION/OCTET-STREAM";
+                Response.ContentType = "application/force-download";
+                //Response.ContentType = "APPLICATION/OCTET-STREAM";
                 string Header = "Attachment; Filename=" + file_name;
                 Response.AppendHeader("Content-Disposition", Header);
                 Response.OutputStream.Write(bts, 0, bts.Length);
@@ -86,6 +88,55 @@ namespace Dersa.Controllers
 
         }
 
+        [HttpPost]
+        public ActionResult UploadContentFromUrl(int id, string uploadUrl, bool closeWindow = false)
+        {
+            //foreach (var file in fileUpload)
+            //{
+            //    if (file == null) continue;
+            //    byte[] fileContent = new byte[file.InputStream.Length];
+            //    file.InputStream.Read(fileContent, 0, fileContent.Length);
+            //    string JsonContent = System.Text.Encoding.Default.GetString(fileContent);
+            //    NodeControllerAdapter.SchemaEntity[] schemaContent = NodeControllerAdapter.GetSchema(JsonContent);
+            //    for (int i = 0; i < schemaContent.Length; i++)
+            //    {
+            //        NodeControllerAdapter.SchemaEntity schemaEntity = schemaContent[i];
+            //        string entId = CreateEntity(schemaEntity, id.ToString());
+            //    }
+            //}
+            System.Net.HttpWebRequest req = System.Net.HttpWebRequest.CreateHttp(uploadUrl);
+            System.Net.HttpWebRequest authReq = System.Net.HttpWebRequest.CreateHttp("http://" + req.Address.Authority + "/Account/aspNetCookie?login=" + HttpContext.User.Identity.Name);
+            authReq.Method = "GET";
+            var resp = authReq.GetResponse();
+            var respStream = resp.GetResponseStream();
+            var SR = new System.IO.StreamReader(respStream);
+            string authCookie = SR.ReadToEnd();
+            req.Method = "GET";
+            req.CookieContainer = new System.Net.CookieContainer();
+            System.Net.Cookie cookie = new System.Net.Cookie(".AspNet.ApplicationCookie", authCookie, "/", req.Address.Host);
+            //Request.Cookies[".AspNet.ApplicationCookie"].Value, "/", req.Address.Host);
+            req.CookieContainer.Add(cookie);
+            resp = req.GetResponse();
+            respStream = resp.GetResponseStream();
+            SR = new System.IO.StreamReader(respStream);
+            string JsonContent = SR.ReadToEnd();
+            NodeControllerAdapter.SchemaEntity[] schemaContent = NodeControllerAdapter.GetSchema(JsonContent);
+            if (schemaContent != null)
+            {
+                for (int i = 0; i < schemaContent.Length; i++)
+                {
+                    NodeControllerAdapter.SchemaEntity schemaEntity = schemaContent[i];
+                    string entId = CreateEntity(schemaEntity, id.ToString());
+                }
+            }
+
+            if (closeWindow)
+                return View("Close");
+            else
+                return RedirectToAction("UploadContent/" + id.ToString());
+
+        }
+
         //private string CreateEntity(string stereotypeName, string parentId, string entityName, NodeControllerAdapter.SchemaAttribute[] attrs, string guid = null)
         private string CreateEntity(NodeControllerAdapter.SchemaEntity schemaEntity, string parentId, string guid = null) 
         {
@@ -93,14 +144,18 @@ namespace Dersa.Controllers
             string entityName = schemaEntity.Name;
             NodeControllerAdapter.SchemaAttribute[] attrs = schemaEntity.schemaAttributes;
             string entityCreateResult = DnD(stereotypeName, parentId, 0);  //"[{\"id\":10000361,\"text\":\"Entity\",\"icon\":\"Entity\",\"name\":\"Entity\"}]"; 
-            dynamic ES = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(entityCreateResult);
             string resultId = "";
+            if (string.IsNullOrEmpty(entityCreateResult))
+                return resultId;
+            dynamic ES = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(entityCreateResult);
+            if (ES == null)
+                return resultId;
             if (ES.Count > 0)
             {
                 resultId = ES[0].id.ToString();
                 Rename(resultId, entityName);
                 if (guid != null)
-                    Dersa.Common.Util.SetGuid(HttpContext.User.Identity.Name, resultId, guid);
+                    DersaUtil.SetGuid(HttpContext.User.Identity.Name, resultId, guid);
             }
             Common.DersaSqlManager DM = new Common.DersaSqlManager();
             if (resultId != "" && attrs != null && attrs.Length > 0)
@@ -123,6 +178,13 @@ namespace Dersa.Controllers
         }
 
         public ActionResult UploadContent(int id)
+        {
+            ViewBag.PackageId = id;
+            return View();
+
+        }
+
+        public ActionResult UploadContentFromUrl(int id)
         {
             ViewBag.PackageId = id;
             return View();

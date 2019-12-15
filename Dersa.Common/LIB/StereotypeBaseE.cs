@@ -4,6 +4,8 @@ using Dersa.Common;
 using System.Data;
 using System.Reflection;
 using Newtonsoft.Json;
+using DIOS.Common;
+using DIOS.Common.Interfaces;
 
 namespace DersaStereotypes
 {
@@ -18,7 +20,7 @@ namespace DersaStereotypes
             if (ET == null || ET.Rows.Count < 1)
                 return null;
             string typeName = "DersaStereotypes." + ET.Rows[0]["stereotype_name"].ToString();
-            Type dType = Util.GetDynamicType(typeName);
+            Type dType = DersaUtil.GetDynamicType(typeName);
             if (dType == null)
                 return null;
             object inst = Activator.CreateInstance(dType, new object[] { });
@@ -32,8 +34,8 @@ namespace DersaStereotypes
             return res;
         }
 
-        protected IEntity _object;
-        public IEntity Object
+        protected IDersaEntity _object;
+        public IDersaEntity Object
         {
             get { return _object; }
         }
@@ -61,7 +63,7 @@ namespace DersaStereotypes
             {
                 if (_parent == null)
                 {
-                    Dersa.Interfaces.IEntity parent = null;
+                    Dersa.Interfaces.IDersaEntity parent = null;
                     if (_object != null)
                         parent = _object.Parent;
                     if (parent != null) _parent = parent.GetInstance();
@@ -151,7 +153,7 @@ namespace DersaStereotypes
         {
             Dersa.Common.DersaSqlManager M = new Dersa.Common.DersaSqlManager();
             System.Data.DataTable T = M.GetEntity(this.Id.ToString());
-            this._object = new Dersa.Common.Entity(T, M);
+            this._object = new Dersa.Common.DersaEntity(T, M);
             this._parent = null;
             this._aRelations = null;
             this._bRelations = null;
@@ -168,13 +170,13 @@ namespace DersaStereotypes
         public static void DropDiagram(string diagram_id, string userName)
         {
             DersaSqlManager DM = new DersaSqlManager();
-            DM.ExecuteSPWithParams("ENTITY$Remove", new object[] { diagram_id, userName, Util.GetPassword(userName), 0 });
+            DM.ExecuteSPWithParams("ENTITY$Remove", new object[] { diagram_id, userName, DersaUtil.GetPassword(userName), 0 });
         }
 
         public static void DropRelation(int id, string userName)
         {
             DersaSqlManager DM = new DersaSqlManager();
-            DM.ExecuteSPWithParams("ENTITY$Remove", new object[] { id, userName, Util.GetPassword(userName), 0 });
+            DM.ExecuteSPWithParams("ENTITY$Remove", new object[] { id, userName, DersaUtil.GetPassword(userName), 0 });
         }
 
         public virtual string AddChild(string userName, string stereotypeName)
@@ -188,7 +190,7 @@ namespace DersaStereotypes
             {
                 if (!this.AllowModifyChildren())
                     return "";
-                return Util.EntityAddChild(userName, src, this.Id.ToString(), 0);
+                return DersaUtil.EntityAddChild(userName, src, this.Id.ToString(), 0);
             }
             catch
             {
@@ -202,7 +204,7 @@ namespace DersaStereotypes
             {
                 if (!this.AllowModifyChildren())
                     return "";
-                return Util.EntityAddChild(userName, src, this.Id.ToString(), options);
+                return DersaUtil.EntityAddChild(userName, src, this.Id.ToString(), options);
             }
             catch
             {
@@ -232,7 +234,13 @@ namespace DersaStereotypes
                 if (this.Parent != null && !(this.Parent as StereotypeBaseE).AllowModifyChildren())
                     return "";
                 DersaSqlManager DM = new DersaSqlManager();
-                string result = JsonConvert.SerializeObject(DM.ExecuteSPWithParams("ENTITY$Rename", new object[] { this.Id, objectName, userName, Util.GetPassword(userName) }));
+                IParameterCollection Params = new ParameterCollection();
+                Params.Add("entity", this.Id);
+                Params.Add("name", objectName);
+                Params.Add("login", userName);
+                Params.Add("password", DersaUtil.GetPassword(userName));
+                string result = JsonConvert.SerializeObject(DM.ExecuteSPWithParams("ENTITY$Rename", Params));
+//                string result = JsonConvert.SerializeObject(DM.ExecuteSPWithParams("ENTITY$Rename", new object[] { this.Id, objectName, userName, DersaUtil.GetPassword(userName) }));
                 return result;
             }
             catch
@@ -252,7 +260,7 @@ namespace DersaStereotypes
                 if (!(this.Parent as StereotypeBaseE).AllowModifyChildren())
                     return;
                 DersaSqlManager DM = new DersaSqlManager();
-                DM.ExecuteSPWithParams("ENTITY$Remove", new object[] { this.Id, userName, Util.GetPassword(userName), options });
+                DM.ExecuteSPWithParams("ENTITY$Remove", new object[] { this.Id, userName, DersaUtil.GetPassword(userName), options });
             }
             catch
             {

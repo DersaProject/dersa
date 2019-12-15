@@ -18,7 +18,7 @@ namespace Dersa.Models
             Params.Add("@parent", parent);
             string currentUser = System.Web.HttpContext.Current.User.Identity.Name;
             Params.Add("@login", currentUser);
-            Params.Add("@password", Util.GetPassword(currentUser));
+            Params.Add("@password", DersaUtil.GetPassword(currentUser));
             DersaSqlManager M = new DersaSqlManager();
             int res = M.ExecuteSPWithResult("DIAGRAM$Create", false, Params);
             return res.ToString();
@@ -33,7 +33,7 @@ namespace Dersa.Models
             Params.Add("@xml", decodedXml);
             string currentUser = System.Web.HttpContext.Current.User.Identity.Name;
             Params.Add("@login", currentUser);
-            Params.Add("@password", Util.GetPassword(currentUser));
+            Params.Add("@password", DersaUtil.GetPassword(currentUser));
             DersaSqlManager M = new DersaSqlManager();
             int res = M.ExecuteSPWithResult("DIAGRAM$SaveFromXml", false, Params);
             return res.ToString();

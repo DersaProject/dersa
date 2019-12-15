@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using Dersa.Common;
 using System.Xml;
+using System.Web.Configuration;
 
 namespace Dersa.Common
 {
@@ -20,10 +21,8 @@ namespace Dersa.Common
     }
     public class DersaUserSqlManager : DIOS.Common.SqlManager
     {
-        static DersaUserSqlManager()
-        {
-            SqlBrand = DIOS.Common.SqlBrand.MSSqlServer;
-        }
+        public DersaUserSqlManager(): this(DIOS.Common.SqlManager.SqlBrand) { }
+        public DersaUserSqlManager(DIOS.Common.SqlBrand sqlBrand): base(sqlBrand) { }
         protected override string GetConnectionString()
         {
             return this.InitConnectionString;
@@ -37,12 +36,20 @@ namespace Dersa.Common
     {
         protected override void LogSqlActivity(string query, string methodName)
         {
-            dbManager.ExecuteSPWithParams("ACTIVITY_LOG$Log", new object[] { query.Replace("'", "''"), methodName});
+            DIOS.Common.Logger.LogStatic(query);
+            //dbManager.ExecuteSPWithParams("ACTIVITY_LOG$Log", new object[] { query.Replace("'", "''"), methodName});
         }
 
         static DersaSqlManager()
         {
-            SqlBrand = DIOS.Common.SqlBrand.MSSqlServer;
+            string SqlBrandName = WebConfigurationManager.AppSettings["SqlBrand"];
+            if (SqlBrandName.ToUpper() == "ORACLE")
+                SqlBrand = DIOS.Common.SqlBrand.ORACLE;
+            else
+                SqlBrand = DIOS.Common.SqlBrand.MSSqlServer;
+        }
+        public DersaSqlManager(DIOS.Common.SqlBrand sqlBrand):base(sqlBrand)
+        {
         }
         public DersaSqlManager()
         {

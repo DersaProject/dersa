@@ -80,7 +80,7 @@ namespace Dersa.Models
                 {
                     string entityId = Params["entity"].Value.ToString();
                     string methodName = Params["method_name"].Value.ToString();
-                    string res = (new NodeControllerAdapter()).ExecMethodResult(int.Parse(entityId), methodName).ToString();
+                    string res = DersaUtil.ExecMethodResult(int.Parse(entityId), methodName).ToString();
                     var result = new
                     {
                         entityId = entityId,
@@ -99,7 +99,8 @@ namespace Dersa.Models
                 string userName = HttpContext.Current.User.Identity.Name;
                 string entityId = Params["entity"].Value.ToString();
                 string attrName = Params["attr_name"].Value.ToString();
-                string attrValue = (new QueryExecuteService()).GetAttrValue(attrName, entityId, userName);
+                string attrValue = DersaUtil.GetAttributeValue(userName, int.Parse(entityId), attrName, -1);
+                //(new QueryExecuteService()).GetAttrValue(attrName, entityId, userName);
                 var result = new
                 {
                     entityId = entityId,
@@ -179,9 +180,9 @@ namespace Dersa.Models
                 throw new Exception(string.Format("Table is null for entity {0}", id));
             if (t.Rows.Count < 1)
                 throw new Exception(string.Format("Table is empty for entity {0}", id));
-            Entity ent = new Entity(t, M);
+            DersaEntity ent = new DersaEntity(t, M);
             CachedObjects.CachedCompiledInstances[ent.StereotypeName + id.ToString()] = null;
-            foreach (Entity child in ent.Children)
+            foreach (DersaEntity child in ent.Children)
             {
                 CachedObjects.CachedCompiledInstances[child.StereotypeName + child.Id.ToString()] = null;
             }
@@ -213,14 +214,21 @@ namespace Dersa.Models
         }
         public static string GetQueryId(string query)
         {
+            var queryStruct = new
+            {
+                dersa_entity = 0xde,
+                object_name = "RELATION_VIEW",
+                object_type = "VIEW",
+                query_text = query
+            };
             string UserName = HttpContext.Current.User.Identity.Name;
             if (string.IsNullOrEmpty(UserName))
                 return null;
             string token = QueryExecuteService.GetToken(UserName);
-            string encodedQuery = Cryptor.Encrypt(query, token);
+            string encodedQueryStruct = Cryptor.Encrypt(JsonConvert.SerializeObject(queryStruct), token);
             //_query = encodedQuery;
             //return Guid.NewGuid().ToString();
-            return PutString(encodedQuery);
+            return PutString(encodedQueryStruct);
         }
 
         public string ExecSql(string json_params)
@@ -235,7 +243,7 @@ namespace Dersa.Models
                 IParameterCollection UserParams = new ParameterCollection();
                 string userName = HttpContext.Current.User.Identity.Name;
                 UserParams.Add("@login", userName);
-                UserParams.Add("@password", Util.GetPassword(userName));
+                UserParams.Add("@password", DersaUtil.GetPassword(userName));
                 int userPermissions = M.ExecuteSPWithResult("DERSA_USER$GetPermissions", false, UserParams);
                 int canExecSql = userPermissions & 1;
                 if (canExecSql == 0)
@@ -250,13 +258,24 @@ namespace Dersa.Models
                     else
                     {
                         string queryId = GetQueryId(sql);
-                        (UserParams["@user_setting_name"] as IParameter).Value = "Функция вызова локального клиента SQL";
-                        System.Data.DataTable VT = M.ExecuteSPWithParams("DERSA_USER$GetTextUserSetting", UserParams);
-                        if (VT == null || VT.Rows.Count < 1)
-                            throw new Exception("Функция вызова локального клиента SQL не определена");
-                        string functionBody = VT.Rows[0][0].ToString();
-                        var result = new { action = functionBody, arg_name = "queryId", arg = queryId };
-                        return JsonConvert.SerializeObject(result);
+                        UserParams.Clear();
+                        UserParams.Add("@login", userName);
+                        UserParams.Add("@password", DersaUtil.GetPassword(userName));
+                        UserParams.Add("@user_setting_name", "Функция вызова локального клиента SQL");
+//                        (UserParams["@user_setting_name"] as IParameter).Value = "Функция вызова локального клиента SQL";
+                        try
+                        {
+                            System.Data.DataTable VT = M.ExecuteSPWithParams("DERSA_USER$GetTextUserSetting", UserParams);
+                            if (VT == null || VT.Rows.Count < 1)
+                                throw new Exception("Функция вызова локального клиента SQL не определена");
+                            string functionBody = VT.Rows[0][0].ToString();
+                            var result = new { action = functionBody, arg_name = "queryId", arg = queryId };
+                            return JsonConvert.SerializeObject(result);
+                        }
+                        catch(Exception exc)
+                        {
+                            throw;
+                        }
                     }
                 }
 

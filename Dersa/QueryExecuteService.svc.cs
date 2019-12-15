@@ -9,6 +9,7 @@ using DIOS.Common;
 using Dersa.Models;
 using Dersa.Common;
 using DIOS.WCF.Core;
+using Newtonsoft.Json;
 
 namespace Dersa
 {
@@ -19,7 +20,9 @@ namespace Dersa
     {
         public string GetText(string TextId, string token)
         {
-            string userName = Cryptor.Decrypt(token, "DERSA");
+            string userName = WcfCoreUtil.VerifyUser(token);
+            //string userName = Cryptor.Decrypt(token, "DERSA");
+
             return QueryControllerAdapter.GetString(TextId, false, userName);//._query;
         }
         public string GetUserToken(string name, string password)
@@ -38,10 +41,10 @@ namespace Dersa
                 string userName = WcfCoreUtil.VerifyUser(userToken);
                 if (userName == null)
                     userName = "ServiceUser";
-                string result = Util.GetAttributeValue(userName, int.Parse(entityId), attrName, -1);
+                string result = DersaUtil.GetAttributeValue(userName, int.Parse(entityId), attrName, -1);
                 DIOS.WCF.Core.WcfCoreUtil.RemoveUserFromUserTable();
                 return result;
-                //System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$GetAttribute", new object[] { entityId, attrName, userName, Util.GetPassword(userName) });
+                //System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$GetAttribute", new object[] { entityId, attrName, userName, DersaUtil.GetPassword(userName) });
                 //string result = "";
                 //if (T.Rows.Count > 0)
                 //    result = T.Rows[0]["Value"].ToString();
@@ -56,8 +59,9 @@ namespace Dersa
         {
             try 
             {
-                string userName = Cryptor.Decrypt(token, "DERSA");
-                Util.SetAttributeValue(new DersaAnonimousSqlManager(), userName, AttributeOwnerType.Entity, entity_id, attr_name, -1, attr_value);
+                string userName = WcfCoreUtil.VerifyUser(token);
+                //Cryptor.Decrypt(token, "DERSA");
+                DersaUtil.SetAttributeValue(new DersaAnonimousSqlManager(), userName, AttributeOwnerType.Entity, entity_id, attr_name, -1, attr_value);
                 //NodeControllerAdapter.SetTextProperty(int.Parse(entity_id), attr_name, attr_value, userName);
                 return "";
             }

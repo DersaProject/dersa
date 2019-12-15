@@ -11,7 +11,7 @@ namespace Dersa.Interfaces
 		int Y{get;}
 		int Width{get;}
 		int Height{get;}
-		IEntity Entity{get;}
+		IDersaEntity Entity{get;}
 		int GetChildIndex(int entityId);
 		IDiagramEntity Parent{get;}
 		int ChildrenIndexOf(IDiagramEntity de);

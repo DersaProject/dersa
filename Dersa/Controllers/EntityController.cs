@@ -10,6 +10,14 @@ namespace Dersa.Controllers
     public class EntityController : Controller
     {
 
+        public string List(string class_name, string filter = null, string order = "", int limit = -1, int offset = 0)
+        {
+
+            string result = (new EntityControllerAdapter()).List(class_name, filter, order, limit, offset);
+            return result;
+
+        }
+
         public string DownloadIcon(int id, bool from_stereotype)
         {
             try

@@ -5,6 +5,7 @@ using Dersa.Models;
 using Dersa.Common;
 using Newtonsoft.Json;
 using System.Collections;
+using DIOS.Common;
 using DIOS.Common.Interfaces;
 using System.Reflection;
 using System.Collections.Generic;
@@ -90,7 +91,7 @@ namespace Dersa.Controllers
         public ActionResult Index()
         {
             DersaUserSqlManager M = new DersaUserSqlManager();
-            System.Data.DataTable T = M.ExecSql("select class_name from OBJECT_TYPE(nolock)");
+            System.Data.DataTable T = M.ExecSql("select class_name from OBJECT_TYPE");
             return View(T);
         }
 

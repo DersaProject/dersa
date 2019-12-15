@@ -31,7 +31,7 @@ namespace Dersa.Controllers
                 Response.ContentType = "application/force-download";
                 string Header = "Attachment; Filename=" + fileName;
                 Response.AppendHeader("Content-Disposition", Header);
-                var SW = new System.IO.StreamWriter(Response.OutputStream);
+                var SW = new System.IO.StreamWriter(Response.OutputStream, System.Text.Encoding.Default);
                 SW.Write(result);
                 SW.Flush();
                 SW.Close();
@@ -49,7 +49,7 @@ namespace Dersa.Controllers
 
         public ActionResult GetViewByName(string view_name, string json_params)
         {
-            IParameterCollection Params = Util.DeserializeParams(json_params);
+            IParameterCollection Params = DIOS.Common.Util.DeserializeParams(json_params);
             return GetViewByName(view_name, Params, false);
         }
 
