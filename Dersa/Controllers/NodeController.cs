@@ -203,11 +203,7 @@ namespace Dersa.Controllers
 
         public string List(string id)
         {
-            string useDIOS = WebConfigurationManager.AppSettings["useDIOS"];
-            if (useDIOS.ToLower() == "true")
-                return NodeControllerAdapter.ListNodes(id);
-            else
-                return (new NodeControllerAdapter()).List(id);
+            return (new NodeControllerAdapter()).List(id);
         }
 
         public string Remove(int id, string diagram_id = null, int options = 0)
