@@ -244,12 +244,12 @@ namespace Dersa.Models
                 string userName = HttpContext.Current.User.Identity.Name;
                 UserParams.Add("@login", userName);
                 UserParams.Add("@password", DersaUtil.GetPassword(userName));
-                int userPermissions = M.ExecuteSPWithResult("DERSA_USER$GetPermissions", false, UserParams);
+                int userPermissions = M.ExecuteIntMethod("DERSA_USER", "GetPermissions", UserParams);
                 int canExecSql = userPermissions & 1;
                 if (canExecSql == 0)
                     return "You have no permissions to exec SQL in database.";
                 UserParams.Add("@user_setting_name", "Выполнять SQL локально");
-                int execSqlLocal = M.ExecuteSPWithResult("DERSA_USER$GetBoolUserSetting", false, UserParams);
+                int execSqlLocal = M.ExecuteIntMethod("DERSA_USER", "GetBoolUserSetting", UserParams);
                 int canExecLocalSql = userPermissions & 2;
                 if (execSqlLocal > 0)
                 {
@@ -265,7 +265,7 @@ namespace Dersa.Models
 //                        (UserParams["@user_setting_name"] as IParameter).Value = "Функция вызова локального клиента SQL";
                         try
                         {
-                            System.Data.DataTable VT = M.ExecuteSPWithParams("DERSA_USER$GetTextUserSetting", UserParams);
+                            System.Data.DataTable VT = M.ExecuteMethod("DERSA_USER", "GetTextUserSetting", UserParams);
                             if (VT == null || VT.Rows.Count < 1)
                                 throw new Exception("Функция вызова локального клиента SQL не определена");
                             string functionBody = VT.Rows[0][0].ToString();

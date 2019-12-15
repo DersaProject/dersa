@@ -14,6 +14,26 @@ namespace Dersa.Common
     public enum AttributeOwnerType : int { Entity = 0, Relation = 1 }
     public class DersaUtil
     {
+        public static string AddRelation(int stereotype, int entity_a, int entity_b)
+        {
+            try
+            {
+                DersaSqlManager DM = new DersaSqlManager();
+                IParameterCollection Params = new ParameterCollection(); 
+                Params.Add("stereotype", stereotype);
+                Params.Add("entity_a", entity_a);
+                Params.Add("entity_b", entity_b);
+                //Params.Add("login", userName);
+                //Params.Add("password", DersaUtil.GetPassword(userName));
+                int result = DM.ExecuteIntMethod("ENTITY","AddRelation", Params);
+                return result.ToString();
+            }
+            catch (Exception exc)
+            {
+                return exc.Message;
+            }
+        }
+
         public static object ExecMethodResult(int id, string method_name)
         {
             CachedObjects.CachedEntities[id] = null;
@@ -41,7 +61,7 @@ namespace Dersa.Common
                 throw new Exception(excMessage);
             }
             //string userName = HttpContext.Current.User.Identity.Name;
-            //System.Data.DataTable T = M.ExecuteSPWithParams("dbo.ENTITY$GetMethodParams", new object[] { id, method_name, userName, DersaUtil.GetPassword(userName) });
+            //System.Data.DataTable T = M.ExecuteMethod("dbo.ENTITY$GetMethodParams", new object[] { id, method_name, userName, DersaUtil.GetPassword(userName) });
             //string Params = "";
             //if (T.Rows.Count > 0)
             //    Params = T.Rows[0][0].ToString();
@@ -79,7 +99,7 @@ namespace Dersa.Common
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
-                DM.ExecuteSPWithParams("ENTITY$SetGuid", new object[] { entityId, guid, DersaUtil.GetPassword(userName) });
+                DM.ExecuteMethod("ENTITY", "SetGuid", new object[] { entityId, guid, DersaUtil.GetPassword(userName) });
                 return "";
             }
             catch(Exception exc)
@@ -91,15 +111,15 @@ namespace Dersa.Common
         public static string SetAttributeValue(DersaSqlManager DM, string userName, AttributeOwnerType ownerType, string entityId, string attrName, int attrType, string attrValue)
         {
             IParameterCollection Params = new ParameterCollection();
-            string procName = "";
+            string className = "";
             switch (ownerType)
             {
                 case AttributeOwnerType.Entity:
-                    procName = "ENTITY$SetAttribute";
+                    className = "ENTITY";
                     Params.Add("@entity", entityId);
                     break;
                 case AttributeOwnerType.Relation:
-                    procName = "RELATION$SetAttribute";
+                    className = "RELATION";
                     Params.Add("@relation", entityId);
                     break;
             }
@@ -108,12 +128,12 @@ namespace Dersa.Common
             Params.Add("@login", userName);
             Params.Add("@password", DersaUtil.GetPassword(userName));
             Params.Add("@attr_type", attrType);
-            int res = DM.ExecuteSPWithResult(procName, false, Params);
+            int res = DM.ExecuteIntMethod(className, "SetAttribute", Params);
             if(res == 5)
             {
                 Params["@attr_type"].Value = 5;
                 Params["@attr_value"].Value = Cryptor.Encrypt(attrValue, userName);
-                res = DM.ExecuteSPWithResult(procName, false, Params);
+                res = DM.ExecuteIntMethod(className, "SetAttribute", Params);
             }
             return "";
         }
@@ -127,7 +147,7 @@ namespace Dersa.Common
                 return res.ToString();
             }
             DersaSqlManager DM = new DersaSqlManager();
-            System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$GetAttribute", new object[] { entityId, attrName, userName, DersaUtil.GetPassword(userName) });
+            System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "GetAttribute", new object[] { entityId, attrName, userName, DersaUtil.GetPassword(userName) });
             if (T == null || T.Rows.Count < 1)
                 return null;
             if (attrType <= 0)
@@ -150,7 +170,7 @@ namespace Dersa.Common
             IParameterCollection UserParams = new ParameterCollection();
             UserParams.Add("@login", userName);
             UserParams.Add("@password", DersaUtil.GetPassword(userName));
-            return M.ExecuteSPWithResult("DERSA_USER$GetPermissions", false, UserParams);
+            return M.ExecuteIntMethod("DERSA_USER", "GetPermissions", UserParams);
         }
 
         public static string GetUserSetting(string userName, string settingName)
@@ -160,7 +180,7 @@ namespace Dersa.Common
             UserParams.Add("@login", userName);
             UserParams.Add("@password", DersaUtil.GetPassword(userName));
             UserParams.Add("@user_setting_name", settingName);
-            System.Data.DataTable VT = DM.ExecuteSPWithParams("DERSA_USER$GetUserSetting", UserParams);
+            System.Data.DataTable VT = DM.ExecuteMethod("DERSA_USER", "GetUserSetting", UserParams);
             if (VT == null || VT.Rows.Count < 1)
                 throw new Exception(string.Format("Не задано значение для параметра {0}", settingName));
             return VT.Rows[0][0].ToString();
@@ -171,7 +191,7 @@ namespace Dersa.Common
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
-                System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$SetAttribute", new object[] { entity, prop_name, prop_value, userName, DersaUtil.GetPassword(userName) });
+                System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "SetAttribute", new object[] { entity, prop_name, prop_value, userName, DersaUtil.GetPassword(userName) });
                 if (T.Rows.Count > 0)
                 {
                     return T.Rows[0][0].ToString();
@@ -189,7 +209,7 @@ namespace Dersa.Common
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
-                DM.ExecuteSPWithParams("ENTITY$SetStereotype", new object[] { entity, stereotype_name, userName, DersaUtil.GetPassword(userName) });
+                DM.ExecuteMethod("ENTITY", "SetStereotype", new object[] { entity, stereotype_name, userName, DersaUtil.GetPassword(userName) });
             }
             catch
             {
@@ -201,7 +221,7 @@ namespace Dersa.Common
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
-                System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$AddRelation", new object[] { entity, entity_b, stereotype_name, relation_name, source_class, source_ref, userName, DersaUtil.GetPassword(userName) });
+                System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "AddRelation", new object[] { entity, entity_b, stereotype_name, relation_name, source_class, source_ref, userName, DersaUtil.GetPassword(userName) });
                 if (T.Rows.Count > 0)
                 {
                     return T.Rows[0][0].ToString();
@@ -225,9 +245,9 @@ namespace Dersa.Common
                 Params.Add("options", options);
                 Params.Add("login", userName);
                 Params.Add("password", GetPassword(userName));
-                DataTable T = DM.ExecuteSPWithParams("ENTITY$OnDnD", Params);
+                DataTable T = DM.ExecuteMethod("ENTITY", "OnDnD", Params);
 
-//                DataTable T = DM.ExecuteSPWithParams("ENTITY$OnDnD", new object[] { src, dst, options, userName, GetPassword(userName) });
+//                DataTable T = DM.ExecuteMethod("ENTITY$OnDnD", new object[] { src, dst, options, userName, GetPassword(userName) });
                 string result = JsonConvert.SerializeObject(T);
                 return result;
             }

@@ -20,7 +20,7 @@ namespace Dersa.Models
             Params.Add("@login", currentUser);
             Params.Add("@password", DersaUtil.GetPassword(currentUser));
             DersaSqlManager M = new DersaSqlManager();
-            int res = M.ExecuteSPWithResult("DIAGRAM$Create", false, Params);
+            int res = M.ExecuteIntMethod("DIAGRAM", "Create", Params);
             return res.ToString();
         }
 
@@ -35,7 +35,7 @@ namespace Dersa.Models
             Params.Add("@login", currentUser);
             Params.Add("@password", DersaUtil.GetPassword(currentUser));
             DersaSqlManager M = new DersaSqlManager();
-            int res = M.ExecuteSPWithResult("DIAGRAM$SaveFromXml", false, Params);
+            int res = M.ExecuteIntMethod("DIAGRAM", "SaveFromXml", Params);
             return res.ToString();
         }
     }

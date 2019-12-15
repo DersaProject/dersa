@@ -37,7 +37,7 @@ namespace Dersa.Common
         protected override void LogSqlActivity(string query, string methodName)
         {
             DIOS.Common.Logger.LogStatic(query);
-            //dbManager.ExecuteSPWithParams("ACTIVITY_LOG$Log", new object[] { query.Replace("'", "''"), methodName});
+            //dbManager.ExecuteMethod("ACTIVITY_LOG$Log", new object[] { query.Replace("'", "''"), methodName});
         }
 
         static DersaSqlManager()

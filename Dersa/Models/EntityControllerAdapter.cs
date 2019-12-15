@@ -25,7 +25,7 @@ namespace Dersa.Models
             object rootArg = null;
             if (root_entity > 0)
                 rootArg = root_entity;
-            System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$FindNext", new object[] { entity, srchval, rootArg, 8, userName, DersaUtil.GetPassword(userName) });
+            System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "FindNext", new object[] { entity, srchval, rootArg, 8, userName, DersaUtil.GetPassword(userName) });
             System.Data.DataRow lastRow = null;
             if (T.Rows.Count > 0)
                 lastRow = T.Rows[T.Rows.Count - 1];
@@ -80,7 +80,7 @@ namespace Dersa.Models
         public string GetPath(int id, int for_system)
         {
             DersaSqlManager DM = new DersaSqlManager();
-            System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$GetPath", new object[] { id, 1/*for_system*/ });
+            System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "GetPath", new object[] { id, 1/*for_system*/ });
             string result = "";
             if (T.Rows.Count > 0)
                 result = T.Rows[0][0].ToString();

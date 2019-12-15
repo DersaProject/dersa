@@ -29,7 +29,7 @@ namespace Dersa.Models
         public string Info(string login)
         {
             DersaSqlManager DM = new DersaSqlManager();
-            System.Data.DataTable T = DM.ExecuteSPWithParams("DERSA_USER$GetInfo", new object[] { login });
+            System.Data.DataTable T = DM.ExecuteMethod("DERSA_USER", "GetInfo", new object[] { login });
             T.Rows[0]["email"] = Cryptor.Decrypt(T.Rows[0]["email"].ToString(), DersaUtil.GetDefaultPassword());
             return JsonConvert.SerializeObject(T);
         }
@@ -44,7 +44,7 @@ namespace Dersa.Models
                 {
                     try
                     {
-                        System.Data.DataTable T = DM.ExecuteSPWithParams("USER_SETTING$SetValue", new object[] { Param.Name, Param.Value, userName, DersaUtil.GetPassword(userName) });
+                        System.Data.DataTable T = DM.ExecuteMethod("USER_SETTING", "SetValue", new object[] { Param.Name, Param.Value, userName, DersaUtil.GetPassword(userName) });
                         if (T.Rows.Count > 0)
                         {
                             return T.Rows[0][0].ToString();
@@ -70,7 +70,7 @@ namespace Dersa.Models
                 string userName = HttpContext.Current.User.Identity.Name;
                 if (settingName == null)
                 {
-                    System.Data.DataTable T = DM.ExecuteSPWithParams("USER_SETTING$List", new object[] { userName, DersaUtil.GetPassword(userName) });
+                    System.Data.DataTable T = DM.ExecuteMethod("USER_SETTING", "List", new object[] { userName, DersaUtil.GetPassword(userName) });
                     var query =
                         from System.Data.DataRow R in T.Rows
                         select new
@@ -94,7 +94,7 @@ namespace Dersa.Models
                 }
                 else
                 {
-                    System.Data.DataTable T = DM.ExecuteSPWithParams("DERSA_USER$GetTextUserSetting", new object[] { userName, DersaUtil.GetPassword(userName), settingName });
+                    System.Data.DataTable T = DM.ExecuteMethod("DERSA_USER", "GetTextUserSetting", new object[] { userName, DersaUtil.GetPassword(userName), settingName });
                     var query =
                         from System.Data.DataRow R in T.Rows
                         select new
@@ -124,17 +124,17 @@ namespace Dersa.Models
             IParameterCollection Params = new ParameterCollection();
             Params.Add("@login", login);
             SqlManager M = new DersaAnonimousSqlManager();
-            int checkresult = M.ExecuteSPWithResult("DERSA_USER$Exists", false, Params);
+            int checkresult = M.ExecuteIntMethod("DERSA_USER", "Exists", Params);
             if (checkresult > 0)
                 return "Пользователь с таким логином уже зарегистрирован";
             Params.Add("@email", Cryptor.Encrypt(email, DersaUtil.GetDefaultPassword()));
-            checkresult = M.ExecuteSPWithResult("DERSA_USER$Exists", false, Params);
+            checkresult = M.ExecuteIntMethod("DERSA_USER", "Exists", Params);
             if (checkresult > 0)
                 return "Пользователь с таким email уже зарегистрирован";
             try
             {
                 Token(login, email);
-                System.Data.DataTable T = M.ExecuteSPWithParams("DERSA_USER$Register", new object[] { login, password, Cryptor.Encrypt(email, DersaUtil.GetDefaultPassword()), name });
+                System.Data.DataTable T = M.ExecuteMethod("DERSA_USER", "Register", new object[] { login, password, Cryptor.Encrypt(email, DersaUtil.GetDefaultPassword()), name });
                 return "";
             }
             catch(Exception exc) 
@@ -153,7 +153,7 @@ namespace Dersa.Models
             MailMessage Message = new MailMessage();
             Message.From = new MailAddress("info@dersa.ru");
             DersaAnonimousSqlManager DM = new DersaAnonimousSqlManager();
-            System.Data.DataTable T = DM.ExecuteSPWithParams("DERSA_USER$GetInfo", new object[] { login });
+            System.Data.DataTable T = DM.ExecuteMethod("DERSA_USER", "GetInfo", new object[] { login });
             if(email == "")
             if (T.Rows.Count > 0)
                 email = Cryptor.Decrypt(T.Rows[0]["email"].ToString(), DersaUtil.GetDefaultPassword());
@@ -186,7 +186,7 @@ namespace Dersa.Models
             Params.Add("@password", DersaUtil.GetPassword(S.username));
             SqlManager M = new DersaAnonimousSqlManager();
             
-            int checkresult = M.ExecuteSPWithResult("DERSA_USER$Activate", false, Params);
+            int checkresult = M.ExecuteIntMethod("DERSA_USER", "Activate", Params);
             return S.username;
         }
         public static string AuthorizeUser(string user_name = "", string password = "")
@@ -198,7 +198,8 @@ namespace Dersa.Models
                 Params.Add("@login", user_name);
                 Params.Add("@password", password);
                 SqlManager M = new DersaAnonimousSqlManager();
-                int checkresult = M.ExecuteSPWithResult("DERSA_USER$CanAuthorize", false, Params);
+                int checkresult = M.ExecuteIntMethod("DERSA_USER", "CanAuthorize", Params);
+                //int checkresult = M.ExecuteSPWithResult("DERSA_USER$CanAuthorize", false, Params);
                 if (checkresult == (int)DersaUserStatus.active)
                 {
                     IAuthenticationManager authenticationManager = HttpContext.Current.GetOwinContext().Authentication;

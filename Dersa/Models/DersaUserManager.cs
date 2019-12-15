@@ -103,7 +103,8 @@ namespace Dersa.Models
                 IParameterCollection Params = new ParameterCollection();
                 Params.Add("@login", login);
                 SqlManager M = new Dersa.Common.DersaAnonimousSqlManager();
-                int checkresult = M.ExecuteSPWithResult("DERSA_USER$Exists", false, Params);
+                int checkresult = M.ExecuteIntMethod("DERSA_USER", "Exists", Params);
+                //int checkresult = M.ExecuteSPWithResult("DERSA_USER$Exists", false, Params);
                 return checkresult > 0;
             }
             catch(Exception exc)

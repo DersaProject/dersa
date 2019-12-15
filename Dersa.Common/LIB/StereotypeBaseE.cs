@@ -170,13 +170,13 @@ namespace DersaStereotypes
         public static void DropDiagram(string diagram_id, string userName)
         {
             DersaSqlManager DM = new DersaSqlManager();
-            DM.ExecuteSPWithParams("ENTITY$Remove", new object[] { diagram_id, userName, DersaUtil.GetPassword(userName), 0 });
+            DM.ExecuteMethod("ENTITY", "Remove", new object[] { diagram_id, userName, DersaUtil.GetPassword(userName), 0 });
         }
 
         public static void DropRelation(int id, string userName)
         {
             DersaSqlManager DM = new DersaSqlManager();
-            DM.ExecuteSPWithParams("ENTITY$Remove", new object[] { id, userName, DersaUtil.GetPassword(userName), 0 });
+            DM.ExecuteMethod("ENTITY", "Remove", new object[] { id, userName, DersaUtil.GetPassword(userName), 0 });
         }
 
         public virtual string AddChild(string userName, string stereotypeName)
@@ -239,8 +239,8 @@ namespace DersaStereotypes
                 Params.Add("name", objectName);
                 Params.Add("login", userName);
                 Params.Add("password", DersaUtil.GetPassword(userName));
-                string result = JsonConvert.SerializeObject(DM.ExecuteSPWithParams("ENTITY$Rename", Params));
-//                string result = JsonConvert.SerializeObject(DM.ExecuteSPWithParams("ENTITY$Rename", new object[] { this.Id, objectName, userName, DersaUtil.GetPassword(userName) }));
+                string result = JsonConvert.SerializeObject(DM.ExecuteMethod("ENTITY", "Rename", Params));
+//                string result = JsonConvert.SerializeObject(DM.ExecuteMethod("ENTITY$Rename", new object[] { this.Id, objectName, userName, DersaUtil.GetPassword(userName) }));
                 return result;
             }
             catch
@@ -260,7 +260,7 @@ namespace DersaStereotypes
                 if (!(this.Parent as StereotypeBaseE).AllowModifyChildren())
                     return;
                 DersaSqlManager DM = new DersaSqlManager();
-                DM.ExecuteSPWithParams("ENTITY$Remove", new object[] { this.Id, userName, DersaUtil.GetPassword(userName), options });
+                DM.ExecuteMethod("ENTITY", "Remove", new object[] { this.Id, userName, DersaUtil.GetPassword(userName), options });
             }
             catch
             {

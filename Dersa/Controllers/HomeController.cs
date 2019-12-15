@@ -24,7 +24,7 @@ namespace Dersa.Controllers
                 try
                 {
                     DersaSqlManager DM = new DersaSqlManager();
-                    System.Data.DataTable T = DM.ExecuteSPWithParams("DERSA_USER$GetTextUserSetting", new object[] { userName, DersaUtil.GetPassword(userName), "toolbox JSON" });
+                    System.Data.DataTable T = DM.ExecuteMethod("DERSA_USER", "GetTextUserSetting", new object[] { userName, DersaUtil.GetPassword(userName), "toolbox JSON" });
                     if (T != null && T.Rows.Count > 0)
                         ViewBag.ToolBoxData = T.Rows[0][0];
                     else

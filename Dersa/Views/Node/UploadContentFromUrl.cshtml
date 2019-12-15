@@ -3,7 +3,7 @@
     @using (Html.BeginForm("UploadContentFromUrl", "Node", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         <input type="text" name="id" value="@ViewBag.PackageId" , hidden /><br />
-        <input type="text" name="uploadUrl" style="width:400px;" /><br />
+        <input type="text" name="uploadUrl" style="width:800px;" /><br />
         <br /><input type="submit" name="Submit" id="SubmitSingle" value="Upload" />
         @Html.CheckBox("closeWindow", true)
         @Html.Label("закрыть после загрузки")

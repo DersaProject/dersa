@@ -44,7 +44,7 @@ namespace Dersa
                 string result = DersaUtil.GetAttributeValue(userName, int.Parse(entityId), attrName, -1);
                 DIOS.WCF.Core.WcfCoreUtil.RemoveUserFromUserTable();
                 return result;
-                //System.Data.DataTable T = DM.ExecuteSPWithParams("ENTITY$GetAttribute", new object[] { entityId, attrName, userName, DersaUtil.GetPassword(userName) });
+                //System.Data.DataTable T = DM.ExecuteMethod("ENTITY$GetAttribute", new object[] { entityId, attrName, userName, DersaUtil.GetPassword(userName) });
                 //string result = "";
                 //if (T.Rows.Count > 0)
                 //    result = T.Rows[0]["Value"].ToString();

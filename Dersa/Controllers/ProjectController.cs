@@ -72,7 +72,7 @@ namespace Dersa.Controllers
         public ActionResult Display(string class_name)
         {
             DersaUserSqlManager M = new DersaUserSqlManager();
-            System.Data.DataTable T = M.ExecuteSPWithParams("OBJ$List", new object[] { class_name });
+            System.Data.DataTable T = M.ExecuteMethod("OBJ", "List", new object[] { class_name });
             try
             {
                 ActionResult CV = View(class_name, T);
@@ -98,7 +98,7 @@ namespace Dersa.Controllers
         public string ObjectInfo(string class_name, int id)
         {
             DersaUserSqlManager M = new DersaUserSqlManager();
-            System.Data.DataTable T = M.ExecuteSPWithParams("OBJ$Info", new object[] { class_name, id });
+            System.Data.DataTable T = M.ExecuteMethod("OBJ", "Info", new object[] { class_name, id });
             System.Data.DataRow R = T.Rows.Count > 0 ? T.Rows[0] : null;
             var query =
                 from System.Data.DataColumn C in T.Columns
@@ -133,7 +133,7 @@ namespace Dersa.Controllers
                 string keyName = class_name.ToLower();
                 if (!Params.Contains(keyName))
                     return "no key";
-                System.Data.DataTable T = M.ExecuteSPWithParams("OBJ$Info", new object[] { class_name, Params[class_name.ToLower()].Value });
+                System.Data.DataTable T = M.ExecuteMethod("OBJ", "Info", new object[] { class_name, Params[class_name.ToLower()].Value });
                 if (T.Rows.Count < 1)
                 {
                     if (!doInsert)
@@ -171,7 +171,7 @@ namespace Dersa.Controllers
             DersaUserSqlManager M = new DersaUserSqlManager();
             try
             {
-                M.ExecuteSPWithParams("OBJ$Drop", new object[] { class_name, id });
+                M.ExecuteMethod("OBJ", "Drop", new object[] { class_name, id });
                 return "";
             }
             catch (System.Exception exc)
