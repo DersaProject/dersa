@@ -188,7 +188,58 @@ namespace Dersa.Models
             string displayText = "the method " + method_name + " returned no result";
             if (!string.IsNullOrEmpty(res))
                 displayText = res.ToString();
-            var resultArray = new object[]{
+            bool execSqlLocal = false;
+            try
+            {
+                execSqlLocal = QueryControllerAdapter.GetLocalSqlExecution();
+            }
+            catch (Exception exc)
+            {
+            }
+            var resultArray = new object[0];
+            if(execSqlLocal)
+                resultArray = new object[]{
+                new
+                {
+                    Name = "SQL",
+                    Value = displayText,
+                    DisplayValue = displayText,
+                    ControlType = "textarea",
+                    Height = 200,
+                    Width = 300,
+                    WriteUnchanged = true
+                },
+                new
+                {
+                    Name = "entity_id",
+                    Value = id.ToString(),
+                    DisplayValue = "",
+                    ControlType = "text",
+                    ReadOnly = true,
+                    WriteUnchanged = true
+                },
+                new
+                {
+                    Name = "object_name",
+                    Value = "ENTITY_VIEW",
+                    DisplayValue = "",
+                    ControlType = "text",
+                    ReadOnly = true,
+                    WriteUnchanged = true
+                },
+                new
+                {
+                    Name = "object_type",
+                    Value = "VIEW",
+                    DisplayValue = "",
+                    ControlType = "text",
+                    ReadOnly = true,
+                    WriteUnchanged = true
+                }
+            };
+
+            else
+                resultArray = new object[]{
                 new
                 {
                     Name = "SQL",
@@ -259,6 +310,7 @@ namespace Dersa.Models
 
         public string MethodsForm(int id)
         {
+            CachedObjects.ClearCache();
             try
             {
                 string SqlExecAction = "alert";

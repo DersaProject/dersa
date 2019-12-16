@@ -167,10 +167,10 @@ namespace Dersa.Controllers
             return (new QueryControllerAdapter()).GetAction(MethodName, id, paramString);
         }
 
-        public string GetQueryId(string query)
-        {
-            return QueryControllerAdapter.GetQueryId(query);
-        }
+        //public string GetQueryId(string query)
+        //{
+        //    return QueryControllerAdapter.GetQueryId(query);
+        //}
 
         public ActionResult Table(string table_name, string db_name = null, string order = null)
         {
