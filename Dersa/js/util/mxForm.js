@@ -182,7 +182,14 @@ function CreateProperties(form, attrs, url, ActionAfterExec, ClassName, callBack
                 xhr.open('POST', url, false);
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 xhr.send(body);
-                if (ActionAfterExec == "alert") {
+                var actionObject = null;
+                var resultAction = null;
+                try {
+                    actionObject = JSON.parse(xhr.responseText);
+                    resultAction = actionObject.action;
+                }
+                catch (err) { }
+                if (ActionAfterExec == "alert" && !resultAction) {
                     if (xhr.responseText != "") {
                         alert(xhr.responseText);
                     }
@@ -192,16 +199,22 @@ function CreateProperties(form, attrs, url, ActionAfterExec, ClassName, callBack
                         callBackFunction(parentForm);
                     }
                 }
-                else if (ActionAfterExec == "exec") {
-                    var actionObject = JSON.parse(xhr.responseText);
-                    if (actionObject && actionObject.action && actionObject.arg_name && actionObject.arg) {
-                        var f = new Function(actionObject.arg_name, actionObject.action);
-                        var R = f(actionObject.arg);
-                        console.log(R);
+                else if (ActionAfterExec == "exec" || resultAction) {
+                    if (actionObject && resultAction && actionObject.arg_name && actionObject.arg) {
+                        //var f = new Function(actionObject.arg_name, resultAction);
+                        //var R = f(actionObject.arg);
+                        var delimiter = "";
+                        if (typeof actionObject.arg === "string")
+                            delimiter = "'";
+                        var F = actionObject.arg_name + '=' + delimiter + actionObject.arg + delimiter + '; ' + resultAction;
+                        queryResult = eval(F);
+                        if (ActionAfterExec == "alert")
+                            alert(queryResult);
+                            //alert(R);
                     }
-                    else if (actionObject && actionObject.action) {
+                    else if (resultAction) {
                         try {
-                            eval(actionObject.action);
+                            eval(resultAction);
                         }
                         catch (err) {
                             let errWin = window.open('', 'newwin', 'width=700,height=700,status=1,menubar=1');
