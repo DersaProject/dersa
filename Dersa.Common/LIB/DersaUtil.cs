@@ -34,7 +34,7 @@ namespace Dersa.Common
             }
         }
 
-        public static object ExecMethodResult(int id, string method_name)
+        public static dynamic ExecMethodResult(int id, string method_name)
         {
             CachedObjects.CachedEntities[id] = null;
             DersaSqlManager M = new DersaSqlManager();

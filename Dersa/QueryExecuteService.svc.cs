@@ -41,14 +41,18 @@ namespace Dersa
                 string userName = WcfCoreUtil.VerifyUser(userToken);
                 if (userName == null)
                     userName = "ServiceUser";
-                string result = DersaUtil.GetAttributeValue(userName, int.Parse(entityId), attrName, -1);
-                DIOS.WCF.Core.WcfCoreUtil.RemoveUserFromUserTable();
+
+                string result = string.Format("Не удалось получить значение атрибута {0} у объекта {1}", attrName, entityId);
+                int Id = -1;
+                if(int.TryParse(entityId, out Id))
+                {
+                    result = DersaUtil.GetAttributeValue(userName, Id, attrName, -1);
+                }
+                else
+                {
+                    result = QueryControllerAdapter.GetString(entityId, false, userName);
+                }
                 return result;
-                //System.Data.DataTable T = DM.ExecuteMethod("ENTITY$GetAttribute", new object[] { entityId, attrName, userName, DersaUtil.GetPassword(userName) });
-                //string result = "";
-                //if (T.Rows.Count > 0)
-                //    result = T.Rows[0]["Value"].ToString();
-                //return result;
             }
             catch(Exception exc)
             {

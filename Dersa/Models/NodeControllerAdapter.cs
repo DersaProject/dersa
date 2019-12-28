@@ -17,7 +17,7 @@ namespace Dersa.Models
 {
     public class NodeControllerAdapter
     {
-        public class SchemaEntity
+        public class SchemaEntity 
         {
             public string StereotypeName;
             public string Name;
@@ -181,13 +181,25 @@ namespace Dersa.Models
             //object[] ParamValues = Util.GetMethodCallParameterValues(Params);
             //object res = mi.Invoke(cInst, ParamValues);
 
-            object execRes = DersaUtil.ExecMethodResult(id, method_name);
-            string res = "";
+            dynamic execRes = DersaUtil.ExecMethodResult(id, method_name);
+            string displayText = "";
             if (execRes is string)
-                res = execRes.ToString();
-            string displayText = "the method " + method_name + " returned no result";
-            if (!string.IsNullOrEmpty(res))
-                displayText = res.ToString();
+            {
+                displayText = (string)execRes;
+                execRes = new
+                {
+                    sql = displayText,
+                    object_name = "",
+                    object_type = ""
+                };
+            }
+            else
+            {
+                string serializedRes = JsonConvert.SerializeObject(execRes);
+                execRes = JsonConvert.DeserializeObject<dynamic>(serializedRes);
+            }
+            if(execRes.sql != null)
+                displayText = execRes.sql;
             bool execSqlLocal = false;
             try
             {
@@ -212,28 +224,25 @@ namespace Dersa.Models
                 new
                 {
                     Name = "entity_id",
-                    Value = id.ToString(),
+                    Value = id,
                     DisplayValue = "",
-                    ControlType = "text",
-                    ReadOnly = true,
+                    ControlType = "hidden",
                     WriteUnchanged = true
                 },
                 new
                 {
                     Name = "object_name",
-                    Value = "ENTITY_VIEW",
+                    Value = execRes.object_name,
                     DisplayValue = "",
                     ControlType = "text",
-                    ReadOnly = true,
                     WriteUnchanged = true
                 },
                 new
                 {
                     Name = "object_type",
-                    Value = "VIEW",
+                    Value = execRes.object_type,
                     DisplayValue = "",
                     ControlType = "text",
-                    ReadOnly = true,
                     WriteUnchanged = true
                 }
             };
@@ -321,18 +330,18 @@ namespace Dersa.Models
                 UserParams.Add("@password", DersaUtil.GetPassword(userName));
                 int userPermissions = DM.ExecuteIntMethod("DERSA_USER", "GetPermissions", UserParams);
                 //int userPermissions = DM.ExecuteSPWithResult("DERSA_USER$GetPermissions", false, UserParams);
-                int canExecSql = userPermissions & 1;
-                if (canExecSql != 0)
-                {
-                    UserParams.Add("@user_setting_name", "Выполнять SQL локально");
-                    int execSqlLocal = DM.ExecuteIntMethod("DERSA_USER", "GetBoolUserSetting", UserParams);
-                    //int execSqlLocal = DM.ExecuteSPWithResult("DERSA_USER$GetBoolUserSetting", false, UserParams);
-                    int canExecLocalSql = userPermissions & 2;
-                    if (execSqlLocal > 0 && canExecLocalSql != 0)
-                    {
-                        SqlExecAction = "exec"; 
-                    }
-                }
+                //int canExecSql = userPermissions & 1;
+                //if (canExecSql != 0)
+                //{
+                //    UserParams.Add("@user_setting_name", "Выполнять SQL локально");
+                //    int execSqlLocal = DM.ExecuteIntMethod("DERSA_USER", "GetBoolUserSetting", UserParams);
+                //    //int execSqlLocal = DM.ExecuteSPWithResult("DERSA_USER$GetBoolUserSetting", false, UserParams);
+                //    int canExecLocalSql = userPermissions & 2;
+                //    if (execSqlLocal > 0 && canExecLocalSql != 0)
+                //    {
+                //        SqlExecAction = "exec"; 
+                //    }
+                //}
 
                 System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "GetMethods", new object[] { id, userName, DersaUtil.GetPassword(userName) });
                 int i = 1;

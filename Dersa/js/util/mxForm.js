@@ -201,16 +201,10 @@ function CreateProperties(form, attrs, url, ActionAfterExec, ClassName, callBack
                 }
                 else if (ActionAfterExec == "exec" || resultAction) {
                     if (actionObject && resultAction && actionObject.arg_name && actionObject.arg) {
-                        //var f = new Function(actionObject.arg_name, resultAction);
-                        //var R = f(actionObject.arg);
-                        var delimiter = "";
-                        if (typeof actionObject.arg === "string")
-                            delimiter = "'";
-                        var F = actionObject.arg_name + '=' + delimiter + actionObject.arg + delimiter + '; ' + resultAction;
-                        queryResult = eval(F);
+                        var f = new Function(actionObject.arg_name, resultAction);
+                        var R = f(actionObject.arg);
                         if (ActionAfterExec == "alert")
-                            alert(queryResult);
-                            //alert(R);
+                            alert(R);
                     }
                     else if (resultAction) {
                         try {

@@ -14,6 +14,7 @@ namespace Dersa.Controllers
 {
     public class QueryController : Controller
     {
+
         public void DownloadContent(string urlId, string fileName="result.html") 
         {
             try
@@ -125,23 +126,23 @@ namespace Dersa.Controllers
 
         }
 
-        //public ActionResult Report(string proc_name, string parameters)
-        //{
-        //    DersaSqlManager M = new DersaSqlManager();
-        //    IParameterCollection Params = Util.DeserializeParams(parameters);
-        //    if (Params.Contains("proc_name") || !string.IsNullOrEmpty(proc_name))
-        //    {
-        //        if (Params.Contains("proc_name"))
-        //        {
-        //            proc_name = Params["proc_name"].Value.ToString();
-        //            Params.Remove("proc_name");
-        //        }
-        //        System.Data.DataTable T = M.ExecuteMethod(proc_name, Params);
-        //        return View(T);
-        //    }
-        //    else
-        //        throw new System.Exception("procedure for report is not defined!");
-        //}
+        public ActionResult Report(string proc_name, string parameters)
+        {
+            DersaSqlManager M = new DersaSqlManager();
+            IParameterCollection Params = Util.DeserializeParams(parameters);
+            if (Params.Contains("proc_name") || !string.IsNullOrEmpty(proc_name))
+            {
+                if (Params.Contains("proc_name"))
+                {
+                    proc_name = Params["proc_name"].Value.ToString();
+                    Params.Remove("proc_name");
+                }
+                System.Data.DataTable T = M.ExecuteSPWithParams(proc_name, Params);
+                return View(T);
+            }
+            else
+                throw new System.Exception("procedure for report is not defined!");
+        }
 
         public string DebugParams(string json_params)
         {
@@ -214,6 +215,11 @@ namespace Dersa.Controllers
         public string PutHtml(string html)
         {
             return QueryControllerAdapter.PutString(html);
+        }
+
+        public string PutText(string text)
+        {
+            return QueryControllerAdapter.PutString(text);
         }
 
         public string GetHtml(string Id, bool viewSource = false)
