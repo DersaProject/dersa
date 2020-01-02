@@ -8,12 +8,79 @@ using DIOS.Common.Interfaces;
 using DIOS.ObjectLib;
 using Newtonsoft.Json;
 using System.Reflection;
+using DersaStereotypes;
 
 namespace Dersa.Common
 {
     public enum AttributeOwnerType : int { Entity = 0, Relation = 1 }
+
+    public class SchemaEntity
+    {
+        public string StereotypeName;
+        public string Name;
+        public SchemaAttribute[] schemaAttributes;
+        public SchemaEntity[] childEntities;
+    }
+    public class SchemaAttribute
+    {
+        public string Name;
+        public string Value;
+    }
+
     public class DersaUtil
     {
+
+        public static SchemaEntity[] GetSchema(string JsonContent)
+        {
+            SchemaEntity[] schemaContent = JsonConvert.DeserializeObject<SchemaEntity[]>(JsonContent);
+            return schemaContent;
+        }
+
+        public static string CreateEntity(SchemaEntity schemaEntity, string parentId, string userName, string guid = null)
+        {
+            string stereotypeName = schemaEntity.StereotypeName;
+            string entityName = schemaEntity.Name;
+            SchemaAttribute[] attrs = schemaEntity.schemaAttributes;
+            string entityCreateResult = EntityAddChild(userName, stereotypeName, parentId, 0);//DnD(stereotypeName, parentId, 0);  //"[{\"id\":10000361,\"text\":\"Entity\",\"icon\":\"Entity\",\"name\":\"Entity\"}]"; 
+            string resultId = "";
+            if (string.IsNullOrEmpty(entityCreateResult))
+                return resultId;
+            dynamic ES = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(entityCreateResult);
+            if (ES == null)
+                return resultId;
+            if (ES.Count > 0)
+            {
+                int entId = ES[0].id;
+                StereotypeBaseE objToRename = StereotypeBaseE.GetSimpleInstance(entId);
+                if (objToRename != null)
+                {
+                    objToRename.Rename(userName, entityName);
+                }
+                resultId = entId.ToString();
+                //Rename(resultId, entityName);
+                //if (guid != null)
+                //    DersaUtil.SetGuid(HttpContext.User.Identity.Name, resultId, guid);
+            }
+            Common.DersaSqlManager DM = new Common.DersaSqlManager();
+            if (resultId != "" && attrs != null && attrs.Length > 0)
+            {
+                for (int a = 0; a < attrs.Length; a++)
+                {
+                    //NodeControllerAdapter.SetAttribute(DM, "ENTITY$SetAttribute", resultId, attrs[a].Name, attrs[a].Value);
+                    SetAttributeValue(DM, userName, AttributeOwnerType.Entity, resultId, attrs[a].Name, 0, attrs[a].Value);
+                }
+            }
+            SchemaEntity[] childEntities = schemaEntity.childEntities;
+            for (int c = 0; c < childEntities.Length; c++)
+            {
+                SchemaEntity childEntity = childEntities[c];
+                CreateEntity(childEntity, resultId, userName);
+            }
+
+            return resultId;
+
+        }
+
         public static string AddRelation(int stereotype, int entity_a, int entity_b)
         {
             try

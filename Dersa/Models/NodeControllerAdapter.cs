@@ -17,25 +17,6 @@ namespace Dersa.Models
 {
     public class NodeControllerAdapter
     {
-        public class SchemaEntity 
-        {
-            public string StereotypeName;
-            public string Name;
-            public SchemaAttribute[] schemaAttributes;
-            public SchemaEntity[] childEntities;
-        }
-        public class SchemaAttribute
-        {
-            public string Name;
-            public string Value;
-        }
-
-        public static SchemaEntity[] GetSchema(string JsonContent)
-        {
-            SchemaEntity[] schemaContent = JsonConvert.DeserializeObject<SchemaEntity[]>(JsonContent);
-            return schemaContent;
-        }
-
         public string GetInsertSubmenu(int id)
         {
             DataTable menuLevels = JsonConvert.DeserializeObject<DataTable>(JsonConvert.SerializeObject(
@@ -545,7 +526,7 @@ namespace Dersa.Models
             //}
             string userName = HttpContext.Current.User.Identity.Name;
 
-            if (src.Contains("D_"))//диагграммы
+            if (src.Contains("D_"))//диаграммы
                 return DersaUtil.EntityAddChild(HttpContext.Current.User.Identity.Name, src, dst, options);
             StereotypeBaseE objFrom = null;
             int intSrc = -1;

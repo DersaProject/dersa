@@ -68,17 +68,18 @@ namespace Dersa.Controllers
         [HttpPost]
         public ActionResult UploadContent(int id, IEnumerable<HttpPostedFileBase> fileUpload, bool closeWindow = false)
         {
+            string userName = HttpContext.User.Identity.Name;
             foreach (var file in fileUpload)
             {
                 if (file == null) continue;
                 byte[] fileContent = new byte[file.InputStream.Length];
                 file.InputStream.Read(fileContent, 0, fileContent.Length);
                 string JsonContent = System.Text.Encoding.Default.GetString(fileContent);
-                NodeControllerAdapter.SchemaEntity[] schemaContent = NodeControllerAdapter.GetSchema(JsonContent);
+                SchemaEntity[] schemaContent = DersaUtil.GetSchema(JsonContent);
                 for (int i = 0; i < schemaContent.Length; i++)
                 {
-                    NodeControllerAdapter.SchemaEntity schemaEntity = schemaContent[i];
-                    string entId = CreateEntity(schemaEntity, id.ToString());
+                    SchemaEntity schemaEntity = schemaContent[i];
+                    string entId = DersaUtil.CreateEntity(schemaEntity, id.ToString(), userName);
                 }
             }
             if (closeWindow)
@@ -104,8 +105,10 @@ namespace Dersa.Controllers
             //        string entId = CreateEntity(schemaEntity, id.ToString());
             //    }
             //}
+            string userName = HttpContext.User.Identity.Name;
+
             System.Net.HttpWebRequest req = System.Net.HttpWebRequest.CreateHttp(uploadUrl);
-            System.Net.HttpWebRequest authReq = System.Net.HttpWebRequest.CreateHttp("http://" + req.Address.Authority + "/Account/aspNetCookie?login=" + HttpContext.User.Identity.Name);
+            System.Net.HttpWebRequest authReq = System.Net.HttpWebRequest.CreateHttp("http://" + req.Address.Authority + "/Account/aspNetCookie?login=" + userName);
             authReq.Method = "GET";
             var resp = authReq.GetResponse();
             var respStream = resp.GetResponseStream();
@@ -120,13 +123,13 @@ namespace Dersa.Controllers
             respStream = resp.GetResponseStream();
             SR = new System.IO.StreamReader(respStream);
             string JsonContent = SR.ReadToEnd();
-            NodeControllerAdapter.SchemaEntity[] schemaContent = NodeControllerAdapter.GetSchema(JsonContent);
+            SchemaEntity[] schemaContent = DersaUtil.GetSchema(JsonContent);
             if (schemaContent != null)
             {
                 for (int i = 0; i < schemaContent.Length; i++)
                 {
-                    NodeControllerAdapter.SchemaEntity schemaEntity = schemaContent[i];
-                    string entId = CreateEntity(schemaEntity, id.ToString());
+                    SchemaEntity schemaEntity = schemaContent[i];
+                    string entId = DersaUtil.CreateEntity(schemaEntity, id.ToString(), userName);
                 }
             }
 
@@ -134,46 +137,6 @@ namespace Dersa.Controllers
                 return View("Close");
             else
                 return RedirectToAction("UploadContent/" + id.ToString());
-
-        }
-
-        //private string CreateEntity(string stereotypeName, string parentId, string entityName, NodeControllerAdapter.SchemaAttribute[] attrs, string guid = null)
-        private string CreateEntity(NodeControllerAdapter.SchemaEntity schemaEntity, string parentId, string guid = null) 
-        {
-            string stereotypeName = schemaEntity.StereotypeName;
-            string entityName = schemaEntity.Name;
-            NodeControllerAdapter.SchemaAttribute[] attrs = schemaEntity.schemaAttributes;
-            string entityCreateResult = DnD(stereotypeName, parentId, 0);  //"[{\"id\":10000361,\"text\":\"Entity\",\"icon\":\"Entity\",\"name\":\"Entity\"}]"; 
-            string resultId = "";
-            if (string.IsNullOrEmpty(entityCreateResult))
-                return resultId;
-            dynamic ES = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(entityCreateResult);
-            if (ES == null)
-                return resultId;
-            if (ES.Count > 0)
-            {
-                resultId = ES[0].id.ToString();
-                Rename(resultId, entityName);
-                if (guid != null)
-                    DersaUtil.SetGuid(HttpContext.User.Identity.Name, resultId, guid);
-            }
-            Common.DersaSqlManager DM = new Common.DersaSqlManager();
-            if (resultId != "" && attrs != null && attrs.Length > 0)
-            {
-                for (int a = 0; a < attrs.Length; a++)
-                {
-                    //NodeControllerAdapter.SetAttribute(DM, "ENTITY$SetAttribute", resultId, attrs[a].Name, attrs[a].Value);
-                    NodeControllerAdapter.SetAttribute(DM, Common.AttributeOwnerType.Entity, resultId, attrs[a].Name, attrs[a].Value, 0);
-                }
-            }
-            NodeControllerAdapter.SchemaEntity[] childEntities = schemaEntity.childEntities;
-            for (int c = 0; c < childEntities.Length; c++)
-            {
-                NodeControllerAdapter.SchemaEntity childEntity = childEntities[c];
-                CreateEntity(childEntity, resultId);
-            }
-
-            return resultId;
 
         }
 

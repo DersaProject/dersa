@@ -126,9 +126,17 @@ mxForm.prototype.addText = function(name, value, type, childFormAttrs, ParentFor
 function CreateProperties(form, attrs, url, ActionAfterExec, ClassName, callBackFunction, parentForm) {
     var texts = [];
     for (var i = 0; i < attrs.length; i++) {
-        var fControl = texts[i] = attrs[i].ControlType == "textarea" ?
-            form.addTextarea('', attrs[i].Value, attrs[i].Height / 10, attrs[i].Width) :
-            form.addText(attrs[i].Name, attrs[i].Value, attrs[i].ControlType, attrs[i].ChildFormAttrs, form, attrs[i].Width);
+        var fControl = null;
+        if (attrs[i].ControlType == "textarea")
+            fControl = texts[i] = form.addTextarea('', attrs[i].Value, attrs[i].Height / 10, attrs[i].Width);
+        else if (attrs[i].ControlType == "combo") {
+            var items = new Array();
+            if (attrs[i].Value)
+                items = JSON.parse(attrs[i].Value);
+            fControl = texts[i] = form.addCombo(attrs[i].Name, false, 1, items);
+        }
+        else
+            fControl = texts[i] = form.addText(attrs[i].Name, attrs[i].Value, attrs[i].ControlType, attrs[i].ChildFormAttrs, form, attrs[i].Width);
         if (attrs[i].ReadOnly)
             fControl.setAttribute('readonly', 'true');
     }
@@ -303,9 +311,16 @@ mxForm.prototype.addTextarea = function(name, value, rows, Width)
  * 
  * Adds a combo for the given name and returns the combo.
  */
-mxForm.prototype.addCombo = function(name, isMultiSelect, size)
+mxForm.prototype.addCombo = function(name, isMultiSelect, size, items)
 {
-	var select = document.createElement('select');
+    var select = document.createElement('select');
+    if(items)
+    items.forEach(function (item) {
+        var selectItem = document.createElement('option');
+        selectItem.innerHTML = item.DisplayedValue;
+        selectItem.setAttribute("value", item.Value);
+        select.appendChild(selectItem);
+    });
 	
 	if (size != null)
 	{
