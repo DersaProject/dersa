@@ -53,7 +53,7 @@
     <div style="float:left;width:200px;margin-top:-20px"><h1>DERSA modeler</h1></div>
     <div style="position:absolute;width: 260px;top: 96px; left: 300px;"><input id="tbSearch" style="width:100%" type="text"></div>
     <div style="position:absolute;width:80px;top:92px;left:556px">
-        <button class="btn" id="bnSearch" onclick="S=document.getElementById('tbSearch');V=S.value;if(isNaN(+V)||+V<10000){var form=new mxForm('find');var xhr=new XMLHttpRequest();args='srchval='+V;xhr.open('GET', 'Entity/Find?' + args, false);xhr.send();var attrs = JSON.parse(xhr.responseText);var Props=CreateProperties(form, attrs, '');var wnd=new mxWindow('find',Props,100,100,800,400,false,true);form.window = wnd;wnd.setVisible(true);return;}GoToNode(V)"><i class="fa fa-search"></i></button>
+        <button class="btn" id="bnSearch" onclick="S=document.getElementById('tbSearch');V=S.value;if(isNaN(+V)||+V<1000){var form=new mxForm('find');var xhr=new XMLHttpRequest();args='srchval='+V;xhr.open('GET', 'Entity/Find?' + args, false);xhr.send();var attrs = JSON.parse(xhr.responseText);var Props=CreateProperties(form, attrs, '');var wnd=new mxWindow('find',Props,100,100,800,400,false,true);form.window = wnd;wnd.setVisible(true);return;}GoToNode(V)"><i class="fa fa-search"></i></button>
     </div>
     @*<div style="float:left;width:160px;margin-left:300px;margin-top:20px"><input id="tbSearch" type="text"></div>
         <div style="float:left;width:200px;margin-top:20px;">
