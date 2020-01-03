@@ -1,7 +1,11 @@
 using System;
 using System.Runtime.Serialization;
 using Dersa.Interfaces;
+using System;
+using System.Runtime.Serialization;
+using Dersa.Interfaces;
 using System.IO;
+
 namespace DersaStereotypes
 {
 	[Serializable()]
@@ -18,29 +22,18 @@ namespace DersaStereotypes
 				_id = _object.Id;
 			}
 		}
-		public string IconPath = "";
-		public string ViewFormat = "";
-		public Map attributes;
 		public string Using = "";
+		public string ViewFormat = "";
+		public string IconPath = "";
+		public Map attributes;
 
 		#region Методы
 		#region AllowExecuteMethod
 		public override bool AllowExecuteMethod(string userName, string methodName)
 		{
-//        this.Reinitialize();
-			//        var inst = Dersa.Common.Util.CreateInstance(this.Object, new Dersa.Common.DersaAnonimousSqlManager());
-			        int userPermissions = Dersa.Common.DersaUtil.GetUserPermissions(userName);
+        int userPermissions = Dersa.Common.DersaUtil.GetUserPermissions(userName);
 				return (userPermissions & 4) > 0;
 			
-		}
-		#endregion
-		#region RemoveStereotypeFile
-		public string RemoveStereotypeFile(object[] Params)
-		{
-            string fileName = AppDomain.CurrentDomain.BaseDirectory + "\\Build\\Stereotypes\\" + this.Name + ".cs";
-			            if (File.Exists(fileName))
-			                File.Delete(fileName);
-			            return string.Format("alert('файл стереотипа {0} удален.');", this.Name);
 		}
 		#endregion
 		#region SaveStereotype
@@ -58,8 +51,17 @@ namespace DersaStereotypes
 			            return string.Format("alert('Для стереотипа {0} записан файл.');", this.Name);
 		}
 		#endregion
+		#region RemoveStereotypeFile
+		public string RemoveStereotypeFile(object[] Params)
+		{
+            string fileName = AppDomain.CurrentDomain.BaseDirectory + "\\Build\\Stereotypes\\" + this.Name + ".cs";
+			            if (File.Exists(fileName))
+			                File.Delete(fileName);
+			            return string.Format("alert('файл стереотипа {0} удален.');", this.Name);
+		}
+		#endregion
 		#region sqlUpdateStereotype
-		public string sqlUpdateStereotype()
+		public dynamic sqlUpdateStereotype()
 		{
 System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			sb.Append("update STEREOTYPE\r\n");
@@ -68,6 +70,79 @@ System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			sb.Append("\t\twhere name = '" + this.Name + "'\r\n");
 			
 			return sb.ToString();
+			
+		}
+		#endregion
+		#region sqlGenerateOperations
+		public dynamic sqlGenerateOperations()
+		{
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			            sb.Append("declare xstereotype int;\r\n");
+			            sb.Append("begin\r\n");
+			            sb.Append("select stereotype into xstereotype\r\n");
+			            sb.Append("\tfrom STEREOTYPE\r\n");
+			            sb.Append("\t\twhere name = '" + this.Name + "';\r\n\r\n");
+			            sb.Append("delete from METHOD where stereotype = xstereotype;\r\n\r\n");
+			            System.Collections.IList methods = this.GetMethods(true);
+			            for (int i = 0; i < methods.Count; i++)
+			            {
+			                Method M = methods[i] as Method;
+			                if (M.AccessModifier != "published")
+			                    continue;
+			                string resultType = "null";
+			                if (M.ReturnType == "SqlExecForm")
+			                    resultType = "1";
+			                if (M.ReturnType == "ExecJScript")
+			                    resultType = "2";
+			                sb.Append("insert into METHOD(method, stereotype, name, result_type) values(METHOD_SEQ.nextval, xstereotype, '" + M.Name + "', " + resultType + ");\r\n");
+			            }
+				    sb.Append("commit;\r\n");
+				    sb.Append("\r\n");
+				    sb.Append("end;\r\n");
+			
+			            return sb.ToString();
+			
+		}
+		#endregion
+		#region GetMethods
+		public System.Collections.IList GetMethods(bool forSQL)
+		{
+            Map methods = new Map();
+			            System.Collections.IList children = this.Children;
+			            for (int i = 0; i < children.Count; i++)
+			            {
+			                Method obj = children[i] as Method;
+			                if (obj == null) continue;
+			                methods.Add(obj.GetMapKey(), obj);
+			            }
+			            if (forSQL)
+			            {
+			                System.Collections.IList relations = this.ARelations;
+			                for (int i = 0; i < relations.Count; i++)
+			                {
+			                    ICompiledRelation rel = (ICompiledRelation)relations[i];
+			                    if (rel is Inherit)
+			                    {
+			                        Inherit inhRel = rel as Inherit;
+			                        string prefix = inhRel.Prefix;
+			                        string namePrefix = inhRel.NamePrefix;
+			                        if (prefix == null) prefix = "";
+			                        if (namePrefix == null) namePrefix = "";
+			                        if (!(rel.B is StereotypeE))
+			                            continue;
+			                        StereotypeE rB = (StereotypeE)rel.B;
+			                        System.Collections.IList inDictionary = rB.GetMethods(forSQL);
+			                        foreach (Method m in inDictionary)
+			                        {
+			                            if (m.AccessModifier == "published")
+			                                methods.Add(m.GetMapKey(), m);
+			                        }
+			                    }
+			                }
+			            }
+			
+			            return methods;
+			
 			
 		}
 		#endregion
@@ -121,48 +196,6 @@ System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			                }
 			            }
 			            return attributes;
-			
-		}
-		#endregion
-		#region GetMethods
-		public System.Collections.IList GetMethods(bool forSQL)
-		{
-            Map methods = new Map();
-			            System.Collections.IList children = this.Children;
-			            for (int i = 0; i < children.Count; i++)
-			            {
-			                Method obj = children[i] as Method;
-			                if (obj == null) continue;
-			                methods.Add(obj.GetMapKey(), obj);
-			            }
-			            if (forSQL)
-			            {
-			                System.Collections.IList relations = this.ARelations;
-			                for (int i = 0; i < relations.Count; i++)
-			                {
-			                    ICompiledRelation rel = (ICompiledRelation)relations[i];
-			                    if (rel is Inherit)
-			                    {
-			                        Inherit inhRel = rel as Inherit;
-			                        string prefix = inhRel.Prefix;
-			                        string namePrefix = inhRel.NamePrefix;
-			                        if (prefix == null) prefix = "";
-			                        if (namePrefix == null) namePrefix = "";
-			                        if (!(rel.B is StereotypeE))
-			                            continue;
-			                        StereotypeE rB = (StereotypeE)rel.B;
-			                        System.Collections.IList inDictionary = rB.GetMethods(forSQL);
-			                        foreach (Method m in inDictionary)
-			                        {
-			                            if (m.AccessModifier == "published")
-			                                methods.Add(m.GetMapKey(), m);
-			                        }
-			                    }
-			                }
-			            }
-			
-			            return methods;
-			
 			
 		}
 		#endregion
@@ -262,7 +295,10 @@ System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			                    sb.Append("\r\n\t\t{\r\n");
 			                    sb.Append("\t\t\tget\r\n");
 			                    sb.Append("\t\t\t{\r\n");
-			                    sb.Append("\t\t\t\treturn " + attr_name + ";\r\n");
+					    if(!string.IsNullOrEmpty(attr.Get))
+			                    	sb.Append(attr.Get + "\r\n");
+					    else
+			                    	sb.Append("\t\t\t\treturn " + attr_name + ";\r\n");
 			                    sb.Append("\t\t\t}\r\n");
 			                    sb.Append("\t\t\tset\r\n");
 			                    sb.Append("\t\t\t{\r\n");
@@ -291,7 +327,7 @@ System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			                        sb.Append("\r\n");
 			                    }
 			                    sb.Append(m.GetDeclarationString().Replace("published", "public")
-			                        .Replace("SqlExecForm", "string")
+			                        .Replace("SqlExecForm", "object")
 			                        .Replace("ExecJScript", "string"));
 			
 			                    sb.Append("\r\n\t\t{\r\n");
@@ -314,37 +350,44 @@ System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			            return result;
 		}
 		#endregion
-		#region sqlGenerateOperations
-		public string sqlGenerateOperations()
-		{
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			            sb.Append("declare @stereotype int;\r\n");
-			            sb.Append("select @stereotype = stereotype\r\n");
-			            sb.Append("\tfrom STEREOTYPE(nolock)\r\n");
-			            sb.Append("\t\twhere name = '" + this.Name + "';\r\n\r\n");
-			            sb.Append("delete METHOD where stereotype = @stereotype\r\n\r\n");
-			            System.Collections.IList methods = this.GetMethods(true);
-			            for (int i = 0; i < methods.Count; i++)
-			            {
-			                Method M = methods[i] as Method;
-			                if (M.AccessModifier != "published")
-			                    continue;
-			                string resultType = "null";
-			                if (M.ReturnType == "SqlExecForm")
-			                    resultType = "1";
-			                if (M.ReturnType == "ExecJScript")
-			                    resultType = "2";
-			                sb.Append("insert METHOD(stereotype, name, result_type) values(@stereotype, '" + M.Name + "', " + resultType + ");\r\n");
-			            }
-			            return sb.ToString();
-			
-		}
-		#endregion
 		#region sqlGenerateStereotype
-		public string sqlGenerateStereotype()
+		public dynamic sqlGenerateStereotype()
 		{
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			            sb.Append("declare @stereotype int, @attribute int, @parent int;\r\n");
+		System.Text.StringBuilder sb = new System.Text.StringBuilder();
+					sb.Append("declare xstereotype int; xattribute int; xparent int;\r\n");
+					sb.Append("begin\r\n");
+					sb.Append("select stereotype into xstereotype\r\n");
+					sb.Append("\tfrom STEREOTYPE\r\n");
+			                sb.Append("\t\twhere name = '" + this.Name + "';\r\n\r\n");
+					sb.Append("if xstereotype is null then begin\r\n");
+					sb.Append("select max(stereotype) + 1 into xstereotype \r\n");
+					sb.Append("\tfrom STEREOTYPE;\r\n");
+					sb.Append("\tinsert into STEREOTYPE(stereotype, name, icon_path, view_format) values(xstereotype");
+				    sb.Append(", '" + this.Name + "'");
+				    sb.Append(", '" + this.IconPath + "'");
+				    sb.Append(", '" + this.ViewFormat.Replace("'", "''") + "'");
+					sb.Append(");\r\n");
+					sb.Append("end;\r\n");
+					sb.Append("end if;\r\n");
+			
+					System.Collections.IList rels = this.ARelations;
+			            for (int i = 0; i < rels.Count; i++)
+			            {
+			                Relation R = rels[i] as Relation;
+			                if (R == null)
+			                    continue;
+			
+					sb.Append("select stereotype into xparent from STEREOTYPE where name = '" + R.B.Name + "';\r\n");
+					sb.Append("insert into CHILD_STEREOTYPE(child_stereotype, parent, stereotype) \r\n");
+					sb.Append(" select CHILD_STEREOTYPE_SEQ.nextval, xparent, xstereotype from dual where not exists(select 1 from CHILD_STEREOTYPE where parent = xparent and stereotype = xstereotype);\r\n");
+			            }
+					sb.Append("commit;\r\n");
+					sb.Append("end;\r\n");
+			
+					return sb.ToString();
+			
+			
+			sb.Append("declare @stereotype int, @attribute int, @parent int;\r\n");
 			            sb.Append("select @stereotype = stereotype\r\n");
 			            sb.Append("\tfrom STEREOTYPE(nolock)\r\n");
 			            sb.Append("\t\twhere name = '" + this.Name + "';\r\n\r\n");
@@ -357,31 +400,6 @@ System.Text.StringBuilder sb = new System.Text.StringBuilder();
 				    sb.Append(", '" + this.ViewFormat.Replace("'", "''") + "'");
 				    sb.Append(")\r\n");
 			            sb.Append("end\r\n");
-			
-			            sb.Append("delete ATTRIBUTE where owner_class = 'STEREOTYPE' and owner_ref = @stereotype\r\n\r\n");
-			            sb.Append("select @attribute = max(attribute) + 1 from ATTRIBUTE(nolock)\r\n\r\n");
-			            System.Collections.IList attrs = this.GetAttributes(true);
-			            for (int i = 0; i < attrs.Count; i++)
-			            {
-			                Attribute A = attrs[i] as Attribute;
-			                string valueType = string.IsNullOrEmpty(A.DIOSType) ? "1" : A.DIOSType;
-			                sb.Append("insert ATTRIBUTE(attribute, changer, owner_account, owner_class, owner_ref, name, type, active, value_type, value)\r\n");
-			                sb.Append(" values (@attribute, 'admin', 1, 'STEREOTYPE', @stereotype, '" + A.Name + "', '" + A.Type + "', 1, " + valueType + ",'" + A.Default + "');\r\n");
-			                sb.Append("select @attribute = @attribute + 1;\r\n");
-			            }
-			            sb.Append("\r\n");
-			            System.Collections.IList rels = this.ARelations;
-			            for (int i = 0; i < rels.Count; i++)
-			            {
-			                Relation R = rels[i] as Relation;
-			                if (R == null)
-			                    continue;
-			                sb.Append("select @parent = stereotype from STEREOTYPE(nolock) where name = '" + R.B.Name + "'\r\n");
-			                sb.Append("if not exists(select 1 from CHILD_STEREOTYPE where parent = @parent and stereotype = @stereotype)\r\n");
-			                sb.Append("insert into CHILD_STEREOTYPE(parent, stereotype) values (@parent, @stereotype)\r\n");
-			            }
-			            return sb.ToString();
-			
 		}
 		#endregion
 		#endregion

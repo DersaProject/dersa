@@ -18,51 +18,29 @@ namespace DersaStereotypes
 				_id = _object.Id;
 			}
 		}
-		public System.String SQL = "";
-		public System.String PrefixDelimiter = "$";
-		public System.Boolean MakePrefix = true;
-		public System.String Source = "SQL";
-		public System.String Params = "()";
-		public System.String Return = "";
-		public System.String Description = "";
 		public System.String Visibility = "public";
+		public System.String Description = "";
+		public System.String Return = "";
+		public System.String Source = "SQL";
+		public System.String PrefixDelimiter = "$";
 		public System.String CallingServer = "";
+		public System.Boolean MakePrefix = true;
+		public System.String SQL = "";
+		public System.String Params = "()";
 
 		#region Ìועמהû
-		#region Generate
-		public System.String Generate(Dersa.Interfaces.ICompiledEntity owner)
+		#region IsCompact
+		public bool IsCompact()
 		{
-if (owner == null)
-			{
-				owner = this.Parent;
-			}
-			
-			string sqlName = this.GetSqlName(owner);
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			sb.Append("if exists (select * from sysobjects where id = object_id('dbo." + sqlName + "'))\n");
-			sb.Append("\tdrop procedure dbo." + sqlName + "\n");
-			sb.Append("go\n\n");
-			
-			if(Source != "SQL" || !this.SQL.ToLower().Contains("create procedure"))
-			    sb.Append("create procedure dbo." + sqlName + "\n");
-			if (Source == "SQL")
-			{
-				sb.Append(this.SQL);
-			}
-			else if (Source == "CSharp")
-			{
-				object result = Static.CompileAndExecuteAditionalMethod(owner, "System.String", this.Name, this.SQL);
-				if (result != null)
-				{
-					sb.Append((string)result);
-				}
-			}
-			sb.Append("\ngo\n\n");
-			sb.Append("grant execute on " + sqlName + " to public\n");
-			sb.Append("go\n\n");
-			
-			string sOut = sb.ToString();
-			return sOut;
+	Regex regEx = new Regex("(PROCEDURE|FUNCTION)[\\s\\S]*?[\\s)][AI]S",  RegexOptions.Singleline);  //(PROCEDURE|FUNCTION) .*? [AI]S
+				MatchCollection Matches = regEx.Matches(this.SQL);
+				return Matches.Count < 1;
+		}
+		#endregion
+		#region sqlGenerate
+		public object sqlGenerate()
+		{
+return Generate(null);
 		}
 		#endregion
 		#region GetSqlName
@@ -92,21 +70,61 @@ if (MakePrefix)
 			}
 		}
 		#endregion
-		#region sqlGenerate
-		public string sqlGenerate()
+		#region Generate
+		public object Generate(Dersa.Interfaces.ICompiledEntity owner)
 		{
-return Generate(null);
+if (owner == null)
+			{
+				owner = this.Parent;
+			}
+			
+			string sqlName = this.GetSqlName(owner);
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			if(Source != "SQL" || !this.SQL.ToLower().Contains("create procedure"))
+			    sb.Append("create or replace function " + sqlName + "\n");
+			if (Source == "SQL")
+			{
+				sb.Append(this.SQL);
+			}
+			else if (Source == "CSharp")
+			{
+				object result = Static.CompileAndExecuteAditionalMethod(owner, "System.String", this.Name, this.SQL);
+				if (result != null)
+				{
+					sb.Append((string)result);
+				}
+			}
+			sb.Append("\n/");
+			
+			string sOut = sb.ToString();
+			return new
+			{
+				sql = sOut,
+				object_name = sqlName,
+				object_type = "FUNCTION"
+			};
 		}
 		#endregion
-		#region GetTextForDeclaration
-		public string GetTextForDeclaration()
+		#region GetText
+		public string GetText(bool ForDeclaration)
 		{
-string procType = "PROCEDURE";
-			if(!this.SQL.Replace(" ","").Contains("PROCEDURE"+this.Name))
-			    procType = "FUNCTION";
-			Regex regEx = new Regex("(" + procType + ".*?)[\\s)][AI]S\\s.*",  RegexOptions.Singleline);
-			string result = regEx.Replace(this.SQL, "$1;");
-			return result;
+string sqlText = this.SQL;
+			if(this.IsCompact())
+				sqlText = "FUNCTION " + this.Name + sqlText;
+			if(ForDeclaration)
+			{
+				string procType = "PROCEDURE";
+				if(!sqlText.Replace(" ","").Contains("PROCEDURE"+this.Name))
+			    		procType = "FUNCTION";
+				Regex regEx = new Regex("(" + procType + ".*?)[\\s)][AI]S\\s.*",  RegexOptions.Singleline);
+				string result = regEx.Replace(sqlText, "$1;");
+				return result;
+			}
+			else
+			{
+				sqlText = this.Description.Trim() + "\r\n" + sqlText;
+			}
+			return sqlText;
 			
 		}
 		#endregion

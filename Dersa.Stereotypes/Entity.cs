@@ -21,10 +21,9 @@ namespace DersaStereotypes
 			}
 		}
 		public System.String PhisicalName = "";
-		public System.Boolean Abstract = false;
+		public string PackageVars = "";
 		public System.Boolean MakePK = true;
 		public System.Boolean AutoPK = true;
-		public System.Boolean NoRefObjects = false;
 		public System.String Interfaces = "";
 		public System.String Comment = "";
 		public System.String LogDBExtention = "_log";
@@ -33,16 +32,149 @@ namespace DersaStereotypes
 		public System.String Using = "";
 		public Map attributes;
 		public System.String KeyType = "int";
-		public System.Boolean ImplementInterface = true;
-		public System.Boolean CanCreateManualy = false;
-		public System.Int32 CachingPolicy = 1;
-		public System.Boolean AllowExternalModification = false;
 		public System.String ModifyUniView = "";
 		public System.Boolean HasIdentityKey = true;
+		public System.Boolean Abstract = false;
 
 		#region Методы
+		#region AddVersionControl
+		public string AddVersionControl(object[] callParams)
+		{
+        DersaUtil.EntitySetStereotype(callParams[0].ToString(), this.Id, "EntityVC");
+			        return "alert('stereotype changed')";
+		}
+		#endregion
+		#region ora_GeneratePackage
+		public object ora_GeneratePackage()
+		{
+System.Collections.IList procs = this.GetStoredProcedures();
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			
+			sb.Append("create or replace PACKAGE " + this.Name + " AS\n\n");
+			sb.Append(this.PackageVars);
+			sb.Append("\n");
+			
+			foreach (Procedure proc in procs)
+			{
+			        sb.Append(proc.GetText(true));
+			        sb.Append("\r\n");
+			}
+			sb.Append("END " + this.Name + ";\r\n");
+			sb.Append("\r\n/\r\n");
+			
+			sb.Append("create or replace PACKAGE BODY " + this.Name + " AS\n\n");
+			foreach (Procedure proc in procs)
+			{
+			        sb.Append(proc.GetText(false));
+			        sb.Append("\r\n\r\n");
+			}
+			sb.Append("END " + this.Name + ";");
+			sb.Append("\r\n/\r\n");
+			
+			
+			return new
+			{
+				sql = sb.ToString(),
+				object_name = this.Name,
+				object_type = "PACKAGE"
+			};
+		}
+		#endregion
+		#region ora_Generate
+		public object ora_Generate()
+		{
+            string comma = "";
+			            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			            string sqlName = this.GetSqlName();
+			
+			            sb.Append("declare\r\n");
+			            sb.Append("\tex int;\r\n");
+			            sb.Append("\tquery_text varchar(1000);\r\n");
+			            sb.Append("begin\r\n");
+			            sb.Append("\tselect count(*) into ex from user_tables where table_name = '" + sqlName + "';\r\n");
+			            sb.Append("\tif ex > 0 then\r\n");
+			            sb.Append("\t\tquery_text := 'drop table " + sqlName + "';\r\n");
+			            sb.Append("\t\texecute immediate query_text;\r\n");
+			            sb.Append("\tend if;\r\n");
+			            sb.Append("end;\r\n");
+			            sb.Append("go\r\n");
+			
+			            sb.Append("create table " + sqlName + "\n(");
+			            System.Collections.IList attrs = this.GetAttributes();
+			            foreach (Attribute attr in attrs)
+			            {
+			                sb.Append(comma + "\n\t" + attr.GetSqlName() + " ");
+			                string AttrType = attr.Type
+			                    .Replace("bigint", "NUMBER(20)")
+			                    .Replace("int", "NUMBER(9)")
+			                    .Replace("bit", "NUMBER(1)")
+			                    .Replace("identity", "")
+			                    .Replace("datetime", "date")
+			                    .Trim();
+			                sb.Append(AttrType + " ");
+			                sb.Append(attr.Null);
+			                string attr_default = attr.Default;
+			                //                    if ((attr_default != null) && (attr_default.Length > 0))
+			                //                    {
+			                //                        sb.Append(" default " + attr_default);
+			                //                    }
+			                comma = ",";
+			            }
+			            System.Collections.IList pk_attrs = this.GetPKAttributes();
+			            if ((pk_attrs != null) && (pk_attrs.Count > 0))
+			            {
+			                string cm = "";
+			                sb.Append(comma + "\n\t" + "primary key (");
+			                for (int i = 0; i < pk_attrs.Count; i++)
+			                {
+			                    Attribute attr = (Attribute)pk_attrs[i];
+			                    sb.Append(cm + attr.GetSqlName());
+			                    cm = ", ";
+			                }
+			                sb.Append(")");
+			            }
+			            Map fk_attrs = this.GetFKLinks() as Map;
+			            if ((fk_attrs != null) && (fk_attrs.Count > 0))
+			            {
+			                for (int i = 0; i < fk_attrs.Count; i++)
+			                {
+			                    Entity link = fk_attrs[i] as Entity;
+			                    if (link != null)
+			                    {
+			                        sb.Append(comma + "\n\t" + "foreign key (" + fk_attrs.KeyAt(i) + ") references " + link.GetSqlName());
+			                    }
+			                }
+			            }
+			
+			            sb.Append("\r\n)");
+			
+			            sb.Append("\r\ngo\n");
+			            //sb.Append("grant " + GetPermissions() + " on " + sqlName + " to " + GetRoleNames() + "\n");
+			            //sb.Append("/\n");
+			
+			            sb.Append(this.GenerateIndexes(this));
+			
+			            object insertData = this.ExecuteScript("InsertData", this, new object[0]);
+			            if (insertData != null)
+			            {
+			                sb.Append((string)insertData);
+			            }
+			
+			            object generateAdditional = this.ExecuteScript("GenerateAdditional", this, new object[] { false });
+			            if (generateAdditional != null)
+			            {
+			                sb.Append((string)generateAdditional);
+			            }
+			            
+			
+			            return sb.ToString()
+			                         .Replace("go\n","go\r\n")
+			                         .Replace("go\r\n", "/\r\n");;
+			
+		}
+		#endregion
 		#region RegisterForOracle
-		public string RegisterForOracle()
+		public object RegisterForOracle()
 		{
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			
@@ -74,7 +206,7 @@ namespace DersaStereotypes
 		}
 		#endregion
 		#region UnRegister
-		public string UnRegister()
+		public object UnRegister()
 		{
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			
@@ -88,15 +220,8 @@ namespace DersaStereotypes
 			
 		}
 		#endregion
-		#region AddVersionControl
-		public string AddVersionControl(object[] callParams)
-		{
-            DersaUtil.EntitySetStereotype(callParams[0].ToString(), this.Id, "EntityVC");
-			        return "alert('stereotype changed')";
-		}
-		#endregion
 		#region sql_Generate
-		public string sql_Generate()
+		public object sql_Generate()
 		{
             System.Boolean doDrop = true;
 			            System.Boolean doSP = true;
@@ -192,7 +317,7 @@ namespace DersaStereotypes
 			
 			            if (doTrig)
 			            {
-			                sb.Append(this.sql_GenerateTriggers(false));
+			                sb.Append(this.sql_GenerateTriggers());
 			            }
 			
 			            sb.Append(GenerateView(this));
@@ -372,471 +497,8 @@ if (attributes != null) return attributes;
 			return attributes;
 		}
 		#endregion
-		#region GetProperties
-		public System.Collections.IList GetProperties()
-		{
-Map properties = new Map();
-			System.Collections.IList relations = this.ARelations;
-			for (int i = 0; i < relations.Count; i++)
-			{
-				ICompiledRelation rel = (ICompiledRelation)relations[i];
-				if (rel is Inherit && ((Inherit)rel).InheritProperties)
-				{
-					System.Collections.IList inList = ((Entity)rel.B).GetProperties();
-					foreach (Property p in inList)
-					{
-						properties.Add(p.Name, p);
-					}
-				}
-				if (rel is Relation)
-				{
-					Relation relation = (Relation)rel;
-					bool isNull = false;
-					if (relation.GenerateForA(out isNull) && relation.B is Type && !((Type)relation.B).GenerateTable)
-					{
-						Type localType = (Type)relation.B;
-						string typeSqlName = localType.Name.ToLower();
-						if ((relation.BRole != null)&&(relation.BRole != ""))
-						{
-							typeSqlName = relation.BRole;
-						}
-						else 
-						{
-							string typePhisicalName = localType.PhisicalName.ToLower();
-							if ((typePhisicalName != null)&&(typePhisicalName != ""))
-							{
-								typeSqlName = typePhisicalName;
-							}
-						}
-						string csTypeName = Static.GetCSharpObjectName(localType);
-						string csType = Static.GetCSharpNativeType(localType.SqlType);
-						string csPropertyName = Static.GetCSharpName(typeSqlName);
-						
-						Property prop = new Property(null);
-						prop.Name = csPropertyName;
-						prop.Type = csTypeName;
-						prop.ReadOnly = false;
-						prop.AccessModifier = "public";
-						prop.Interface = true;
-						prop.Get = "\t\t\t\treturn (" + csTypeName + ") _" + typeSqlName + ".Value;";
-						if ((relation.Set != null)&&(relation.Set.Length > 0))
-						{
-							prop.Set = relation.Set;
-						}
-						else
-						{
-							prop.Set = "\t\t\t\t_" + typeSqlName + " = (" + csType + ")value;";
-						}
-						properties.Add(prop.Name, prop);
-					}
-					if (relation.B is StateEngine)
-					{
-						StateEngine localType = (StateEngine)relation.B;
-						string typeSqlName = localType.Name.ToLower();
-						string typePhisicalName = localType.PhisicalName.ToLower();
-						if ((typePhisicalName != null)&&(typePhisicalName != ""))
-						{
-							typeSqlName = typePhisicalName;
-						}
-						string csTypeName = Static.GetCSharpObjectName(localType);
-						string csType = Static.GetCSharpNativeType(localType.SqlType);
-						
-						Property prop = new Property(null);
-						prop.Name = csTypeName;
-						prop.Type = csTypeName;
-						prop.ReadOnly = false;
-						prop.AccessModifier = "public";
-						prop.Interface = true;
-						if ((localType.Get != null)&&(localType.Get.Length > 0))
-						{
-							prop.Get = localType.Get;
-						}
-						else
-						{
-							prop.Get = "\t\t\t\treturn (" + csTypeName + ") _" + typeSqlName + ".Value;";
-						}
-						if ((localType.Set != null)&&(localType.Set.Length > 0))
-						{
-							prop.Set = localType.Set;
-						}
-						else
-						{
-							prop.Set = "\t\t\t\t_" + typeSqlName + " = (" + csType + ")value;";
-						}
-						properties.Add(prop.Name, prop);
-					}
-				}
-			}
-			relations = this.BRelations;
-			for (int i = 0; i < relations.Count; i++)
-			{
-				ICompiledRelation rel = (ICompiledRelation)relations[i];
-				if (rel is Relation)
-				{
-					Relation relation = (Relation)rel;
-					bool isNull = false;
-					if (relation.GenerateForB(out isNull) && relation.A is Type && !((Type)relation.A).GenerateTable)
-					{
-						Type localType = (Type)relation.A;
-						string typeSqlName = localType.Name.ToLower();
-						if ((relation.ARole != null)&&(relation.ARole != ""))
-						{
-							typeSqlName = relation.ARole;
-						}
-						else 
-						{
-							string typePhisicalName = localType.PhisicalName.ToLower();
-							if ((typePhisicalName != null)&&(typePhisicalName != ""))
-							{
-								typeSqlName = typePhisicalName;
-							}
-						}
-						string csTypeName = Static.GetCSharpObjectName(localType);
-						string csType = Static.GetCSharpNativeType(localType.SqlType);
-						string csPropertyName = Static.GetCSharpName(typeSqlName);
-						
-						Property prop = new Property(null);
-						prop.Name = csPropertyName;
-						prop.Type = csTypeName;
-						prop.ReadOnly = false;
-						prop.AccessModifier = "public";
-						prop.Interface = true;
-						prop.Get = "\t\t\t\treturn (" + csTypeName + ") _" + typeSqlName + ".Value;";
-						if ((relation.Set != null)&&(relation.Set.Length > 0))
-						{
-							prop.Set = relation.Set;
-						}
-						else
-						{
-							prop.Set = "\t\t\t\t_" + typeSqlName + " = (" + csType + ")value;";
-						}
-						properties.Add(prop.Name, prop);
-					}
-				}
-			}
-			System.Collections.IList children = this.Children;
-			for (int i = 0; i < children.Count; i++)
-			{
-				ICompiledEntity obj = (ICompiledEntity)children[i];
-				if (obj is Property)
-				{
-					properties.Add(obj.Name, obj);
-				}
-				else if (obj is Type)
-				{
-					Type localType = (Type)obj;
-					if (localType.GenerateTable) continue;
-					string typeSqlName = localType.Name.ToLower();
-					string typePhisicalName = localType.PhisicalName.ToLower();
-					if ((typePhisicalName != null)&&(typePhisicalName != ""))
-					{
-						typeSqlName = typePhisicalName;
-					}
-					string csTypeName = Static.GetCSharpObjectName(localType);
-					string csType = Static.GetCSharpNativeType(localType.SqlType);
-					
-					Property prop = new Property(null);
-					prop.Name = csTypeName;
-					prop.Type = csTypeName;
-					prop.ReadOnly = false;
-					prop.AccessModifier = "public";
-					prop.Interface = true;
-					if ((localType.Get != null)&&(localType.Get.Length > 0))
-					{
-						prop.Get = localType.Get;
-					}
-					else
-					{
-						prop.Get = "\t\t\t\treturn (" + csTypeName + ") _" + typeSqlName + ".Value;";
-					}
-					if ((localType.Set != null)&&(localType.Set.Length > 0))
-					{
-						prop.Set = localType.Set;
-					}
-					else
-					{
-						prop.Set = "\t\t\t\t_" + typeSqlName + " = (" + csType + ")value;";
-					}
-					properties.Add(prop.Name, prop);
-				}
-				else if (obj is StateEngine)
-				{
-					StateEngine localType = (StateEngine)obj;
-					string typeSqlName = localType.Name.ToLower();
-					string typePhisicalName = localType.PhisicalName.ToLower();
-					if ((typePhisicalName != null)&&(typePhisicalName != ""))
-					{
-						typeSqlName = typePhisicalName;
-					}
-					string csTypeName = Static.GetCSharpObjectName(localType);
-					string csType = Static.GetCSharpNativeType(localType.SqlType);
-					
-					Property prop = new Property(null);
-					prop.Name = csTypeName;
-					prop.Type = csTypeName;
-					prop.ReadOnly = false;
-					prop.AccessModifier = "public";
-					prop.Interface = true;
-					if ((localType.Get != null)&&(localType.Get.Length > 0))
-					{
-						prop.Get = localType.Get;
-					}
-					else
-					{
-						prop.Get = "\t\t\t\treturn (" + csTypeName + ") _" + typeSqlName + ".Value;";
-					}
-					if ((localType.Set != null)&&(localType.Set.Length > 0))
-					{
-						prop.Set = localType.Set;
-					}
-					else
-					{
-						prop.Set = "\t\t\t\t_" + typeSqlName + " = (" + csType + ")value;";
-					}
-					properties.Add(prop.Name, prop);
-				}
-			}
-			return properties;
-		}
-		#endregion
-		#region InheritsFrom
-		public System.Boolean InheritsFrom(Entity fromEntity)
-		{
-System.Collections.IList relations = this.ARelations;
-			for (int i = 0; i < relations.Count; i++)
-			{
-				ICompiledRelation cr = (ICompiledRelation)relations[i];
-				if (cr is Inherit)
-				{
-					if (cr.B.Id == fromEntity.Id) return true;
-					bool result = ((Entity)cr.B).InheritsFrom(fromEntity);
-					if (result) return true;
-				}
-			}
-			return false;
-		}
-		#endregion
-		#region sql_GenerateIndexes
-		public string sql_GenerateIndexes()
-		{
-return GenerateIndexes(this);
-		}
-		#endregion
-		#region GetUsing
-		public System.String GetUsing()
-		{
-string result = "";
-			if ((this.Using != null)&&(this.Using.Length > 0))
-			{
-				result += this.Using;
-			}
-			System.Collections.IList relations = this.ARelations;
-			for (int i = 0; i < relations.Count; i++)
-			{
-				ICompiledRelation rel = (ICompiledRelation)relations[i];
-				if (rel is Inherit && ((Inherit)rel).InheritUsing)
-				{
-					Entity bEntity = (rel as Inherit).B as Entity;
-					result += ((rel as Inherit).B as Entity).GetUsing();
-				}
-			}
-			return result;
-		}
-		#endregion
-		#region GenerateRef
-		public System.String GenerateRef(System.String refMethod)
-		{
-	return this.GenerateRef(refMethod, "");
-		}
-		#endregion
-		#region GetStateEngines
-		public System.Collections.IList GetStateEngines()
-		{
-Map stateEngines = new Map();
-			System.Collections.IList relations = this.ARelations;
-			for (int i = 0; i < relations.Count; i++)
-			{
-				ICompiledRelation rel = (ICompiledRelation)relations[i];
-				if (rel is Inherit)
-				{
-					System.Collections.IList inheritStateEngines = (rel.B as Entity).GetStateEngines();
-					foreach(StateEngine se in inheritStateEngines)
-					{
-						stateEngines.Add(se.PhisicalName, se);
-					}
-				}
-			}
-			System.Collections.IList children = this.Children;
-			for (int i = 0; i < children.Count; i++)
-			{
-				StateEngine obj = children[i] as StateEngine;
-				if (obj == null) continue;
-				stateEngines.Add(obj.PhisicalName, obj);
-			}
-			return stateEngines;
-		}
-		#endregion
-		#region GenerateStateEngines
-		public System.String GenerateStateEngines()
-		{
-System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			System.Collections.IList stateEngines = this.GetStateEngines();
-			foreach(StateEngine se in stateEngines)
-			{
-				sb.Append(se.GenerateEngine());
-			}
-			
-			return sb.ToString();
-		}
-		#endregion
-		#region GenerateInterfaceStateEngines
-		public System.String GenerateInterfaceStateEngines()
-		{
-System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			System.Collections.IList stateEngines = this.GetStateEngines();
-			foreach(StateEngine se in stateEngines)
-			{
-				sb.Append(se.GenerateInterfaceEngine());
-			}
-			
-			return sb.ToString();
-		}
-		#endregion
-		#region TestViewAttrs
-		public string TestViewAttrs()
-		{
-System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			System.Text.StringBuilder sbInterface = new System.Text.StringBuilder();
-			System.Collections.IList children = this.GetViewAttributes();
-			for (int i = 0; i < children.Count; i++)
-			{
-				ViewAttribute obj = children[i] as ViewAttribute;
-				if (obj == null) continue;
-				string attr_name = obj.Name;
-				string attr_type = obj.Type;
-				string attr_phisical_name = obj.GetSqlName();
-				string attr_default_csharp = obj.DIOSDefault;
-				string attr_csharp_type = obj.GetCSharpType();
-				string attr_get = obj.Get; if (attr_get == null) attr_get = "";
-				string attr_set = obj.Set; if (attr_set == null) attr_set = "";
-			
-				sb.Append("\t\t#region " + attr_phisical_name + "\n");
-				if (obj.CreatePrivateField)
-				{
-					sb.Append("\t\tprotected " + attr_csharp_type + " _" + attr_phisical_name);
-					if ((attr_default_csharp != null)&&(attr_default_csharp.Length > 0))
-					{
-						sb.Append(" = " + attr_default_csharp);
-					}
-					sb.Append(";\n");
-				}
-				sb.Append("\t\t[ViewProperty]\n");
-				sb.Append("\t\t[ObjectPropertyAttribute(\"" + attr_name + "\", false, " + (!(attr_set.Length > 0)).ToString().ToLower() + ")]\n");
-				sbInterface.Append("\t\t[ObjectPropertyAttribute(\"" + attr_name + "\", false, " + (!(attr_set.Length > 0)).ToString().ToLower() + ")]\n");
-			
-				sb.Append("\t\tpublic " + attr_csharp_type + " " + attr_phisical_name + "\n\t\t{");
-				sbInterface.Append("\t\t" + attr_csharp_type + " " + attr_phisical_name + "{get;");
-				if (attr_set.Length > 0)
-				{
-					sbInterface.Append("set;");
-				}
-				sbInterface.Append("}\n");
-					
-				if (attr_get == "")
-				{
-					attr_get = "\t\t\t\treturn _" + attr_phisical_name + ";"; 
-				}
-				sb.Append("\n\t\t\tget\n\t\t\t{\n");
-				sb.Append(attr_get);
-				sb.Append("\n\t\t\t}\n");
-				if (attr_set.Length > 0)
-				{
-					sb.Append("\t\t\tset\n\t\t\t{\n");
-					sb.Append(attr_set);
-					sb.Append("\n\t\t\t}\n");
-				}
-				sb.Append("\t\t}\n");
-				sb.Append("\t\t#endregion\n");
-				//sbProperties.Append(", " + attr_phisical_name);
-			}
-			
-			return sb.ToString();
-			
-		}
-		#endregion
-		#region GenerateAdditionalObjectProperties
-		public System.String GenerateAdditionalObjectProperties(System.Collections.IList m)
-		{
-System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			sb.Append("\t\t#region AdditionalObjectProperties()\n");
-			if (m == null)
-			{
-				m = GetCSharpAttributes(true);
-			}
-			sb.Append("\t\tpublic static IndexerPropertyDescriptorCollection AdditionalObjectProperties()\n");
-			sb.Append("\t\t{\n");
-			sb.Append("\t\t\tIndexerPropertyDescriptorCollection objectProperties = null;\n");
-			sb.Append("\t\t\tobjectProperties = IndexerPropertyDescriptorCollection.Empty;\n");
-			for (int i = 0; i < m.Count; i++)
-			{
-				Property p = (Property)m[i];
-				sb.Append("\t\t\tobjectProperties.Add(new IndexerPropertyDescriptor(");
-				sb.Append("\"" + p.Name + "\", ");
-				sb.Append("new Attribute[0], ");
-				sb.Append("\"" + p.Name + "\", ");
-				sb.Append("typeof(string)));\n");
-			}
-			/*
-			System.Collections.IList propEntities = this.GetPropertyEntities();
-			for (int i = 0; i < propEntities.Count; i++)
-			{
-				Entity e = (Entity)propEntities[i];
-				System.Console.WriteLine(e.Name);
-				object[] scriptObjects = e.ExecuteScripts(new string[]{"GetPropertyType", "GetPropertyPrefix"}, e, new object[2]);
-				Entity ptEntity = scriptObjects[0] as Entity;
-				if (ptEntity == null) throw new Exception("Не найден тип для значения свойства " + e.Name);
-				Const ptConst = scriptObjects[1] as Const;
-				if (ptConst == null) throw new Exception("Не найден префикс для значения свойства " + e.Name);
-				
-				string csPropertyObjectName = Static.GetCSharpObjectName(ptEntity);
-				sb.Append("\t\t\t// Дополнительные свойства по типу " + csPropertyObjectName + "\n");
-				sb.Append("\t\t\tIObjectCollection fields = StaticObjectManager.Manager.GetEntity(\"" + ptEntity.GetSqlName() + "\").List(null);\n");
-				sb.Append("\t\t\tfields.Sort(new PropertiesComparer(new SortProperty[]{new SortProperty(\"sequence\")}));\n");
-				sb.Append("\t\t\tfor(int i = 0; i < fields.Count; i++)\n");
-				sb.Append("\t\t\t{\n");
-				sb.Append("\t\t\t	IIndexer tp = fields[i] as IIndexer;\n");
-				sb.Append("\t\t\t	objectProperties.Add(new IndexerPropertyDescriptor(" + ptConst.GetName() + " + tp[\"" + ptEntity.GetPKName() + "\"].ToString(), new Attribute[0], tp[\"localized_name\"].ToString(), Util.GetType(tp[\"type\"].ToString())));\n");
-				sb.Append("\t\t\t}\n");
-			}
-			*/
-			sb.Append("\t\t\treturn objectProperties;\n");
-			sb.Append("\t\t}\n");
-			sb.Append("\t\t#endregion\n");
-			return sb.ToString();
-		}
-		#endregion
-		#region TestAddProps
-		public void TestAddProps()
-		{
-System.Console.WriteLine(this.GenerateAdditionalObjectProperties(this.GetProperties()));
-		}
-		#endregion
-		#region GetSqlView
-		public object GetSqlView()
-		{
-System.Collections.IList children = this.Children;
-			foreach (object obj in children)
-			{
-				if (obj is View)
-				{
-					return obj;	
-				}
-			}
-			return null;
-		}
-		#endregion
 		#region sql_DropTable
-		public string sql_DropTable()
+		public object sql_DropTable()
 		{
                         string sOut = "";
 						string sqlName = this.GetSqlName();
@@ -1551,7 +1213,7 @@ System.Text.StringBuilder sb = new System.Text.StringBuilder();
 		}
 		#endregion
 		#region sql_GenerateStoredProcedures
-		public string sql_GenerateStoredProcedures()
+		public object sql_GenerateStoredProcedures()
 		{
 System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			System.Collections.IList m = this.GetStoredProcedures();
@@ -1680,7 +1342,7 @@ System.Text.StringBuilder sb = new System.Text.StringBuilder();
 		}
 		#endregion
 		#region sql_Alter
-		public string sql_Alter()
+		public object sql_Alter()
 		{
             System.Boolean doSP = true;
 			            System.Boolean doTrig = true;
@@ -1770,7 +1432,7 @@ System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			                }
 			                if (doTrig)
 			                {
-			                    sb.Append(this.sql_GenerateTriggers(false));
+			                    sb.Append(this.sql_GenerateTriggers());
 			                }
 			
 			                sb.Append(GenerateView(this));
@@ -1860,7 +1522,7 @@ System.Collections.IList triggers = new Map();
 		}
 		#endregion
 		#region sql_GenerateTriggers
-		public System.String sql_GenerateTriggers(System.Boolean dialog)
+		public object sql_GenerateTriggers()
 		{
 System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			System.Collections.IList m = this.GetTriggers();
@@ -1869,25 +1531,12 @@ System.Text.StringBuilder sb = new System.Text.StringBuilder();
 				sb.Append((m[i] as Trigger).Generate(false, this));
 			}
 			
-			string sOut = sb.ToString();
-			//if (dialog)
-			//{
-			//	Package parent = this.Parent as Package;
-			//	if (parent != null)
-			//	{
-			//		SqlExecForm.Exec(sOut, parent.GetDatabaseServer(), parent.GetDBName());
-			//	}
-			//	else
-			//	{
-			//		SqlExecForm.Exec(sOut);
-			//	}
-			//	return "";
-			//}
-			return sOut;
+			return sb.ToString();
+			
 		}
 		#endregion
 		#region sql_GenerateFunctions
-		public string sql_GenerateFunctions()
+		public object sql_GenerateFunctions()
 		{
 System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			System.Collections.IList m = this.GetFunctions();
@@ -2855,6 +2504,469 @@ Map attrs = new Map();
 			return attrs;
 		}
 		#endregion
+		#region GetProperties
+		public System.Collections.IList GetProperties()
+		{
+Map properties = new Map();
+			System.Collections.IList relations = this.ARelations;
+			for (int i = 0; i < relations.Count; i++)
+			{
+				ICompiledRelation rel = (ICompiledRelation)relations[i];
+				if (rel is Inherit && ((Inherit)rel).InheritProperties)
+				{
+					System.Collections.IList inList = ((Entity)rel.B).GetProperties();
+					foreach (Property p in inList)
+					{
+						properties.Add(p.Name, p);
+					}
+				}
+				if (rel is Relation)
+				{
+					Relation relation = (Relation)rel;
+					bool isNull = false;
+					if (relation.GenerateForA(out isNull) && relation.B is Type && !((Type)relation.B).GenerateTable)
+					{
+						Type localType = (Type)relation.B;
+						string typeSqlName = localType.Name.ToLower();
+						if ((relation.BRole != null)&&(relation.BRole != ""))
+						{
+							typeSqlName = relation.BRole;
+						}
+						else 
+						{
+							string typePhisicalName = localType.PhisicalName.ToLower();
+							if ((typePhisicalName != null)&&(typePhisicalName != ""))
+							{
+								typeSqlName = typePhisicalName;
+							}
+						}
+						string csTypeName = Static.GetCSharpObjectName(localType);
+						string csType = Static.GetCSharpNativeType(localType.SqlType);
+						string csPropertyName = Static.GetCSharpName(typeSqlName);
+						
+						Property prop = new Property(null);
+						prop.Name = csPropertyName;
+						prop.Type = csTypeName;
+						prop.ReadOnly = false;
+						prop.AccessModifier = "public";
+						prop.Interface = true;
+						prop.Get = "\t\t\t\treturn (" + csTypeName + ") _" + typeSqlName + ".Value;";
+						if ((relation.Set != null)&&(relation.Set.Length > 0))
+						{
+							prop.Set = relation.Set;
+						}
+						else
+						{
+							prop.Set = "\t\t\t\t_" + typeSqlName + " = (" + csType + ")value;";
+						}
+						properties.Add(prop.Name, prop);
+					}
+					if (relation.B is StateEngine)
+					{
+						StateEngine localType = (StateEngine)relation.B;
+						string typeSqlName = localType.Name.ToLower();
+						string typePhisicalName = localType.PhisicalName.ToLower();
+						if ((typePhisicalName != null)&&(typePhisicalName != ""))
+						{
+							typeSqlName = typePhisicalName;
+						}
+						string csTypeName = Static.GetCSharpObjectName(localType);
+						string csType = Static.GetCSharpNativeType(localType.SqlType);
+						
+						Property prop = new Property(null);
+						prop.Name = csTypeName;
+						prop.Type = csTypeName;
+						prop.ReadOnly = false;
+						prop.AccessModifier = "public";
+						prop.Interface = true;
+						if ((localType.Get != null)&&(localType.Get.Length > 0))
+						{
+							prop.Get = localType.Get;
+						}
+						else
+						{
+							prop.Get = "\t\t\t\treturn (" + csTypeName + ") _" + typeSqlName + ".Value;";
+						}
+						if ((localType.Set != null)&&(localType.Set.Length > 0))
+						{
+							prop.Set = localType.Set;
+						}
+						else
+						{
+							prop.Set = "\t\t\t\t_" + typeSqlName + " = (" + csType + ")value;";
+						}
+						properties.Add(prop.Name, prop);
+					}
+				}
+			}
+			relations = this.BRelations;
+			for (int i = 0; i < relations.Count; i++)
+			{
+				ICompiledRelation rel = (ICompiledRelation)relations[i];
+				if (rel is Relation)
+				{
+					Relation relation = (Relation)rel;
+					bool isNull = false;
+					if (relation.GenerateForB(out isNull) && relation.A is Type && !((Type)relation.A).GenerateTable)
+					{
+						Type localType = (Type)relation.A;
+						string typeSqlName = localType.Name.ToLower();
+						if ((relation.ARole != null)&&(relation.ARole != ""))
+						{
+							typeSqlName = relation.ARole;
+						}
+						else 
+						{
+							string typePhisicalName = localType.PhisicalName.ToLower();
+							if ((typePhisicalName != null)&&(typePhisicalName != ""))
+							{
+								typeSqlName = typePhisicalName;
+							}
+						}
+						string csTypeName = Static.GetCSharpObjectName(localType);
+						string csType = Static.GetCSharpNativeType(localType.SqlType);
+						string csPropertyName = Static.GetCSharpName(typeSqlName);
+						
+						Property prop = new Property(null);
+						prop.Name = csPropertyName;
+						prop.Type = csTypeName;
+						prop.ReadOnly = false;
+						prop.AccessModifier = "public";
+						prop.Interface = true;
+						prop.Get = "\t\t\t\treturn (" + csTypeName + ") _" + typeSqlName + ".Value;";
+						if ((relation.Set != null)&&(relation.Set.Length > 0))
+						{
+							prop.Set = relation.Set;
+						}
+						else
+						{
+							prop.Set = "\t\t\t\t_" + typeSqlName + " = (" + csType + ")value;";
+						}
+						properties.Add(prop.Name, prop);
+					}
+				}
+			}
+			System.Collections.IList children = this.Children;
+			for (int i = 0; i < children.Count; i++)
+			{
+				ICompiledEntity obj = (ICompiledEntity)children[i];
+				if (obj is Property)
+				{
+					properties.Add(obj.Name, obj);
+				}
+				else if (obj is Type)
+				{
+					Type localType = (Type)obj;
+					if (localType.GenerateTable) continue;
+					string typeSqlName = localType.Name.ToLower();
+					string typePhisicalName = localType.PhisicalName.ToLower();
+					if ((typePhisicalName != null)&&(typePhisicalName != ""))
+					{
+						typeSqlName = typePhisicalName;
+					}
+					string csTypeName = Static.GetCSharpObjectName(localType);
+					string csType = Static.GetCSharpNativeType(localType.SqlType);
+					
+					Property prop = new Property(null);
+					prop.Name = csTypeName;
+					prop.Type = csTypeName;
+					prop.ReadOnly = false;
+					prop.AccessModifier = "public";
+					prop.Interface = true;
+					if ((localType.Get != null)&&(localType.Get.Length > 0))
+					{
+						prop.Get = localType.Get;
+					}
+					else
+					{
+						prop.Get = "\t\t\t\treturn (" + csTypeName + ") _" + typeSqlName + ".Value;";
+					}
+					if ((localType.Set != null)&&(localType.Set.Length > 0))
+					{
+						prop.Set = localType.Set;
+					}
+					else
+					{
+						prop.Set = "\t\t\t\t_" + typeSqlName + " = (" + csType + ")value;";
+					}
+					properties.Add(prop.Name, prop);
+				}
+				else if (obj is StateEngine)
+				{
+					StateEngine localType = (StateEngine)obj;
+					string typeSqlName = localType.Name.ToLower();
+					string typePhisicalName = localType.PhisicalName.ToLower();
+					if ((typePhisicalName != null)&&(typePhisicalName != ""))
+					{
+						typeSqlName = typePhisicalName;
+					}
+					string csTypeName = Static.GetCSharpObjectName(localType);
+					string csType = Static.GetCSharpNativeType(localType.SqlType);
+					
+					Property prop = new Property(null);
+					prop.Name = csTypeName;
+					prop.Type = csTypeName;
+					prop.ReadOnly = false;
+					prop.AccessModifier = "public";
+					prop.Interface = true;
+					if ((localType.Get != null)&&(localType.Get.Length > 0))
+					{
+						prop.Get = localType.Get;
+					}
+					else
+					{
+						prop.Get = "\t\t\t\treturn (" + csTypeName + ") _" + typeSqlName + ".Value;";
+					}
+					if ((localType.Set != null)&&(localType.Set.Length > 0))
+					{
+						prop.Set = localType.Set;
+					}
+					else
+					{
+						prop.Set = "\t\t\t\t_" + typeSqlName + " = (" + csType + ")value;";
+					}
+					properties.Add(prop.Name, prop);
+				}
+			}
+			return properties;
+		}
+		#endregion
+		#region InheritsFrom
+		public System.Boolean InheritsFrom(Entity fromEntity)
+		{
+System.Collections.IList relations = this.ARelations;
+			for (int i = 0; i < relations.Count; i++)
+			{
+				ICompiledRelation cr = (ICompiledRelation)relations[i];
+				if (cr is Inherit)
+				{
+					if (cr.B.Id == fromEntity.Id) return true;
+					bool result = ((Entity)cr.B).InheritsFrom(fromEntity);
+					if (result) return true;
+				}
+			}
+			return false;
+		}
+		#endregion
+		#region sql_GenerateIndexes
+		public object sql_GenerateIndexes()
+		{
+return GenerateIndexes(this);
+		}
+		#endregion
+		#region GetUsing
+		public System.String GetUsing()
+		{
+string result = "";
+			if ((this.Using != null)&&(this.Using.Length > 0))
+			{
+				result += this.Using;
+			}
+			System.Collections.IList relations = this.ARelations;
+			for (int i = 0; i < relations.Count; i++)
+			{
+				ICompiledRelation rel = (ICompiledRelation)relations[i];
+				if (rel is Inherit && ((Inherit)rel).InheritUsing)
+				{
+					Entity bEntity = (rel as Inherit).B as Entity;
+					result += ((rel as Inherit).B as Entity).GetUsing();
+				}
+			}
+			return result;
+		}
+		#endregion
+		#region GenerateRef
+		public System.String GenerateRef(System.String refMethod)
+		{
+	return this.GenerateRef(refMethod, "");
+		}
+		#endregion
+		#region GetStateEngines
+		public System.Collections.IList GetStateEngines()
+		{
+Map stateEngines = new Map();
+			System.Collections.IList relations = this.ARelations;
+			for (int i = 0; i < relations.Count; i++)
+			{
+				ICompiledRelation rel = (ICompiledRelation)relations[i];
+				if (rel is Inherit)
+				{
+					System.Collections.IList inheritStateEngines = (rel.B as Entity).GetStateEngines();
+					foreach(StateEngine se in inheritStateEngines)
+					{
+						stateEngines.Add(se.PhisicalName, se);
+					}
+				}
+			}
+			System.Collections.IList children = this.Children;
+			for (int i = 0; i < children.Count; i++)
+			{
+				StateEngine obj = children[i] as StateEngine;
+				if (obj == null) continue;
+				stateEngines.Add(obj.PhisicalName, obj);
+			}
+			return stateEngines;
+		}
+		#endregion
+		#region GenerateStateEngines
+		public System.String GenerateStateEngines()
+		{
+System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			System.Collections.IList stateEngines = this.GetStateEngines();
+			foreach(StateEngine se in stateEngines)
+			{
+				sb.Append(se.GenerateEngine());
+			}
+			
+			return sb.ToString();
+		}
+		#endregion
+		#region GenerateInterfaceStateEngines
+		public System.String GenerateInterfaceStateEngines()
+		{
+System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			System.Collections.IList stateEngines = this.GetStateEngines();
+			foreach(StateEngine se in stateEngines)
+			{
+				sb.Append(se.GenerateInterfaceEngine());
+			}
+			
+			return sb.ToString();
+		}
+		#endregion
+		#region TestViewAttrs
+		public string TestViewAttrs()
+		{
+System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			System.Text.StringBuilder sbInterface = new System.Text.StringBuilder();
+			System.Collections.IList children = this.GetViewAttributes();
+			for (int i = 0; i < children.Count; i++)
+			{
+				ViewAttribute obj = children[i] as ViewAttribute;
+				if (obj == null) continue;
+				string attr_name = obj.Name;
+				string attr_type = obj.Type;
+				string attr_phisical_name = obj.GetSqlName();
+				string attr_default_csharp = obj.DIOSDefault;
+				string attr_csharp_type = obj.GetCSharpType();
+				string attr_get = obj.Get; if (attr_get == null) attr_get = "";
+				string attr_set = obj.Set; if (attr_set == null) attr_set = "";
+			
+				sb.Append("\t\t#region " + attr_phisical_name + "\n");
+				if (obj.CreatePrivateField)
+				{
+					sb.Append("\t\tprotected " + attr_csharp_type + " _" + attr_phisical_name);
+					if ((attr_default_csharp != null)&&(attr_default_csharp.Length > 0))
+					{
+						sb.Append(" = " + attr_default_csharp);
+					}
+					sb.Append(";\n");
+				}
+				sb.Append("\t\t[ViewProperty]\n");
+				sb.Append("\t\t[ObjectPropertyAttribute(\"" + attr_name + "\", false, " + (!(attr_set.Length > 0)).ToString().ToLower() + ")]\n");
+				sbInterface.Append("\t\t[ObjectPropertyAttribute(\"" + attr_name + "\", false, " + (!(attr_set.Length > 0)).ToString().ToLower() + ")]\n");
+			
+				sb.Append("\t\tpublic " + attr_csharp_type + " " + attr_phisical_name + "\n\t\t{");
+				sbInterface.Append("\t\t" + attr_csharp_type + " " + attr_phisical_name + "{get;");
+				if (attr_set.Length > 0)
+				{
+					sbInterface.Append("set;");
+				}
+				sbInterface.Append("}\n");
+					
+				if (attr_get == "")
+				{
+					attr_get = "\t\t\t\treturn _" + attr_phisical_name + ";"; 
+				}
+				sb.Append("\n\t\t\tget\n\t\t\t{\n");
+				sb.Append(attr_get);
+				sb.Append("\n\t\t\t}\n");
+				if (attr_set.Length > 0)
+				{
+					sb.Append("\t\t\tset\n\t\t\t{\n");
+					sb.Append(attr_set);
+					sb.Append("\n\t\t\t}\n");
+				}
+				sb.Append("\t\t}\n");
+				sb.Append("\t\t#endregion\n");
+				//sbProperties.Append(", " + attr_phisical_name);
+			}
+			
+			return sb.ToString();
+			
+		}
+		#endregion
+		#region GenerateAdditionalObjectProperties
+		public System.String GenerateAdditionalObjectProperties(System.Collections.IList m)
+		{
+System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			sb.Append("\t\t#region AdditionalObjectProperties()\n");
+			if (m == null)
+			{
+				m = GetCSharpAttributes(true);
+			}
+			sb.Append("\t\tpublic static IndexerPropertyDescriptorCollection AdditionalObjectProperties()\n");
+			sb.Append("\t\t{\n");
+			sb.Append("\t\t\tIndexerPropertyDescriptorCollection objectProperties = null;\n");
+			sb.Append("\t\t\tobjectProperties = IndexerPropertyDescriptorCollection.Empty;\n");
+			for (int i = 0; i < m.Count; i++)
+			{
+				Property p = (Property)m[i];
+				sb.Append("\t\t\tobjectProperties.Add(new IndexerPropertyDescriptor(");
+				sb.Append("\"" + p.Name + "\", ");
+				sb.Append("new Attribute[0], ");
+				sb.Append("\"" + p.Name + "\", ");
+				sb.Append("typeof(string)));\n");
+			}
+			/*
+			System.Collections.IList propEntities = this.GetPropertyEntities();
+			for (int i = 0; i < propEntities.Count; i++)
+			{
+				Entity e = (Entity)propEntities[i];
+				System.Console.WriteLine(e.Name);
+				object[] scriptObjects = e.ExecuteScripts(new string[]{"GetPropertyType", "GetPropertyPrefix"}, e, new object[2]);
+				Entity ptEntity = scriptObjects[0] as Entity;
+				if (ptEntity == null) throw new Exception("Не найден тип для значения свойства " + e.Name);
+				Const ptConst = scriptObjects[1] as Const;
+				if (ptConst == null) throw new Exception("Не найден префикс для значения свойства " + e.Name);
+				
+				string csPropertyObjectName = Static.GetCSharpObjectName(ptEntity);
+				sb.Append("\t\t\t// Дополнительные свойства по типу " + csPropertyObjectName + "\n");
+				sb.Append("\t\t\tIObjectCollection fields = StaticObjectManager.Manager.GetEntity(\"" + ptEntity.GetSqlName() + "\").List(null);\n");
+				sb.Append("\t\t\tfields.Sort(new PropertiesComparer(new SortProperty[]{new SortProperty(\"sequence\")}));\n");
+				sb.Append("\t\t\tfor(int i = 0; i < fields.Count; i++)\n");
+				sb.Append("\t\t\t{\n");
+				sb.Append("\t\t\t	IIndexer tp = fields[i] as IIndexer;\n");
+				sb.Append("\t\t\t	objectProperties.Add(new IndexerPropertyDescriptor(" + ptConst.GetName() + " + tp[\"" + ptEntity.GetPKName() + "\"].ToString(), new Attribute[0], tp[\"localized_name\"].ToString(), Util.GetType(tp[\"type\"].ToString())));\n");
+				sb.Append("\t\t\t}\n");
+			}
+			*/
+			sb.Append("\t\t\treturn objectProperties;\n");
+			sb.Append("\t\t}\n");
+			sb.Append("\t\t#endregion\n");
+			return sb.ToString();
+		}
+		#endregion
+		#region TestAddProps
+		public void TestAddProps()
+		{
+System.Console.WriteLine(this.GenerateAdditionalObjectProperties(this.GetProperties()));
+		}
+		#endregion
+		#region GetSqlView
+		public object GetSqlView()
+		{
+System.Collections.IList children = this.Children;
+			foreach (object obj in children)
+			{
+				if (obj is View)
+				{
+					return obj;	
+				}
+			}
+			return null;
+		}
+		#endregion
 		#region GenerateWebObject
 		public string GenerateWebObject()
 		{
@@ -3171,13 +3283,11 @@ Map attrs = new Map();
 			            sb.Append("\t\t#endregion\r\n");
 			
 			            //Console.WriteLine("Формирование RefObjects");
-			            if (!this.NoRefObjects)
-			            {
-			                sb.Append("\t\t#region RefObjects\r\n");
-			                sb.Append(this.GenerateRef("GenerateRefObjs", ""));
-			                sb.Append("\t\t#endregion\r\n");
-			                sbInterface.Append(this.GenerateRef("GenerateInterfaceRefObjs", ""));
-			            }
+			            sb.Append("\t\t#region RefObjects\r\n");
+			            sb.Append(this.GenerateRef("GenerateRefObjs", ""));
+			            sb.Append("\t\t#endregion\r\n");
+			            sbInterface.Append(this.GenerateRef("GenerateInterfaceRefObjs", ""));
+			
 			            //Console.WriteLine("Формирование методов");
 			            sb.Append("\t\t#region Методы\r\n");
 			            sb.Append(this.GenerateMethods());
@@ -3225,7 +3335,7 @@ Map attrs = new Map();
 		}
 		#endregion
 		#region RegisterForWeb
-		public string RegisterForWeb()
+		public object RegisterForWeb()
 		{
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			
@@ -3267,100 +3377,32 @@ Map attrs = new Map();
 			
 		}
 		#endregion
-		#region ora_Generate
-		public string ora_Generate()
+		#region GetTableName
+		public string GetTableName()
 		{
-            string comma = "";
-			            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			            string sqlName = this.GetSqlName();
+string s = this.PhisicalName;
+			if ((s != null)&&(s.Length > 0))
+			{
+				return s;
+			}
+			else
+			{
+				s = this.Name.ToUpper();
+			}
 			
-			            sb.Append("declare\r\n");
-			            sb.Append("\tex int;\r\n");
-			            sb.Append("\tquery_text varchar(1000);\r\n");
-			            sb.Append("begin\r\n");
-			            sb.Append("\tselect count(*) into ex from user_tables where table_name = '" + sqlName + "';\r\n");
-			            sb.Append("\tif ex > 0 then\r\n");
-			            sb.Append("\t\tquery_text := 'drop table " + sqlName + "';\r\n");
-			            sb.Append("\t\texecute immediate query_text;\r\n");
-			            sb.Append("\tend if;\r\n");
-			            sb.Append("end;\r\n");
-			            sb.Append("go\r\n");
+			System.Collections.Hashtable HT = new System.Collections.Hashtable();
 			
-			            sb.Append("create table " + sqlName + "\n(");
-			            System.Collections.IList attrs = this.GetAttributes();
-			            foreach (Attribute attr in attrs)
-			            {
-			                sb.Append(comma + "\n\t" + attr.GetSqlName() + " ");
-			                string AttrType = attr.Type
-			                    .Replace("bigint", "NUMBER(20)")
-			                    .Replace("int", "NUMBER(9)")
-			                    .Replace("bit", "NUMBER(1)")
-			                    .Replace("identity", "")
-			                    .Replace("datetime", "date")
-			                    .Trim();
-			                sb.Append(AttrType + " ");
-			                sb.Append(attr.Null);
-			                string attr_default = attr.Default;
-			                //                    if ((attr_default != null) && (attr_default.Length > 0))
-			                //                    {
-			                //                        sb.Append(" default " + attr_default);
-			                //                    }
-			                comma = ",";
-			            }
-			            System.Collections.IList pk_attrs = this.GetPKAttributes();
-			            if ((pk_attrs != null) && (pk_attrs.Count > 0))
-			            {
-			                string cm = "";
-			                sb.Append(comma + "\n\t" + "primary key (");
-			                for (int i = 0; i < pk_attrs.Count; i++)
-			                {
-			                    Attribute attr = (Attribute)pk_attrs[i];
-			                    sb.Append(cm + attr.GetSqlName());
-			                    cm = ", ";
-			                }
-			                sb.Append(")");
-			            }
-			            Map fk_attrs = this.GetFKLinks() as Map;
-			            if ((fk_attrs != null) && (fk_attrs.Count > 0))
-			            {
-			                for (int i = 0; i < fk_attrs.Count; i++)
-			                {
-			                    Entity link = fk_attrs[i] as Entity;
-			                    if (link != null)
-			                    {
-			                        sb.Append(comma + "\n\t" + "foreign key (" + fk_attrs.KeyAt(i) + ") references " + link.GetSqlName());
-			                    }
-			                }
-			            }
+			HT.Add("Y$", "IE");
+			HT.Add("S$", "SE");
+			HT.Add("X$", "XE");
 			
-			            sb.Append("\r\n)");
+			foreach(string key in HT.Keys)
+			{
+				System.Text.RegularExpressions.Regex regEx = new System.Text.RegularExpressions.Regex(key);
+				s = regEx.Replace(s, HT[key].ToString());
+			}
 			
-			            sb.Append("\r\ngo\n");
-			            //sb.Append("grant " + GetPermissions() + " on " + sqlName + " to " + GetRoleNames() + "\n");
-			            //sb.Append("/\n");
-			
-			            sb.Append(this.GenerateIndexes(this));
-			
-			            object insertData = this.ExecuteScript("InsertData", this, new object[0]);
-			            if (insertData != null)
-			            {
-			                sb.Append((string)insertData);
-			            }
-			
-			            object generateAdditional = this.ExecuteScript("GenerateAdditional", this, new object[] { false });
-			            if (generateAdditional != null)
-			            {
-			                sb.Append((string)generateAdditional);
-			            }
-			            else
-			            {
-			                sb.Append("/* No Additional Script */\n");
-			            }
-			
-			            return sb.ToString()
-			                         .Replace("go\n","go\r\n")
-			                         .Replace("go\r\n", "/\r\n");;
-			
+			return s + "S";
 		}
 		#endregion
 		#endregion

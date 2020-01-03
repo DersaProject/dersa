@@ -11,7 +11,7 @@ namespace DersaStereotypes
 	{
 		public Script(){}
 
-		public Script(IDersaEntity obj) 
+		public Script(IDersaEntity obj)
 		{
 			_object = obj;
 			if (_object != null)
@@ -20,21 +20,118 @@ namespace DersaStereotypes
 				_id = _object.Id;
 			}
 		}
-		public string Using = "";
-		public System.String Code = "";
-		public System.String Source = "CSharp";
-		public System.String PhisicalName = "";
-		public System.String ReturnType = "System.String";
 		public System.String Parameters = "";
+		public System.String Source = "CSharp";
+		public System.String Code = "";
+		public string Using = "";
+		public System.String ReturnType = "System.String";
+		public System.String PhisicalName = "";
+		public Dersa.Common.DersaUserSqlManager userSqlManager = new Dersa.Common.DersaUserSqlManager();
 
 		#region Методы
+		#region ExecWithoutParams
+		public string ExecWithoutParams()
+		{
+	return this.Exec(new object[0]);
+		}
+		#endregion
+		#region code
+		public string code(string userName)
+		{
+         return Dersa.Common.DersaUtil.GetAttributeValue(userName, this.Id, "Code", 5);
+		}
+		#endregion
+		#region Execute
+		public System.Object Execute(ICompiledEntity owner, object[] args, string userName)
+		{
+if ((this.Code == null)||(this.Code.Length == 0)) return null;
+			
+			if (this.CompileScript())
+			{
+			        string[] usingAssemblies = this.Using.Split(',');
+			        string[] Using = new string[usingAssemblies.Length];
+			        for(int i = 0; i < usingAssemblies.Length; i++)
+			        {
+			             Using[i] = usingAssemblies[i].Contains("bin\\")? AppDomain.CurrentDomain.BaseDirectory + usingAssemblies[i] : usingAssemblies[i];
+			        }
+			        object[] argsWithUserName = new object[args.Length+1];
+			        argsWithUserName[0] = userName;
+			        for(int a = 0; a < args.Length; a++)
+			             argsWithUserName[a+1] = args[a];
+			        string paramsWithUserName = "System.String userName"; 
+			        if(!string.IsNullOrEmpty(this.Parameters))
+			               paramsWithUserName += ",";                
+			        paramsWithUserName += this.Parameters.Replace("B64\"", "\"");
+				return Static.CompileAndExecuteAditionalMethod(owner, this.ReturnType, this.Name, this.code(userName), paramsWithUserName, argsWithUserName, Using);
+			}
+			else
+			{
+				return this.Code;
+			}
+			return null;
+		}
+		#endregion
 		#region Exec
 [MethodPermissionsAttribute("admin")]
 		public string Exec(object[] callParams)
 		{
 System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			
-			if(this.Source == "JScript")
+			if(this.Source == "SQL")
+			{
+			
+			    if(callParams.Length == 1)//минимальная длина, передано только имя пользователя
+			    {
+			
+			        sb.Append("var xhr = new XMLHttpRequest();");
+			        sb.Append("args = 'id=" + this.Id.ToString() + "&method_name=ExecWithoutParams';");
+			        sb.Append("xhr.open('GET', 'node/ExecMethodForm?' + args, false);");
+			        sb.Append("xhr.send();");
+			
+			        sb.Append("var attrs = JSON.parse(xhr.responseText);");
+			        sb.Append("var form = new mxForm('');");
+			        sb.Append("var Props = CreateProperties(form, attrs, 'query/ExecSql', 'alert');");
+			        sb.Append("var win_scrolled_value = parseInt($(window).scrollTop());");
+			        sb.Append("var wnd = new mxWindow('exec SQL', Props, 100, win_scrolled_value + 100, 400, 600, false, true);");
+			        sb.Append("form.window = wnd;");
+			        sb.Append("wnd.setVisible(true);");
+			        return sb.ToString();
+			
+			
+			//        sb.Append("xhr=new XMLHttpRequest();");
+			//        sb.Append("xhr.open('GET', 'Query/GetAction?MethodName=Exec&id="); 
+			//        sb.Append(this.Id.ToString());
+			//        sb.Append("&paramString=[0]'");
+			//        sb.Append(", false);");
+			//        sb.Append("xhr.send();");
+			//        sb.Append("eval(xhr.responseText);");
+			//        return sb.ToString();
+			    }
+			    else
+			    {
+				return this.Code;
+			//        sb.Append("var attrs = [{Name:\"SQL\",Value:\"");
+			//	sb.Append(this.Code); 
+			//	sb.Append("\",ControlType:\"textarea\"");
+			//	sb.Append(",Height:200");
+			//	sb.Append(",Width:300");
+			//	sb.Append(",WriteUnchanged:true}");
+			//      sb.Append(",{Name:\"entity_id\",Value:\"");
+			//	sb.Append(this.Id.ToString()); 
+			//	sb.Append("\",ControlType:\"hidden\"");
+			//	sb.Append(",WriteUnchanged:true}");
+			//	sb.Append("];");
+			//        sb.Append("var form = new mxForm('');");
+			//        sb.Append("var Props = CreateProperties(form, attrs, 'query/ExecSql', 'alert');");
+			//        sb.Append("var win_scrolled_value = parseInt($(window).scrollTop());");
+			//        sb.Append("var wnd = new mxWindow('exec SQL', Props, 100, win_scrolled_value + 100, 400, 600, false, true);");
+			//        sb.Append("form.window = wnd;");
+			//        sb.Append("wnd.setVisible(true);");
+			
+			//        return sb.ToString();
+			    }
+			}
+			else if(this.Source == "JScript")
 			{
 			     sb.Append("var paramsArray = new Array();");
 			     for(int i=1; i < callParams.Length; i++)
@@ -150,50 +247,10 @@ System.Text.StringBuilder sb = new System.Text.StringBuilder();
 			    return null;
 		}
 		#endregion
-		#region AllowExecuteMethod
-		public override bool AllowExecuteMethod(string userName, string methodName)
+		#region CompileScript
+		public System.Boolean CompileScript()
 		{
-        this.Reinitialize();
-			        var inst = Dersa.Common.DersaUtil.CreateInstance(this.Object, new Dersa.Common.DersaAnonimousSqlManager());
-			        int userPermissions = Dersa.Common.DersaUtil.GetUserPermissions(userName);
-				return (userPermissions & 4) > 0 || (inst is Script && ((Script)inst).Source == "JScript");
-			
-		}
-		#endregion
-		#region Execute
-		public System.Object Execute(ICompiledEntity owner, object[] args, string userName)
-		{
-if ((this.Code == null)||(this.Code.Length == 0)) return null;
-			
-			if (this.CompileScript())
-			{
-			        string[] usingAssemblies = this.Using.Split(',');
-			        string[] Using = new string[usingAssemblies.Length];
-			        for(int i = 0; i < usingAssemblies.Length; i++)
-			        {
-			             Using[i] = usingAssemblies[i].Contains("bin\\")? AppDomain.CurrentDomain.BaseDirectory + usingAssemblies[i] : usingAssemblies[i];
-			        }
-			        object[] argsWithUserName = new object[args.Length+1];
-			        argsWithUserName[0] = userName;
-			        for(int a = 0; a < args.Length; a++)
-			             argsWithUserName[a+1] = args[a];
-			        string paramsWithUserName = "System.String userName"; 
-			        if(!string.IsNullOrEmpty(this.Parameters))
-			               paramsWithUserName += ",";                
-			        paramsWithUserName += this.Parameters.Replace("B64\"", "\"");
-				return Static.CompileAndExecuteAditionalMethod(owner, this.ReturnType, this.Name, this.code(userName), paramsWithUserName, argsWithUserName, Using);
-			}
-			else
-			{
-				return this.Code;
-			}
-			return null;
-		}
-		#endregion
-		#region code
-		public string code(string userName)
-		{
-         return Dersa.Common.DersaUtil.GetAttributeValue(userName, this.Id, "Code", 5);
+        return this.Source == "CSharp";
 		}
 		#endregion
 		#region Execute
@@ -202,10 +259,14 @@ if ((this.Code == null)||(this.Code.Length == 0)) return null;
 return this.Execute(owner, args, "");
 		}
 		#endregion
-		#region CompileScript
-		public System.Boolean CompileScript()
+		#region AllowExecuteMethod
+		public override bool AllowExecuteMethod(string userName, string methodName)
 		{
-        return this.Source == "CSharp";
+        this.Reinitialize();
+			        var inst = Dersa.Common.DersaUtil.CreateInstance(this.Object, new Dersa.Common.DersaAnonimousSqlManager());
+			        int userPermissions = Dersa.Common.DersaUtil.GetUserPermissions(userName);
+				return (userPermissions & 4) > 0 || (inst is Script && ((Script)inst).Source == "JScript");
+			
 		}
 		#endregion
 		#endregion
