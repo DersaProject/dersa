@@ -739,6 +739,7 @@ namespace Dersa.Models
             }
             catch(Exception exc)
             {
+                DIOS.Common.Logger.LogStatic(exc.Message);
                 return "";
             }
         }
