@@ -204,6 +204,27 @@ namespace Dersa.Common
             }
             return "";
         }
+        
+        public static string GetFileExtension(string userName, int entityId, string attrName, int attrType)
+        {
+            DersaSqlManager DM = new DersaSqlManager();
+            System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "GetFileExtensionForAttribute", new object[] { entityId, attrName, userName, DersaUtil.GetPassword(userName) });
+            if (T == null || T.Rows.Count < 1)
+                return ".txt";
+            string result = T.Rows[0]["file_extension"].ToString();
+            return result;
+            //if (attrName.Contains("()"))
+            //{
+            //    return ".sql";
+            //}
+            //string fileExtension = ".sql";
+            //if (attrName == "Code" || attrName == "Text")
+            //    fileExtension = ".cs";
+            //else if (attrName == "WordText")
+            //    fileExtension = ".html";
+            //return fileExtension;
+        }
+
         public static string GetAttributeValue(string userName, int entityId, string attrName, int attrType)
         {
             if(attrName.Contains("()"))

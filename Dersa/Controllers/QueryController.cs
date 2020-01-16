@@ -22,6 +22,7 @@ namespace Dersa.Controllers
                 string url = QueryControllerAdapter.GetString(urlId, true);
                 System.Net.HttpWebRequest req = System.Net.HttpWebRequest.CreateHttp(url);
                 req.Method = "GET";
+                req.Timeout = 600000;
                 req.CookieContainer = new System.Net.CookieContainer();
                 System.Net.Cookie cookie = new System.Net.Cookie(".AspNet.ApplicationCookie", Request.Cookies[".AspNet.ApplicationCookie"].Value, "/", Request.UrlReferrer.Host);
                 req.CookieContainer.Add(cookie);

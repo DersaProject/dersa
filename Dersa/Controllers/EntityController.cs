@@ -1,5 +1,6 @@
 using System.Data;
-using System.Linq;
+using System;
+using System.IO;
 using System.Web.Mvc;
 using Dersa.Models;
 using Dersa.Common;
@@ -23,8 +24,8 @@ namespace Dersa.Controllers
             try
             {
                 DersaSqlManager M = new DersaSqlManager();
-                string sql = from_stereotype ? "select icon, name from STEREOTYPE (nolock) where stereotype = " + id.ToString()
-                    : "select s.icon, s.name from STEREOTYPE s(nolock) join ENTITY e(nolock) on e.stereotype = s.stereotype where e.entity = " + id.ToString();
+                string sql = from_stereotype ? "select icon, name from STEREOTYPE where stereotype = " + id.ToString()
+                    : "select s.icon, s.name from STEREOTYPE s join ENTITY e on e.stereotype = s.stereotype where e.entity = " + id.ToString();
                 System.Data.DataTable T = M.ExecSql(sql);
                 Response.ContentType = "APPLICATION/OCTET-STREAM";
                 string Header = "Attachment; Filename=" + T.Rows[0][1].ToString() + ".gif";
@@ -64,6 +65,63 @@ namespace Dersa.Controllers
         public string Range(string ids)
         {
             return (new EntityControllerAdapter()).Range(ids);
+        }
+
+        public void IconForStereotype(string name)
+        {
+            DersaSqlManager M = new DersaSqlManager();
+            string sql = "select icon_path from STEREOTYPE where name = '" + name + "'";
+            System.Data.DataTable T = M.ExecSql(sql);
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, T.Rows[0][0].ToString().Replace("/", "\\"));
+
+            using (Stream iconStream = new FileStream(filePath, FileMode.Open))
+                try
+                {
+                    Response.ContentType = "APPLICATION/OCTET-STREAM";
+                    string Header = "Attachment; Filename=" + name;
+                    Response.AppendHeader("Content-Disposition", Header);
+                    byte[] bts = new byte[iconStream.Length];
+                    iconStream.Read(bts, 0, bts.Length);
+                    Response.OutputStream.Write(bts, 0, bts.Length);
+                    Response.End();
+                }
+                catch (System.Exception exc)
+                {
+                    Response.OutputStream.Flush();
+                    Response.OutputStream.Close();
+                    Response.ContentType = "TEXT/HTML";
+                    Response.ClearHeaders();
+                    Response.Write(exc.Message);
+                }
+        }
+
+        public void Icon(int id)
+        {
+            DersaSqlManager M = new DersaSqlManager();
+            try
+            {
+                string sql = "select s.icon_path, s.name from STEREOTYPE s join ENTITIES e on e.stereotype = s.stereotype where e.entity = " + id.ToString();
+                System.Data.DataTable T = M.ExecSql(sql);
+                string filePath = (AppDomain.CurrentDomain.BaseDirectory + T.Rows[0][0].ToString().Replace("/", "\\")).Replace("\\\\", "\\");
+                using (Stream iconStream = new FileStream(filePath, FileMode.Open))
+                {
+                    Response.ContentType = "APPLICATION/OCTET-STREAM";
+                    string Header = "Attachment; Filename=" + T.Rows[0][1].ToString();
+                    Response.AppendHeader("Content-Disposition", Header);
+                    byte[] bts = new byte[iconStream.Length];
+                    iconStream.Read(bts, 0, bts.Length);
+                    Response.OutputStream.Write(bts, 0, bts.Length);
+                    Response.End();
+                }
+            }
+            catch (System.Exception exc)
+            {
+                Response.OutputStream.Flush();
+                Response.OutputStream.Close();
+                Response.ContentType = "TEXT/HTML";
+                Response.ClearHeaders();
+                Response.Write(exc.Message);
+            }
         }
     }
 }

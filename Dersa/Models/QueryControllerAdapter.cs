@@ -123,12 +123,14 @@ namespace Dersa.Models
                 string entityId = Params["entity"].Value.ToString();
                 string attrName = Params["attr_name"].Value.ToString();
                 string attrValue = DersaUtil.GetAttributeValue(userName, int.Parse(entityId), attrName, -1);
+                string fileExtension = DersaUtil.GetFileExtension(userName, int.Parse(entityId), attrName, -1);
                 //(new QueryExecuteService()).GetAttrValue(attrName, entityId, userName);
                 var result = new
                 {
                     entityId = entityId,
                     attrName = attrName,
-                    attrValue = attrValue
+                    attrValue = attrValue,
+                    fileExtension = fileExtension
                 };
                 return JsonConvert.SerializeObject(result);
             }
