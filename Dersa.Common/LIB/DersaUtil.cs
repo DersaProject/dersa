@@ -81,7 +81,7 @@ namespace Dersa.Common
 
         }
 
-        public static string AddRelation(int stereotype, int entity_a, int entity_b)
+        public static string AddRelationSimple(int stereotype, int entity_a, int entity_b)
         {
             try
             {
@@ -92,8 +92,9 @@ namespace Dersa.Common
                 Params.Add("entity_b", entity_b);
                 //Params.Add("login", userName);
                 //Params.Add("password", DersaUtil.GetPassword(userName));
-                int result = DM.ExecuteIntMethod("ENTITY","AddRelation", Params);
-                return result.ToString();
+                int result = DM.ExecuteIntMethod("ENTITY","AddRelationSimple", Params);
+                //return result.ToString();
+                return "";
             }
             catch (Exception exc)
             {

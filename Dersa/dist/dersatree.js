@@ -272,8 +272,12 @@ $.jstree.defaults.contextmenu = {
         instance.deselect_all();
         var found = document.getElementById("found");
         var nextId = found.value;
-        if (instance.get_node(nextId))
+        if (instance.get_node(nextId)) {
             instance.select_node(nextId);
+            var documentId = '#' + nextId + '_anchor';
+            var scrollTop = $(documentId).offset().top;
+            $(document).scrollTop(scrollTop);
+        }
 });
 
 $('#listBox').on("click", function () {
@@ -623,6 +627,10 @@ function GoToB() {
     nodeId = FindNext(relId, '');
     if (instance.get_node(nodeId)) {
         instance.select_node(nodeId);
+        var documentId = '#' + nodeId + '_anchor';
+        var scrollTop = $(documentId).offset().top;
+        $(document).scrollTop(scrollTop);
+
     }
     else {
         var jsonPath = GetPath(nodeId, 1);
@@ -648,6 +656,9 @@ function LoadPath() {
             instance.load_node(npath[0]);
         instance.deselect_node(instance.get_selected());
         instance.select_node(npath[0]);
+        var documentId = '#' + npath[0] + '_anchor';
+        var scrollTop = $(documentId).offset().top;
+        $(document).scrollTop(scrollTop);
     }
     else {
         var lnode = npath[0];
