@@ -56,7 +56,6 @@ var lastDnDsource;
 var lastDnDtarget;
 var lastDnDresult;
 var selectedForCut;
-var lastSelectedY;
 
 function InsertNode(data) {
     var inst = $.jstree.reference(data.reference);
@@ -505,10 +504,9 @@ $('#dersa')
     "plugins": ["contextmenu", "dnd", "state"]
 })
     .on("changed.jstree", function (e, data) {
-        if(data && data.event)
-            lastSelectedY = data.event.pageY;
     if (data.selected.length) {
         selected_id = data.instance.get_node(data.selected[0]).id;
+        SaveCurrentNode(selected_id);
         var currentOptionsControl = document.getElementById("tbOptions");
         currentOptionsControl.value = 0;
         if (data.event) {
@@ -644,6 +642,36 @@ function GoToNode(N)
     jP = GetPath(N, 1);
     npath = JSON.parse(jP);
     LoadPath();
+}
+
+var navigationArray = new Array();;
+var navigationArrayIndex = -1;
+var preventSaveNode = false;
+
+function SaveCurrentNode(nodeId) {
+    if (preventSaveNode) {
+        preventSaveNode = false;
+        return;
+    }
+    navigationArrayIndex++;
+    navigationArray[navigationArrayIndex] = nodeId;
+}
+
+function moveForward() {
+    if (navigationArrayIndex >= navigationArray.length - 1) {
+        navigationArrayIndex = navigationArray.length - 1;
+        return null;
+    }
+    preventSaveNode = true;
+    return navigationArray[++navigationArrayIndex];
+}
+function moveBack() {
+    if (navigationArrayIndex <= 0) {
+        navigationArrayIndex = 0;
+        return null;
+    }
+    preventSaveNode = true;
+    return navigationArray[--navigationArrayIndex];
 }
 
 var npath;

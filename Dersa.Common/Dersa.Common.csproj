@@ -89,6 +89,7 @@
   <ItemGroup>
     <Compile Include="Interfaces\CommonStructs.cs" />
     <Compile Include="Interfaces\ICacheProvider.cs" />
+    <Compile Include="Interfaces\IEditControl.cs" />
     <Compile Include="Interfaces\IFilterControl.cs" />
     <Compile Include="LIB\CachedObjects.cs" />
     <Compile Include="LIB\ChildrenCollection.cs" />
