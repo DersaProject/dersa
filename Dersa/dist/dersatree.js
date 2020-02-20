@@ -107,19 +107,27 @@ function CanDnD(src, dstNode, data)
             return;
         }
     }
-    if (dstNode != null) {
+    if (dstNode) {
         var result = lastDnDresult;
-        if (src != lastDnDsource || dstNode.id != lastDnDtarget) {
-            var xhr = new XMLHttpRequest();
-            args = "src=" + src + "&dst=" + dstNode.id;
-            xhr.open('GET', "node/CanDnD?" + args, false);
-            xhr.send();
-            result = xhr.responseText > 0;
-            lastDnDresult = result;
-            lastDnDsource = src;
-            lastDnDtarget = dstNode.id;
+        if (dstNode.id) {
+            if (src != lastDnDsource || dstNode.id != lastDnDtarget) {
+                var xhr = new XMLHttpRequest();
+                args = "src=" + src + "&dst=" + dstNode.id;
+                xhr.open('GET', "node/CanDnD?" + args, false);
+                xhr.send();
+                result = xhr.responseText > 0;
+                lastDnDresult = result;
+                lastDnDsource = src;
+                lastDnDtarget = dstNode.id;
+            }
         }
+        else
+            result = true;
         return result;
+    }
+    else if (data.event.target.ondrop) {
+        data.event.data = { id: src, name: data.element.text };
+        return data.event.target.ondrop(data.event);
     }
     return false;
 }

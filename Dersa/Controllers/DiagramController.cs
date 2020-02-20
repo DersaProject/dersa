@@ -51,6 +51,13 @@ namespace Dersa.Controllers
             {
             }
         */
+
+        public string SaveDiagram(string id, string jsonObject)
+        {
+            return "OK"; 
+        }
+
+
         public string Save(string id, string xml)
 		{
 

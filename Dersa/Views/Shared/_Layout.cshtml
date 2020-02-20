@@ -2,15 +2,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title – приложение ASP.NET</title>
+    <title>DERSA</title>
     <!--Styles.Render("~/Content/css")-->
     @Styles.Render("~/Content/bootstrap.css")
     @Styles.Render("~/Content/site.css")
     @Styles.Render("~/dist/themes/default/style.css")
-
+    @Styles.Render("~/css/jquery-ui.css")
+    
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
@@ -31,17 +32,18 @@
                     <li>@Html.ActionLink("Контакты", "Contact", "Home")</li>
                     @if (System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
                     {
-                        <li>@Html.ActionLink("Проект", "Index", "Project")</li>
+                        <li>
+                            @Html.ActionLink("Проект", "Index", "Project")
+                        </li>
                         <li>@Html.ActionLink("Выйти", "Logout", "Account")</li>
                     }
                     else
                     {
                         <li>@Html.ActionLink("Регистрация", "Register", "Account")</li>
-                        <li><a href = "http://dersa-forum-ru.1gb.ru/forum/Index.php">Форум</a></li>
+                        <li><a href="http://dersa-forum-ru.1gb.ru/forum/Index.php">Форум</a></li>
                     }
                 </ul>
             </div>
-
         </div>
     </div>
     <div class="container body-content" style="margin-left:0px; margin-right:0px">
@@ -51,9 +53,15 @@
             <p>&copy; @DateTime.Now.Year – приложение ASP.NET</p>
         </footer-->
     </div>
+    @Scripts.Render("~/dist/vue.js")
 
+    @*@Scripts.Render("~/dist/jquery-ui.js")
+        @Scripts.Render("~/dist/jquery.js")*@
     @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryui")
+    @*@Scripts.Render("~/bundles/bootstrap")*@
     @RenderSection("scripts", required: false)
+
+    @Scripts.Render("~/dist/vuediag.js")
 </body>
 </html>

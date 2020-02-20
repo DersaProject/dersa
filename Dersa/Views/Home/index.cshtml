@@ -16,6 +16,32 @@
             border: none;
         }
     </style-->
+    <style>
+        #diag {
+            width: 100%;
+            height: 100%;
+        }
+
+        .sel {
+            border: 2px solid red;
+            opacity: 0.5
+        }
+
+        #testblock {
+            width: 90px;
+            height: 25px;
+            background: magenta;
+        }
+
+        .statusbar {
+            color: #000080;
+            background-color: #dfe0d8;
+            position: absolute;
+            padding: 5px;
+            bottom: 25px;
+            width: 100%;
+        }
+    </style>
     <script type="text/javascript">
         var mxBasePath = '../../';
     </script>
@@ -53,7 +79,7 @@
     <div style="float:left;width:200px;margin-top:-20px"><h1>DERSA modeler</h1></div>
     <div style="position:absolute;width: 260px;top: 96px; left: 300px;"><input id="tbSearch" style="width:100%" type="text"></div>
     <div style="position:absolute;width:80px;top:92px;left:556px">
-        <button class="btn" id="bnSearch" onclick="S=document.getElementById('tbSearch');V=S.value;if(isNaN(+V)||+V<1000){var form=new mxForm('find');var xhr=new XMLHttpRequest();args='srchval='+V;xhr.open('GET', 'Entity/Find?' + args, false);xhr.send();var attrs = JSON.parse(xhr.responseText);var Props=CreateProperties(form, attrs, '');var wnd=new mxWindow('find',Props,100,100,800,400,false,true);form.window = wnd;wnd.setVisible(true);return;}GoToNode(V)"><i class="fa fa-search"></i></button>
+        <button class="btn" id="bnSearch" onclick="S=document.getElementById('tbSearch');V=S.value;if(isNaN(+V)||+V<10000){var form=new mxForm('find');var xhr=new XMLHttpRequest();args='srchval='+V;xhr.open('GET', 'Entity/Find?' + args, false);xhr.send();var attrs = JSON.parse(xhr.responseText);var Props=CreateProperties(form, attrs, '');var wnd=new mxWindow('find',Props,100,100,800,400,false,true);form.window = wnd;wnd.setVisible(true);return;}GoToNode(V)"><i class="fa fa-search"></i></button>
     </div>
     @*<div style="float:left;width:160px;margin-left:300px;margin-top:20px"><input id="tbSearch" type="text"></div>
         <div style="float:left;width:200px;margin-top:20px;">
@@ -325,34 +351,6 @@
             };
 
 
-            //// Clones the source if new connection has no target
-            //editor.graph.connectionHandler.setCreateTarget(true);
-
-            // Updates the title if the root changes
-            var title = document.getElementById('title');
-
-            if (title != null) {
-                var f = function (sender) {
-                    title.innerHTML = 'mxDraw - ' + sender.getTitle();
-                };
-
-                editor.addListener(mxEvent.ROOT, f);
-                f(editor);
-            }
-
-            //// Changes the zoom on mouseWheel events
-            //mxEvent.addMouseWheelListener(function (evt, up) {
-            //    if (!mxEvent.isConsumed(evt)) {
-            //        if (up) {
-            //            editor.execute('zoomIn');
-            //        }
-            //        else {
-            //            editor.execute('zoomOut');
-            //        }
-
-            //        mxEvent.consume(evt);
-            //    }
-            //});
 
             // Defines a new action to switch between
             // XML and graphical display
