@@ -20,7 +20,7 @@ namespace Dersa.Models
             Params.Add("@login", currentUser);
             Params.Add("@password", DersaUtil.GetPassword(currentUser));
             DersaSqlManager M = new DersaSqlManager();
-            int res = M.ExecuteIntMethod("DIAGRAM", "Create", Params);
+            int res = M.ExecuteIntMethod("DIAGRAM", "CreateDiagram", Params);
             return res.ToString();
         }
 

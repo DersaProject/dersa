@@ -167,6 +167,10 @@ namespace DersaStereotypes
             CachedObjects.CachedCompiledInstances[this.Id] = null;
         }
 
+        public virtual void SaveCoords(string userName, int x, int y, int width, int height)
+        {
+        }
+
         public static void DropDiagram(string diagram_id, string userName)
         {
             DersaSqlManager DM = new DersaSqlManager();

@@ -8,6 +8,7 @@ using Dersa.Common;
 using DIOS.Common;
 using DIOS.Common.Interfaces;
 using Newtonsoft.Json;
+using DersaStereotypes;
 
 namespace Dersa.Controllers
 {
@@ -66,14 +67,16 @@ namespace Dersa.Controllers
 
                 DersaSqlManager DM = new DersaSqlManager();
                 IParameterCollection Params = new ParameterCollection();
-                int diagram_entity = -1;
-                int entity = -1;
                 foreach (dynamic X in query)
                 {
+                    int diagram_entity = -1;
+                    int entity = -1;
+                    bool saveCoords = true;
                     Params.Clear();
                     string S = "";
                     if(!(bool)X.is_visible)
                     {
+                        saveCoords = false;
                         if (((string)X.id).Substring(0, 2) == "DE")
                         {
                             diagram_entity = int.Parse(((string)X.id).Split('_')[1]);
@@ -100,7 +103,12 @@ namespace Dersa.Controllers
                         Params.Add("top", X.top);
                         Params.Add("w", X.width);
                         Params.Add("h", X.height);
-                        DM.ExecuteIntMethod("DIAGRAM", "UpdateEntity", Params);
+                        entity = DM.ExecuteIntMethod("DIAGRAM", "UpdateEntity", Params);
+                    }
+                    if (saveCoords)
+                    {
+                        StereotypeBaseE objToSaveCoords = StereotypeBaseE.GetSimpleInstance(entity);
+                        objToSaveCoords.SaveCoords("", (int)X.left, (int)X.top, (int)X.width, (int)X.height);
                     }
                 }
                 string result = JsonConvert.SerializeObject(query);

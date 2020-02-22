@@ -83,7 +83,7 @@ diagContainer.setAttribute("ondrop", "return dragDrop(event)");
 document.addEventListener("dragover", dragOver); 
 
 //var diagContainer = document.getElementById('diag');
-    var wnd = new mxWindow('Diagram', diagContainer, 120, +$(window).scrollTop() + 20, 600, 600, false, true);
+    var wnd = new mxWindow('Diagram', diagContainer, 120, +$(window).scrollTop() + 100, 600, 600, false, true);
     wnd.setClosable(true);
     wnd.setResizable(true);
     wnd.setVisible(true);
