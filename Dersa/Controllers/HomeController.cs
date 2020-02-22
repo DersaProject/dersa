@@ -8,6 +8,7 @@ using Dersa.Models;
 using System.Net.Mail;
 using System.Net;
 using Dersa.Common;
+using Newtonsoft.Json;
 
 namespace Dersa.Controllers
 {
@@ -25,8 +26,10 @@ namespace Dersa.Controllers
                 {
                     DersaSqlManager DM = new DersaSqlManager();
                     System.Data.DataTable T = DM.ExecuteMethod("DERSA_USER", "GetTextUserSetting", new object[] { userName, DersaUtil.GetPassword(userName), "toolbox JSON" });
+                    string jsonData = (string)T.Rows[0][0];
+                    JsonConvert.DeserializeObject(jsonData);
                     if (T != null && T.Rows.Count > 0)
-                        ViewBag.ToolBoxData = T.Rows[0][0];
+                        ViewBag.ToolBoxData = jsonData;
                     else
                         ViewBag.ToolBoxData = "[]";
                 }

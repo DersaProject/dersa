@@ -65,7 +65,7 @@ function dragOver(ev) {
 function dragDrop(ev) {
     console.log(ev);
 	let N = app.ctrls.length;
-	app.ctrls.push({ displayed_name: ev.data.name, id: 'n' + (N+1), app_index: N, left: ev.offsetX/* - 10*/, top: ev.offsetY/* - 10*/, width: 100, height: 25, is_selected: false, is_visible: true });
+    app.ctrls.push({ displayed_name: ev.data.name, id: 'n_' + ev.data.id, app_index: N, left: ev.offsetX/* - 10*/, top: ev.offsetY/* - 10*/, width: 100, height: 25, is_selected: false, is_visible: true });
 	ev.stopPropagation();
 	return false;
 }
@@ -74,7 +74,7 @@ $(document).keydown(function (e) { app.ProcessKey(e.key, e.altKey, e.ctrlKey, e.
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function initDiag(){
+function initDiag(diagramId){
 
 var diagContainer = document.createElement('div');
 diagContainer.id = "diag";
@@ -83,24 +83,25 @@ diagContainer.setAttribute("ondrop", "return dragDrop(event)");
 document.addEventListener("dragover", dragOver); 
 
 //var diagContainer = document.getElementById('diag');
-    var wnd = new mxWindow('Diagram prototype', diagContainer, 120, +$(window).scrollTop() + 20, 600, 600, false, true);
+    var wnd = new mxWindow('Diagram', diagContainer, 120, +$(window).scrollTop() + 20, 600, 600, false, true);
     wnd.setClosable(true);
     wnd.setResizable(true);
     wnd.setVisible(true);
     wnd.addListener("close", function () {
-        var body = new Object();
-        body.id = 1006;
-        body.jsonObject = JSON.stringify(app.ctrls);
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/Diagram/SaveDiagram', false);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify(body));
-         
+        if (confirm("Сохранить диаграмму?")) {
+            var body = new Object();
+            body.id = diagramId;
+            body.jsonObject = JSON.stringify(app.ctrls);
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/Diagram/SaveDiagram', false);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify(body));
+        }
     });
     
 
 var xhr=new XMLHttpRequest();
-xhr.open('GET', '/Diagram/GetJson?id=1006', false);
+xhr.open('GET', '/Diagram/GetJson?id=' + diagramId, false);
 xhr.send();
 var initArray = JSON.parse(xhr.responseText);
 

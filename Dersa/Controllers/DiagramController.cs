@@ -1,9 +1,12 @@
+using System;
 using System.Reflection;
 using System.Data;
 using System.Linq;
 using System.Web.Mvc;
 using Dersa.Models;
 using Dersa.Common;
+using DIOS.Common;
+using DIOS.Common.Interfaces;
 using Newtonsoft.Json;
 
 namespace Dersa.Controllers
@@ -54,7 +57,59 @@ namespace Dersa.Controllers
 
         public string SaveDiagram(string id, string jsonObject)
         {
-            return "OK"; 
+            //displayed_name":"OBJ","id":"n3","app_index":2,"left":407,"top":254,"width":100,"height":25,"is_selected":false,"is_visible":true 
+            try
+            {
+                object[] diagArray = JsonConvert.DeserializeObject<object[]>(jsonObject);
+                var query = from dynamic N in diagArray
+                            select new { N.is_visible, N.id, N.left, N.top, N.width, N.height };
+
+                DersaSqlManager DM = new DersaSqlManager();
+                IParameterCollection Params = new ParameterCollection();
+                int diagram_entity = -1;
+                int entity = -1;
+                foreach (dynamic X in query)
+                {
+                    Params.Clear();
+                    string S = "";
+                    if(!(bool)X.is_visible)
+                    {
+                        if (((string)X.id).Substring(0, 2) == "DE")
+                        {
+                            diagram_entity = int.Parse(((string)X.id).Split('_')[1]);
+                            Params.Add("diagram_entity", diagram_entity);
+                            DM.ExecuteIntMethod("DIAGRAM", "DropEntity", Params);
+                        }
+                    }
+                    else if(((string)X.id).Substring(0, 1) == "n")
+                    {
+                        entity = int.Parse(((string)X.id).Split('_')[1]);
+                        Params.Add("diagram", id);
+                        Params.Add("entity", entity);
+                        Params.Add("left", X.left);
+                        Params.Add("top", X.top);
+                        Params.Add("w", X.width);
+                        Params.Add("h", X.height);
+                        DM.ExecuteIntMethod("DIAGRAM", "CreateEntity", Params);
+                    }
+                    else
+                    {
+                        diagram_entity = int.Parse(((string)X.id).Split('_')[1]);
+                        Params.Add("diagram_entity", diagram_entity);
+                        Params.Add("left", X.left);
+                        Params.Add("top", X.top);
+                        Params.Add("w", X.width);
+                        Params.Add("h", X.height);
+                        DM.ExecuteIntMethod("DIAGRAM", "UpdateEntity", Params);
+                    }
+                }
+                string result = JsonConvert.SerializeObject(query);
+                return result;
+            }
+            catch(Exception exc)
+            {
+                return exc.Message;
+            }
         }
 
 
