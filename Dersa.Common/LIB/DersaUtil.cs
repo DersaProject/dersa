@@ -195,8 +195,14 @@ namespace Dersa.Common
             Params.Add("@attr_value", attrValue);
             Params.Add("@login", userName);
             Params.Add("@password", DersaUtil.GetPassword(userName));
+            int res = 0;
+            //if (attrType == 0)
+            //{
+            //    res = DM.ExecuteIntMethod(className, "SetAttributeFast", Params);
+            //    return "";
+            //}
             Params.Add("@attr_type", attrType);
-            int res = DM.ExecuteIntMethod(className, "SetAttribute", Params);
+            res = DM.ExecuteIntMethod(className, "SetAttribute", Params);
             if(res == 5)
             {
                 Params["@attr_type"].Value = 5;
