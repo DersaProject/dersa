@@ -1,12 +1,13 @@
-﻿var app;
+﻿//var app;
+//var keydown_assigned = false;
 
 Vue.component('drdiv', {
     mounted: function () {
         $('#' + this.id).draggable({
           stop: function(ev) {
             if(this.__vue__ && this.__vue__.app_index >= 0){
-	            app.ctrls[this.__vue__.app_index].left = $('#'+this.id).position().left; 
-	            app.ctrls[this.__vue__.app_index].top = $('#'+this.id).position().top; 
+	            appDiagram.ctrls[this.__vue__.app_index].left = $('#'+this.id).position().left; 
+	            appDiagram.ctrls[this.__vue__.app_index].top = $('#'+this.id).position().top; 
 	    }
          }
 	});
@@ -15,9 +16,9 @@ Vue.component('drdiv', {
             if(this.__vue__ && this.__vue__.app_index >= 0){
 				let w = $('#'+this.id).width();
 				let h = $('#'+this.id).height();
-	            app.ctrls[this.__vue__.app_index].width = w;
-	            app.ctrls[this.__vue__.app_index].height = h;
-				app.DisplayDimensions(w, h);
+	            appDiagram.ctrls[this.__vue__.app_index].width = w;
+	            appDiagram.ctrls[this.__vue__.app_index].height = h;
+				appDiagram.DisplayDimensions(w, h);
 			}
         }
 	});
@@ -25,7 +26,7 @@ Vue.component('drdiv', {
 
 methods:{
     DoSelect: function(event){
-        app.SelectByIndex(this.app_index);
+        appDiagram.SelectByIndex(this.app_index);
     }
 },
 
@@ -64,13 +65,13 @@ function dragOver(ev) {
 }
 function dragDrop(ev) {
     console.log(ev);
-	let N = app.ctrls.length;
-    app.ctrls.push({ displayed_name: ev.data.name, id: 'n_' + ev.data.id, app_index: N, left: ev.offsetX/* - 10*/, top: ev.offsetY/* - 10*/, width: 100, height: 25, is_selected: false, is_visible: true });
+	let N = appDiagram.ctrls.length;
+    appDiagram.ctrls.push({ displayed_name: ev.data.name, id: 'n_' + ev.data.id, app_index: N, left: ev.offsetX, top: ev.offsetY, width: 100, height: 25, is_selected: false, is_visible: true });
 	ev.stopPropagation();
 	return false;
 }
 
-$(document).keydown(function (e) { app.ProcessKey(e.key, e.altKey, e.ctrlKey, e.shiftKey) });
+$(document).keydown(function (e) { appDiagram.ProcessKey(e.key, e.altKey, e.ctrlKey, e.shiftKey) });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -91,11 +92,12 @@ document.addEventListener("dragover", dragOver);
         if (confirm("Сохранить диаграмму?")) {
             var body = new Object();
             body.id = diagramId;
-            body.jsonObject = JSON.stringify(app.ctrls);
+            body.jsonObject = JSON.stringify(appDiagram.ctrls);
             var xhr = new XMLHttpRequest();
             xhr.open('POST', '/Diagram/SaveDiagram', false);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.send(JSON.stringify(body));
+            appDiagram = null;
         }
     });
     
@@ -105,16 +107,11 @@ xhr.open('GET', '/Diagram/GetJson?id=' + diagramId, false);
 xhr.send();
 var initArray = JSON.parse(xhr.responseText);
 
-app = new Vue({ el: '#diag', 
+appDiagram = new Vue({ el: '#diag', 
 data: {
   selected_index: -1,
   status_message: 'hello',
   ctrls: initArray
-	//[
-      //{ displayed_name: 'entity1', id: 'e1', app_index: 0, left: 98, top: 100, width: 100, height: 25, is_selected: false, is_visible: true },
-      //{ displayed_name: 'entity2', id: 'e2', app_index: 1, left: 200, top: 0, width: 100, height: 25, is_selected: false, is_visible: true },
-      //{ displayed_name: 'entity3', id: 'e3', app_index: 2, left: 302, top: 150, width: 100, height: 25, is_selected: false, is_visible: true }
-    //]
 },
 methods:{
 	ProcessKey: function(key, altKey, ctrlKey, shiftKey){

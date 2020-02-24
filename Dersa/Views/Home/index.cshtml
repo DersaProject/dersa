@@ -45,6 +45,19 @@
     <script type="text/javascript">
         var mxBasePath = '../../';
     </script>
+    <script>
+        var appDiagram;
+        var keydown_assigned = false;
+        function dragDrop(ev) {
+            console.log(ev);
+            let N = appDiagram.ctrls.length;
+            appDiagram.ctrls.push({ displayed_name: ev.data.name, id: 'n_' + ev.data.id, app_index: N, left: ev.offsetX, top: ev.offsetY, width: 100, height: 25, is_selected: false, is_visible: true });
+            ev.stopPropagation();
+            return false;
+        }
+
+    </script>
+
     <!-- Add icon library -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
