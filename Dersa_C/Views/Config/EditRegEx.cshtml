@@ -1,0 +1,39 @@
+﻿@model DIOS.BusinessBase.RegexChecker
+
+@{
+    ViewBag.Title = "EditRegEx";
+}
+
+<h2>EditRegEx</h2>
+
+@using (Html.BeginForm("SaveRegExEdit", "Config"))
+{
+
+    <fieldset>
+        <legend>RegexChecker</legend>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.code)
+        </div>
+        <div class="editor-field">
+            @Html.ValueFor(model => model.code)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.regexp)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.regexp)
+            @Html.ValidationMessageFor(model => model.regexp)
+        </div>
+
+        <p>
+            @Html.HiddenFor(model => model.regex_checker)
+            <input type="submit" value="Save" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to Regular Expressions", "RegEx")
+</div>

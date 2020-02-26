@@ -1,0 +1,605 @@
+﻿@using System.Web.Optimization;
+@using System.Data
+@using Newtonsoft.Json
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DERSA</title>
+    <!--link rel="stylesheet" href="dist/themes/default/style.css" />-->
+    <!--link rel="stylesheet" href="css/wordpress.css" type="text/css" media="screen" /-->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!--style-- type="text/css" media="screen">
+        #page {
+            background: url("images/draw/drawbg.jpg") repeat-y top;
+            border: none;
+        }
+    </style-->
+    <style>
+        #diag {
+            width: 100%;
+            height: 100%;
+        }
+
+        .sel {
+            border: 2px solid red;
+            opacity: 0.5
+        }
+
+        #testblock {
+            width: 90px;
+            height: 25px;
+            background: magenta;
+        }
+
+        .statusbar {
+            color: #000080;
+            background-color: #dfe0d8;
+            position: absolute;
+            padding: 5px;
+            bottom: 25px;
+            width: 100%;
+        }
+    </style>
+    <script src="dist/vue.js"></script>
+    <script src="dist/jquery.js"></script>
+    <script src="dist/jquery-ui.js"></script>
+    <script src="dist/jstree.js"></script>
+    <script src="dist/dersatree.js"></script>
+    <script src="js/mxClient.js"></script>
+
+    <script type="text/javascript">
+        var mxBasePath = '../../';
+    </script>
+    <script>
+        var appDiagram;
+        var keydown_assigned = false;
+        function dragDrop(ev) {
+            console.log(ev);
+            let N = appDiagram.ctrls.length;
+            appDiagram.ctrls.push({ displayed_name: ev.data.name, id: 'n_' + ev.data.id, app_index: N, left: ev.offsetX, top: ev.offsetY, width: 100, height: 25, is_selected: false, is_visible: true });
+            ev.stopPropagation();
+            return false;
+        }
+
+    </script>
+
+    <!-- Add icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .btn {
+            background-color: black;
+            border: none;
+            color: lightgray;
+            padding: 4px 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 32px;
+        }
+
+            /* Darker background on mouse-over */
+            .btn:hover {
+                background-color: RoyalBlue;
+                color: black;
+            }
+    </style>
+</head>
+<body onload="createEditor('config/diagrameditor.xml');">
+    <!--
+    <button id="find_button">Найти</button>
+    <input id="searchtext" type="text" size="105" /> <br>
+    <input id="found" type="text" size="10" value="0" />
+    <input id="foundpath" type="text" size="80" />
+    <button id="goto_button">Перейти</button>
+    <button id="reset_button">Reset</button><br>
+    <select id="listBox" multiple size="5"></select>
+    <div style="margin: 0 0 0 auto"> Имя пользователя: <strong><span style="color: green;">@ViewBag.Login</span></strong></div>
+        -->
+    <div style="float:left;width:200px;margin-top:-20px"><h1>DERSA modeler</h1></div>
+    <div style="position:absolute;width: 260px;top: 96px; left: 300px;"><input id="tbSearch" style="width:100%" type="text"></div>
+    <div style="position:absolute;width:80px;top:92px;left:556px">
+        <button class="btn" id="bnSearch" onclick="S=document.getElementById('tbSearch');V=S.value;if(isNaN(+V)||+V<10000){var form=new mxForm('find');var xhr=new XMLHttpRequest();args='srchval='+V;xhr.open('GET', 'Entity/Find?' + args, false);xhr.send();var attrs = JSON.parse(xhr.responseText);var Props=CreateProperties(form, attrs, '');var wnd=new mxWindow('find',Props,100,100,800,400,false,true);form.window = wnd;wnd.setVisible(true);return;}GoToNode(V)"><i class="fa fa-search"></i></button>
+    </div>
+    @*<div style="float:left;width:160px;margin-left:300px;margin-top:20px"><input id="tbSearch" type="text"></div>
+        <div style="float:left;width:200px;margin-top:20px;">
+            <input id="bnSearch" onclick="S=document.getElementById('tbSearch');V=S.value;if(isNaN(+V)||+V<10000){var form=new mxForm('find');var xhr=new XMLHttpRequest();args='srchval='+V;xhr.open('GET', 'Entity/Find?' + args, false);xhr.send();var attrs = JSON.parse(xhr.responseText);var Props=CreateProperties(form, attrs, '');var wnd=new mxWindow('find',Props,100,100,800,400,false,true);form.window = wnd;wnd.setVisible(true);return;}GoToNode(V)" type="button">
+        </div>*@
+    <div style="float:right;width:200px;margin-top:10px">
+        <p align="right">
+            <a href="#Settings" id="bnSettings"><strong><span style="color: green;">@ViewBag.Login</span></strong></a>
+        </p>
+        @*&ensp;<button id="bnSet">Settings</button>*@
+        &ensp;<input type="text" id="tbOptions" hidden><input type="checkbox" id="bnEdit" hidden><label id="laEdit"></label>
+        <input id="displaytext" type="hidden" />
+        <input id="DiagramId" type="hidden" />
+    </div>
+    <div id="tool_box" style="top: 120px; left: 5px; width: 20px; height: 100px; position: absolute;">
+        @{
+            DataTable T = null;
+            if (ViewBag.ToolBoxData != null)
+            { T = JsonConvert.DeserializeObject<DataTable>(ViewBag.ToolBoxData.ToString()); }
+        }
+        @if (T != null)
+        {
+            foreach (DataRow item in T.Rows)
+            {
+                <button class="btn" onmouseover="$('#toolhint').html('@item["hint"].ToString()'); $('#toolhint').show();" onmouseout="$('#toolhint').hide();" onclick="var xhr=new XMLHttpRequest();xhr.open('GET','/Query/GetAction?id=@item["script_id"].ToString()&MethodName=Exec', false);xhr.send();eval(xhr.responseText);"><i class="fa fa-@item["icon"].ToString()"></i></button>
+                @*<button onclick="var xhr=new XMLHttpRequest();xhr.open('GET','/Query/GetAction?id= @item["script_id"].ToString() &MethodName=Exec', false);xhr.send();eval(xhr.responseText);"> @item["icon"].ToString() </button>*@
+            }
+        }
+        <div id="toolhint" style="background:white;width:80px;display:none"></div>
+        @*<button onclick="var xhr=new XMLHttpRequest();xhr.open('GET','/Query/GetAction?id=10124607&MethodName=Exec', false);xhr.send();eval(xhr.responseText);">.^.</button>
+            <button onclick="var xhr=new XMLHttpRequest();xhr.open('GET','/Query/GetAction?id=10107464&MethodName=Exec', false);xhr.send();eval(xhr.responseText);">...</button>
+            <button onclick="var xhr=new XMLHttpRequest();xhr.open('GET','/Query/GetAction?id=10101029&MethodName=Exec', false);xhr.send();eval(xhr.responseText);">[[.</button>
+            <button onclick="var xhr=new XMLHttpRequest();xhr.open('GET','/Query/GetAction?id=10123320&MethodName=Exec', false);xhr.send();eval(xhr.responseText);">/..</button>
+            <button onclick="var xhr=new XMLHttpRequest();xhr.open('GET','/Query/GetAction?id=10110246&MethodName=Exec', false);xhr.send();eval(xhr.responseText);">.||</button>
+            <button onclick="var xhr=new XMLHttpRequest();xhr.open('GET','/Query/GetAction?id=10123319&MethodName=Exec', false);xhr.send();eval(xhr.responseText);">=.</button>*@
+    </div>
+    <br><br><p>&copy; @DateTime.Now.Year</p>
+    <hr size="2" color="black">
+    <br>
+    <div id="dersa" class="block1">
+    </div>
+    <!--button id="bnTest">Test</button-->
+    <script>
+        //var npath;
+        //function load_path() {
+        //    if(npath.length == 1)
+        //    {
+        //        $('#dersa').jstree(true).load_node(npath[0]);
+        //        $('#dersa').jstree(true).select_node(npath[0]);
+        //    }
+        //    else
+        //    {
+        //        var lnode = npath[0];
+        //        console.log($('#dersa').jstree(true).get_node(lnode));
+        //        npath.shift();
+        //        $('#dersa').jstree(true).load_node(lnode, load_path);
+        //    }
+        //}
+
+        //bnTest = document.getElementById("bnTest");
+        //bnTest.addEventListener("click", function () {
+        //    console.log(Editor.graph);
+        //    //Editor.execute('exportSvg');
+        //    mxUtils.show(Editor.graph, null, 10, 10);
+        //});
+        bnSettings = document.getElementById("bnSettings");
+        bnSettings.addEventListener("click", function () {
+            var form = new mxForm('settings');
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', "Account/JsSettings", false);
+            xhr.send();
+            var attrs = JSON.parse(xhr.responseText);
+
+            var Props = CreateProperties(form, attrs, "Account/SetUserSettings");
+            var wnd = new mxWindow('settings',
+                Props, 100, 100, 400, 400, false, true);
+            form.window = wnd;
+            wnd.setVisible(true);
+        });
+        //var n = 5;
+        //function on_load_node(node, status) {
+        //    console.log(node);
+        //    if (node.children.length && n > 0) {
+        //        $('#dersa').jstree(true).load_node(node.children[0], on_load_node);
+        //        //n--;
+        //    }
+        //    else {
+        //        $('#dersa').jstree(true).select_node('602250');
+        //    }
+        //}
+
+    </script>
+    <div id="infoboard" class="block2">
+    </div>
+    <script>
+        var Editor = null;
+        infoControl = document.getElementById("infoboard");
+        chEdit = document.getElementById("bnEdit");
+        laEdit = document.getElementById("laEdit");
+        chEdit.addEventListener("click", function () {
+            if (!chEdit.checked) {
+                infoControl.innerHTML = "";
+                CancelEditDiagram();
+            }
+        });
+    </script>
+    @*@section Scripts {
+            @Scripts.Render("~/bundles/jstree")
+            @Scripts.Render("~/dist/dersatree.js")
+            @Scripts.Render("~/js/mxClient.js")
+        }*@
+
+    <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript">
+        // Program starts here. The document.onLoad executes the
+        // createEditor function with a given configuration.
+        // In the config file, the mxEditor.onInit method is
+        // overridden to invoke this global function as the
+        // last step in the editor constructor.
+        function onInit(editor) {
+            Editor = editor;
+            // Enables rotation handle
+            mxVertexHandler.prototype.rotationEnabled = true;
+
+            // Enables guides
+            mxGraphHandler.prototype.guidesEnabled = true;
+
+            // Alt disables guides
+            mxGuide.prototype.isEnabledForEvent = function (evt) {
+                return !mxEvent.isAltDown(evt);
+            };
+
+            // Enables snapping waypoints to terminals
+            mxEdgeHandler.prototype.snapToTerminals = true;
+
+            // Defines an icon for creating new connections in the connection handler.
+            // This will automatically disable the highlighting of the source vertex.
+            mxConnectionHandler.prototype.connectImage = new mxImage('images/connector.gif', 16, 16);
+
+            // Enables connections in the graph and disables
+            // reset of zoom and translate on root change
+            // (ie. switch between XML and graphical mode).
+            editor.graph.setConnectable(true);
+
+            //******LABELS!!!!!!!!*******
+            editor.graph.getLabel = function (cell) {
+                return cell.value.label ? cell.value.label : cell.value;
+            };
+
+
+            editor.createProperties = function (cell) {
+                var model = this.graph.getModel();
+                var value = model.getValue(cell);
+                //console.log(value);
+
+                if (/*mxUtils.isNode(value) ||*/ value.entity) {
+                    // Creates a form for the user object inside
+                    // the cell
+                    var form = new mxForm('properties');
+
+                    // Adds a readonly field for the cell id
+                    var id = form.addText('ID', value.entity/*cell.getId()*/);
+                    id.setAttribute('readonly', 'true');
+
+                    var geo = null;
+                    var yField = null;
+                    var xField = null;
+                    var widthField = null;
+                    var heightField = null;
+
+                    // Adds fields for the location and size
+                    //if (model.isVertex(cell))
+                    //{
+                    //    geo = model.getGeometry(cell);
+
+                    //    if (geo != null)
+                    //    {
+                    //        yField = form.addText('top', geo.y);
+                    //        xField = form.addText('left', geo.x);
+                    //        widthField = form.addText('width', geo.width);
+                    //        heightField = form.addText('height', geo.height);
+                    //    }
+                    //}
+
+                    var xhr = new XMLHttpRequest();
+                    args = "id=" + value.entity;//cell.getId();
+                    xhr.open('GET', "node/properties?" + args, false);
+                    xhr.send();
+                    var attrs = JSON.parse(xhr.responseText);
+                    var texts = [];
+
+                    //// Creates textareas for each attribute of the
+                    //// user object within the cell
+                    //var attrs = value.attributes;
+                    //var texts = [];
+
+                    for (var i = 0; i < attrs.length; i++) {
+                        // Creates a textarea with more lines for
+                        // the cell label
+                        var val = attrs[i].Value;
+                        texts[i] = form.addText(attrs[i].Name, val, 2);
+                        //texts[i] = form.addTextarea(attrs[i].nodeName, val, 2);
+                        //(attrs[i].nodeName == 'label') ? 4 : 2);
+                    }
+
+                    // Adds an OK and Cancel button to the dialog
+                    // contents and implements the respective
+                    // actions below
+
+                    // Defines the function to be executed when the
+                    // OK button is pressed in the dialog
+                    var okFunction = mxUtils.bind(this, function () {
+                        // Hides the dialog
+                        this.hideProperties();
+
+                        // Supports undo for the changes on the underlying
+                        // XML structure / XML node attribute changes.
+                        model.beginUpdate();
+                        try {
+                            //if (geo != null)
+                            //{
+                            //    geo = geo.clone();
+
+                            //    geo.x = parseFloat(xField.value);
+                            //    geo.y = parseFloat(yField.value);
+                            //    geo.width = parseFloat(widthField.value);
+                            //    geo.height = parseFloat(heightField.value);
+
+                            //    model.setGeometry(cell, geo);
+                            //}
+
+                            // Creates an undoable change for each
+                            // attribute and executes it using the
+                            // model, which will also make the change
+                            // part of the current transaction
+                            for (var i = 0; i < attrs.length; i++) {
+                                var edit = new mxCellAttributeChange(
+                                    cell, attrs[i].nodeName,
+                                    texts[i].value);
+                                model.execute(edit);
+                            }
+
+                            // Checks if the graph wants cells to
+                            // be automatically sized and updates
+                            // the size as an undoable step if
+                            // the feature is enabled
+                            if (this.graph.isAutoSizeCell(cell)) {
+                                this.graph.updateCellSize(cell);
+                            }
+                        }
+                        finally {
+                            model.endUpdate();
+                        }
+                    });
+                    // Defines the function to be executed when the
+                    // Cancel button is pressed in the dialog
+                    var cancelFunction = mxUtils.bind(this, function () {
+                        // Hides the dialog
+                        this.hideProperties();
+                    });
+
+                    form.addButtons(okFunction, cancelFunction);
+
+                    return form.table;
+                }
+
+                return null;
+            };
+
+
+
+            // Defines a new action to switch between
+            // XML and graphical display
+            var textNode = document.getElementById('xml');
+            var graphNode = editor.graph.container;
+            var sourceInput = document.getElementById('source');
+            sourceInput.checked = false;
+
+            var showSaved = function (editor, diaghtml) {
+                //Editor.execute("clearDiagram");
+                dID = document.getElementById("DiagramId");
+                diagramXml = GetText(dID.value, "DiagramXml");
+                drawGraph(diagramXml);
+
+                var diagNode = document.getElementById('diagram');
+                var diagText = graphNode.innerHTML;
+                var newText = diagText.replace(new RegExp("c3d9ff-1-white", 'g'), "c3d9ff-1-black").replace(new RegExp("cdeb8b-1-white", 'g'), "cdeb8b-1-black")
+
+                if (newText == "")
+                    newText = diaghtml;
+                diagNode.innerHTML = newText;//diaghtml;
+                //console.log(diagNode);
+                //var child_nodes = diagNode.childNodes;
+                //child_nodes[1].removeChild(child_nodes[1].childNodes[2]);
+                //child_nodes[1].removeChild(child_nodes[1].childNodes[1]);
+                //console.log(diagNode);
+                //console.log(child_nodes[1].childNodes[1]);
+                //gradientNode = document.getElementById("mx-gradient-c3d9ff-1-black-1-s-0");
+                //gradientNode.parentNode.removeChild(gradientNode);
+                //console.log(gradientNode.parentNode);
+
+                diagNode.style.display = '';
+                graphNode.style.display = 'none';
+            }
+
+            editor.addAction('showSavedDiagram', showSaved);
+
+            var clearDiag = function (editor) {
+                //console.log('clearDiag');
+                var diagNode = document.getElementById('diagram');
+                //diagNode.innerHTML = "";
+                diagNode.style.display = 'none';
+                graphNode.style.display = '';
+
+                if (textNode.value != textNode.originalValue) {
+                    var doc = mxUtils.parseXml("<mxGraphModel><root><mxCell id=\"0\"/><mxCell id=\"1\" parent=\"0\"/></root></mxGraphModel>");
+                    var dec = new mxCodec(doc);
+                    dec.decode(doc.documentElement, editor.graph.getModel());
+                }
+
+                textNode.originalValue = null;
+
+                // Makes sure nothing is selected in IE
+                if (mxClient.IS_IE) {
+                    mxUtils.clearSelection();
+                }
+
+                textNode.style.display = 'none';
+
+                // Moves the focus back to the graph
+                editor.graph.container.focus();
+            }
+
+            editor.addAction('clearDiagram', clearDiag);
+
+            var funct = function (editor) {
+                if (sourceInput.checked) {
+                    graphNode.style.display = 'none';
+                    textNode.style.display = 'inline';
+
+                    var enc = new mxCodec();
+                    var node = enc.encode(editor.graph.getModel());
+
+                    textNode.value = mxUtils.getPrettyXml(node);
+                    textNode.originalValue = textNode.value;
+                    textNode.focus();
+                }
+                else {
+                    graphNode.style.display = '';
+
+                    if (textNode.value != textNode.originalValue) {
+                        var doc = mxUtils.parseXml(textNode.value);
+                        var dec = new mxCodec(doc);
+                        dec.decode(doc.documentElement, editor.graph.getModel());
+                    }
+
+                    textNode.originalValue = null;
+
+                    // Makes sure nothing is selected in IE
+                    if (mxClient.IS_IE) {
+                        mxUtils.clearSelection();
+                    }
+
+                    textNode.style.display = 'none';
+
+                    // Moves the focus back to the graph
+                    editor.graph.container.focus();
+                }
+            };
+
+            editor.addAction('switchView', funct);
+
+            // Defines a new action to switch between
+            // XML and graphical display
+            mxEvent.addListener(sourceInput, 'click', function () {
+                editor.execute('switchView');
+            });
+
+            var insNode = function (editor, id, text, x, y) {
+                editor.graph.getModel().beginUpdate();
+                try {
+                    var vObj = new Object();
+                    vObj.entity = id;
+                    vObj.label = text;
+                    var v1 = editor.graph.insertVertex(null, null/*id*/, vObj, x, y, 120, 25);
+                    //v1.label = text;
+                    //var template = editor.templates['rectangle'];
+                    //var clone = editor.graph.model.cloneCell(template);
+                    //clone.geometry.x = x;
+                    //clone.geometry.y = y;
+                    //clone.setAttribute("label", text);
+                    //editor.graph.addCell(clone);
+                }
+                finally {
+                    editor.graph.getModel().endUpdate();
+                }
+            }
+
+            editor.addAction('insertNode', insNode);
+
+            var initGraph = function (editor, xml) {
+                editor.graph.getModel().beginUpdate();
+                try {
+                    var doc = mxUtils.parseXml(xml);
+                    var codec = new mxCodec(doc);
+                    codec.decode(doc.documentElement, editor.graph.getModel());
+                }
+                finally {
+                    editor.graph.getModel().endUpdate();
+                }
+            }
+
+            editor.addAction('initG', initGraph);
+
+            // Create select actions in page
+            //var node = document.getElementById('mainActions');
+            //var buttons = ['group', 'ungroup', 'cut', 'copy', 'paste', 'delete', 'undo', 'redo', 'print', 'show'];
+
+
+            //for (var i = 0; i < buttons.length; i++) {
+            //    var button = document.createElement('button');
+            //    mxUtils.write(button, mxResources.get(buttons[i]));
+
+            //    var factory = function (name) {
+            //        return function () {
+            //            editor.execute(name);
+            //        };
+            //    };
+
+            //    mxEvent.addListener(button, 'click', factory(buttons[i]));
+            //    node.appendChild(button);
+            //}
+
+            //// Create select actions in page
+            //var node = document.getElementById('selectActions');
+            //mxUtils.write(node, 'Select: ');
+            //mxUtils.linkAction(node, 'All', editor, 'selectAll');
+            //mxUtils.write(node, ', ');
+            //mxUtils.linkAction(node, 'None', editor, 'selectNone');
+            //mxUtils.write(node, ', ');
+            //mxUtils.linkAction(node, 'Vertices', editor, 'selectVertices');
+            //mxUtils.write(node, ', ');
+            //mxUtils.linkAction(node, 'Edges', editor, 'selectEdges');
+
+            //// Create select actions in page
+            //var node = document.getElementById('zoomActions');
+            //mxUtils.write(node, 'Zoom: ');
+            //mxUtils.linkAction(node, 'In', editor, 'zoomIn');
+            //mxUtils.write(node, ', ');
+            //mxUtils.linkAction(node, 'Out', editor, 'zoomOut');
+            //mxUtils.write(node, ', ');
+            //mxUtils.linkAction(node, 'Actual', editor, 'actualSize');
+            //mxUtils.write(node, ', ');
+            //mxUtils.linkAction(node, 'Fit', editor, 'fit');
+        }
+
+                                            //window.onbeforeunload = function () { return mxResources.get('changesLost'); };
+    </script>
+    <div id="page" class="block2">
+        <!--div-- id="header">
+            <div id="headerimg" style="overflow:hidden;">
+                <h1 id="title">mxDraw</h1>
+            </div>
+        </div-->
+        <!--div-- id="mainActions"
+             style="width:100%;padding-top:8px;padding-left:24px;padding-bottom:8px;">
+        </div-->
+        <!--div-- id="selectActions" style="width:100%;padding-left:54px;padding-bottom:4px;">
+        </div-->
+        <table border="0" width="730px">
+            <tr>
+                <td id="toolbar" style="width:16px;padding-left:0px;" valign="top">
+                    <!-- Toolbar Here -->
+                </td>
+                <td valign="top" style="border-width:1px;border-style:solid;border-color:black;">
+                    <div id="graph" tabindex="-1" style="height:480px;width:684px;display:none;overflow:hidden;cursor:default;">
+                    </div>
+                    <div id="diagram" tabindex="-1" style="height:800px;width:684px;display:none;overflow:hidden;cursor:default;">
+                    </div>
+                    <textarea id="xml" style="height:480px;width:684px;display:none;border-style:none;"></textarea>
+                </td>
+            </tr>
+        </table>
+        <span style="float:right;padding-right:36px;">
+            <input id="source" type="checkbox" />Source
+            @*<input id="add_xml" type="checkbox" />Additional*@
+        </span>
+        <div id="diagram_xml">
+            <input id="diag_xml_main" type="hidden" />
+            @*<input id="diag_xml_add" type="hidden" />*@
+        </div>
+        <div id="zoomActions" style="width:100%;padding-left:54px;padding-top:4px;">
+        </div>
+        <!--div-- id="footer">
+            <p id="status">
+                Loading...
+            </p>
+            <br />
+        </div-->
+    </div>
+</body>
+</html>
