@@ -16,12 +16,17 @@ namespace Dersa.Models
 {
     public class QueryControllerAdapter
     {
+        private string _contextUserName;
+        public QueryControllerAdapter(string contextUserName) : base()
+        {
+            _contextUserName = contextUserName;
+        }
         //public static string _query;
         private static Hashtable hashTable = new Hashtable();
 
-        internal static bool GetLocalSqlExecution()
+        internal bool GetLocalSqlExecution()
         {
-            string userName = "lanitadmin";//"lanitadmin"/*HttpContext.Current.User.Identity.Name*/;
+            string userName = _contextUserName;
             DersaSqlManager M = new DersaSqlManager();
             IParameterCollection UserParams = new ParameterCollection();
             UserParams.Add("@login", userName);
@@ -75,19 +80,19 @@ namespace Dersa.Models
             }
             return fileName;
         }
-        public static string PutString(string src)
+        public string PutString(string src)
         {
             string userName = "";
             //if(HttpContext.Current != null)
-                userName = "lanitadmin";//"lanitadmin"/*HttpContext.Current.User.Identity.Name*/;
+                userName = _contextUserName;
             string Id = Guid.NewGuid().ToString();
             hashTable[userName+Id] = src;
             return Id;
         }
-        public static string GetString(string Id, bool viewSource, string userName = null)
+        public string GetString(string Id, bool viewSource, string userName = null)
         {
             if (userName == null)// && HttpContext.Current != null)
-                userName = "lanitadmin";//"lanitadmin"/*HttpContext.Current.User.Identity.Name*/;
+                userName = _contextUserName;
             string result = hashTable[userName+Id].ToString();
             if(!viewSource)
                 result = result.Replace("$lt$", "<").Replace("$gt$", ">");
@@ -119,7 +124,7 @@ namespace Dersa.Models
             }
             else if (Params.Contains("entity") && Params.Contains("attr_name"))
             {
-                string userName = "lanitadmin";//"lanitadmin"/*HttpContext.Current.User.Identity.Name*/;
+                string userName = _contextUserName;
                 string entityId = Params["entity"].Value.ToString();
                 string attrName = Params["attr_name"].Value.ToString();
                 string attrValue = DersaUtil.GetAttributeValue(userName, int.Parse(entityId), attrName, -1);
@@ -194,7 +199,7 @@ namespace Dersa.Models
 
         public string GetAction(string MethodName, int id, string paramString = null)
         {//AllowExecuteJSMethod
-            string userName = "lanitadmin";//"lanitadmin"/*HttpContext.Current.User.Identity.Name*/;
+            string userName = _contextUserName;
             StereotypeBaseE target = StereotypeBaseE.GetSimpleInstance(id);
             if(!target.AllowExecuteMethod(userName, MethodName))
                 return string.Format("You are not allowed to execute method {0}", MethodName);
@@ -237,7 +242,7 @@ namespace Dersa.Models
                 return result.ToString();
             return JsonConvert.SerializeObject(result);
         }
-        public static string GetQueryId(string query, object dersaEntity, object objectName, object objectType)
+        public string GetQueryId(string query, object dersaEntity, object objectName, object objectType)
         {
             var queryStruct = new
             {
@@ -246,7 +251,7 @@ namespace Dersa.Models
                 object_type = objectType,
                 query_text = query
             };
-            string UserName = "lanitadmin";//"lanitadmin"/*HttpContext.Current.User.Identity.Name*/;
+            string UserName = _contextUserName;
             if (string.IsNullOrEmpty(UserName))
                 return null;
             string token = "xxxxxxxxx"; //QueryExecuteService.GetToken(UserName);
@@ -265,7 +270,7 @@ namespace Dersa.Models
             {
                 DersaSqlManager M = new DersaSqlManager();
                 string sql = Params["SQL"].Value.ToString().Replace("$gt$", ">").Replace("$lt$", "<");
-                string userName = "lanitadmin";//"lanitadmin"/*HttpContext.Current.User.Identity.Name*/;
+                string userName = _contextUserName;
                 bool execSqlLocal = false;
                 try
                 {

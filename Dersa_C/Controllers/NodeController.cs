@@ -14,12 +14,12 @@ namespace Dersa.Controllers
     {
         public string GetInsertSubmenu(int id)
         {
-            return (new NodeControllerAdapter()).GetInsertSubmenu(id);
+            return (new NodeControllerAdapter(HttpContext.User.Identity.Name)).GetInsertSubmenu(id);
         }
 
         public int CanDnD(string src, int dst)
         {
-            return (new NodeControllerAdapter()).CanDnD(src, dst);
+            return (new NodeControllerAdapter(HttpContext.User.Identity.Name)).CanDnD(src, dst);
         }
 
         //public void DownloadMethodResult(int id, string method_name)
@@ -155,7 +155,7 @@ namespace Dersa.Controllers
 
         public string Restore(int id)
         {
-            return (new NodeControllerAdapter()).Restore(id);
+            return (new NodeControllerAdapter(HttpContext.User.Identity.Name)).Restore(id);
         }
 
         public string Close()
@@ -165,71 +165,71 @@ namespace Dersa.Controllers
 
         public string List(string id)
         {
-            return (new NodeControllerAdapter()).List(id);
+            return (new NodeControllerAdapter(HttpContext.User.Identity.Name)).List(id);
         }
 
         public string Remove(int id, string diagram_id = null, int options = 0)
         {
-            return (new NodeControllerAdapter()).Remove(id, diagram_id, options);
+            return (new NodeControllerAdapter(HttpContext.User.Identity.Name)).Remove(id, diagram_id, options);
         }
 
         public string Rename(string id, string name)
         {
-            return (new NodeControllerAdapter()).Rename(id, name);
+            return (new NodeControllerAdapter(HttpContext.User.Identity.Name)).Rename(id, name);
         }
 
         public string DnD(string src, string dst, int options)
         {
-            return (new NodeControllerAdapter()).DnD(src, dst, options);
+            return (new NodeControllerAdapter(HttpContext.User.Identity.Name)).DnD(src, dst, options);
         }
 
         public string Description(string id, string attr_name)
         {
-            return (new NodeControllerAdapter()).Description(id, attr_name);
+            return (new NodeControllerAdapter(HttpContext.User.Identity.Name)).Description(id, attr_name);
         }
 
         [HttpPost]
         public string SetProperties(string json_params)
         {
-            return (new NodeControllerAdapter()).SetProperties(json_params);
+            return (new NodeControllerAdapter(HttpContext.User.Identity.Name)).SetProperties(json_params);
         }
 
         [HttpPost]
 
         public string SetTextProperty(int entity, string prop_name, string prop_value)
         {
-            return NodeControllerAdapter.SetTextProperty(entity, prop_name, prop_value);
+            return (new NodeControllerAdapter(HttpContext.User.Identity.Name)).SetTextProperty(entity, prop_name, prop_value);
 
         }
 
         public string PropertiesForm(int id)
         {
-            return (new NodeControllerAdapter()).PropertiesForm(id);
+            return (new NodeControllerAdapter(HttpContext.User.Identity.Name)).PropertiesForm(id);
         }
 
         public string PropertyForm(int id, string prop_name, int prop_type)
         {
-            return (new NodeControllerAdapter()).PropertyForm(id, prop_name, prop_type);
+            return (new NodeControllerAdapter(HttpContext.User.Identity.Name)).PropertyForm(id, prop_name, prop_type);
         }
 
         public string MethodsForm(int id)
         {
-            return (new NodeControllerAdapter()).MethodsForm(id);
+            return (new NodeControllerAdapter(HttpContext.User.Identity.Name)).MethodsForm(id);
         }
 
         public string ExecMethodForm(int id, string method_name)
         {
-            return (new NodeControllerAdapter()).ExecMethodForm(id, method_name);
+            return (new NodeControllerAdapter(HttpContext.User.Identity.Name)).ExecMethodForm(id, method_name);
         }
 
         public string ChildStereotypes(int id)
         {
-            return (new NodeControllerAdapter()).ChildStereotypes(id);
+            return (new NodeControllerAdapter(HttpContext.User.Identity.Name)).ChildStereotypes(id);
         }
 
         public string Properties(int id)
         {
-            return (new NodeControllerAdapter()).Properties(id);
+            return (new NodeControllerAdapter(HttpContext.User.Identity.Name)).Properties(id);
         }
     }
 }

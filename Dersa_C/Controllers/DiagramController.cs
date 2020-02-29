@@ -18,7 +18,7 @@ namespace Dersa.Controllers
 		public string Create(int parent)
 		{
 
-			string result = (new DiagramControllerAdapter()).Create(parent);
+			string result = (new DiagramControllerAdapter(HttpContext.User.Identity.Name)).Create(parent);
 			return result;
 
 		}
@@ -26,7 +26,6 @@ namespace Dersa.Controllers
         public string GetJson(string id)
         {
             string userName = HttpContext.User.Identity.Name;
-            userName = "lanitadmin";
             DersaSqlManager DM = new DersaSqlManager();
             DataTable T = DM.ExecuteMethod("DIAGRAM", "GetEntities", new object[] { id, userName, DersaUtil.GetPassword(userName) });
             int appIndex = 0;
@@ -125,7 +124,7 @@ namespace Dersa.Controllers
         public string Save(string id, string xml)
 		{
 
-			string result = (new DiagramControllerAdapter()).Save(id, xml);
+			string result = (new DiagramControllerAdapter(HttpContext.User.Identity.Name)).Save(id, xml);
 			return result;
 
 		}

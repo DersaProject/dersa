@@ -11,12 +11,16 @@ namespace Dersa.Models
 {
     public class DiagramControllerAdapter
     {
-
+        private string _contextUserName;
+        public DiagramControllerAdapter(string contextUserName) : base()
+        {
+            _contextUserName = contextUserName;
+        }
         public string Create(int parent)
         {
             IParameterCollection Params = new ParameterCollection();
             Params.Add("@parent", parent);
-            string currentUser = "lanitadmin";//System.Web."lanitadmin"/*HttpContext.Current.User.Identity.Name*/;
+            string currentUser = _contextUserName;
             Params.Add("@login", currentUser);
             Params.Add("@password", DersaUtil.GetPassword(currentUser));
             DersaSqlManager M = new DersaSqlManager();
@@ -31,7 +35,7 @@ namespace Dersa.Models
             IParameterCollection Params = new ParameterCollection();
             Params.Add("@diagram", id.Replace("D_", ""));
             Params.Add("@xml", decodedXml);
-            string currentUser = "lanitadmin";//System.Web."lanitadmin"/*HttpContext.Current.User.Identity.Name*/;
+            string currentUser = _contextUserName;
             Params.Add("@login", currentUser);
             Params.Add("@password", DersaUtil.GetPassword(currentUser));
             DersaSqlManager M = new DersaSqlManager();

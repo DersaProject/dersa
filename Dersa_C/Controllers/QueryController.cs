@@ -57,7 +57,7 @@ namespace Dersa.Controllers
 
         public ActionResult GetViewById(string cshtmlId)
         {
-            IParameterCollection Params = (new QueryControllerAdapter()).GetViewParams(cshtmlId);
+            IParameterCollection Params = (new QueryControllerAdapter(HttpContext.User.Identity.Name)).GetViewParams(cshtmlId);
             if (Params.Contains("view_name"))
             {
                 string view_name = Params["view_name"].Value.ToString();
@@ -70,7 +70,7 @@ namespace Dersa.Controllers
             IParameterCollection Params = Util.DeserializeParams(json_params);
             if (!Params.Contains("cshtml"))
                 return null;
-            string view_name = (new QueryControllerAdapter()).GetViewName(Params["cshtml"].Value.ToString());
+            string view_name = (new QueryControllerAdapter(HttpContext.User.Identity.Name)).GetViewName(Params["cshtml"].Value.ToString());
             return GetViewByName(view_name, Params);
         }
 
@@ -156,17 +156,17 @@ namespace Dersa.Controllers
 
         public string ReportParams(string json_params)
         {
-            return (new QueryControllerAdapter()).ReportParams(json_params);
+            return (new QueryControllerAdapter(HttpContext.User.Identity.Name)).ReportParams(json_params);
         }
 
         public string GetActionForParams(string json_params)
         {
-            return (new QueryControllerAdapter()).GetActionForParams(json_params);
+            return (new QueryControllerAdapter(HttpContext.User.Identity.Name)).GetActionForParams(json_params);
         }
 
         public string GetAction(string MethodName, int id, string paramString = null) 
         {
-            return (new QueryControllerAdapter()).GetAction(MethodName, id, paramString);
+            return (new QueryControllerAdapter(HttpContext.User.Identity.Name)).GetAction(MethodName, id, paramString);
         }
 
         //public string GetQueryId(string query)
@@ -197,17 +197,17 @@ namespace Dersa.Controllers
 
         public string GetText(string json_params)
         {
-            return (new QueryControllerAdapter()).GetText(json_params);
+            return (new QueryControllerAdapter(HttpContext.User.Identity.Name)).GetText(json_params);
         }
 
         public string OpenHtml(string json_params)
         {
-            return (new QueryControllerAdapter()).OpenHtml(json_params);
+            return (new QueryControllerAdapter(HttpContext.User.Identity.Name)).OpenHtml(json_params);
         }
 
         public string PutCSHtml(string json_params, bool addController = true)
         {
-            string resultId = QueryControllerAdapter.PutString(json_params);
+            string resultId = (new QueryControllerAdapter(HttpContext.User.Identity.Name)).PutString(json_params);
             if (addController)
                 resultId = "/Query/GetViewById?cshtmlId=" + resultId;
             return resultId;
@@ -215,23 +215,23 @@ namespace Dersa.Controllers
 
         public string PutHtml(string html)
         {
-            return QueryControllerAdapter.PutString(html);
+            return (new QueryControllerAdapter(HttpContext.User.Identity.Name)).PutString(html);
         }
 
         public string PutText(string text)
         {
-            return QueryControllerAdapter.PutString(text);
+            return (new QueryControllerAdapter(HttpContext.User.Identity.Name)).PutString(text);
         }
 
         public string GetHtml(string Id, bool viewSource = false)
         {
-            return QueryControllerAdapter.GetString(Id, viewSource);
+            return (new QueryControllerAdapter(HttpContext.User.Identity.Name)).GetString(Id, viewSource);
         }
 
         [HttpPost]
         public string ExecSql(string json_params)
         {
-            return (new QueryControllerAdapter()).ExecSql(json_params);
+            return (new QueryControllerAdapter(HttpContext.User.Identity.Name)).ExecSql(json_params);
         }
 
         public ActionResult LogTable()

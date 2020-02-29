@@ -25,7 +25,7 @@ namespace Dersa.Controllers
             string login = "";
             try
             {
-                login = (new AccountControllerAdapter()).Activate(token);
+                login = (new AccountControllerAdapter(HttpContext.User.Identity.Name)).Activate(token);
             }
             catch(System.Exception exc)
             {
@@ -77,7 +77,7 @@ namespace Dersa.Controllers
 		public string Info(string login)
 		{
 
-			string result = (new AccountControllerAdapter()).Info(login);
+			string result = (new AccountControllerAdapter(HttpContext.User.Identity.Name)).Info(login);
 			return result;
 
 		}
@@ -95,7 +95,7 @@ namespace Dersa.Controllers
 		public string JsSettings(string settingName = null)
 		{
 
-			string result = (new AccountControllerAdapter()).JsSettings(settingName);
+			string result = (new AccountControllerAdapter(HttpContext.User.Identity.Name)).JsSettings(settingName);
 			return result;
 
 		}
@@ -112,13 +112,12 @@ namespace Dersa.Controllers
 	*/
 		public ActionResult Login(int userid=0, string login = "", string result = "")
 		{
-            //return RedirectToAction("Index", "Home");
-            //if (System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
-            //{
-            //    if (Dersa.Models.User.Exists(System.Web."lanitadmin"/*HttpContext.Current.User.Identity.Name*/))
-            //        return RedirectToAction("Index", "Home");
-            //}
-            if (result != "")
+			if (HttpContext.User.Identity.IsAuthenticated)
+			{
+				if (Dersa.Models.User.Exists(HttpContext.User.Identity.Name))
+					return RedirectToAction("Index", "Home");
+			}
+			if (result != "")
                 ViewBag.AuthResult = result;
             if(login != "")
             {
@@ -175,7 +174,7 @@ namespace Dersa.Controllers
 		[HttpPost]
 		public ActionResult Register(string login, string password, string name, string email)
 		{
-            string result = (new AccountControllerAdapter()).Register(login, password, name, email);
+            string result = (new AccountControllerAdapter(HttpContext.User.Identity.Name)).Register(login, password, name, email);
             if(result != "")
             {
                 ViewBag.ErrorDescr = result;
@@ -214,7 +213,7 @@ namespace Dersa.Controllers
 		public string SetUserSettings(string json_params)
 		{
 
-			string result = (new AccountControllerAdapter()).SetUserSettings(json_params);
+			string result = (new AccountControllerAdapter(HttpContext.User.Identity.Name)).SetUserSettings(json_params);
 			return result;
 
 		}
@@ -232,7 +231,7 @@ namespace Dersa.Controllers
 		public string Token(string login)
 		{
 
-			string result = (new AccountControllerAdapter()).Token(login);
+			string result = (new AccountControllerAdapter(HttpContext.User.Identity.Name)).Token(login);
 			return result;
 
 		}

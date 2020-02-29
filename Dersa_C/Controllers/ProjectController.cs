@@ -20,7 +20,7 @@ namespace Dersa.Controllers
 
         public string CreateDir(string name)
         {
-            return (new ProjectControllerAdapter()).CreateDir(name);
+            return (new ProjectControllerAdapter(HttpContext.User.Identity.Name)).CreateDir(name);
         }
 
         public ActionResult UploadFile()
@@ -31,7 +31,7 @@ namespace Dersa.Controllers
 
         public string CreateTextFile(string json_params)
         {
-            return (new ProjectControllerAdapter()).CreateTextFile(json_params);
+            return (new ProjectControllerAdapter(HttpContext.User.Identity.Name)).CreateTextFile(json_params);
         }
 
         //[HttpPost]

@@ -14,7 +14,7 @@ namespace Dersa.Controllers
         public string List(string class_name, string filter = null, string order = "", int limit = -1, int offset = 0)
         {
 
-            string result = (new EntityControllerAdapter()).List(class_name, filter, order, limit, offset);
+            string result = (new EntityControllerAdapter(HttpContext.User.Identity.Name)).List(class_name, filter, order, limit, offset);
             return result;
 
         }
@@ -49,12 +49,12 @@ namespace Dersa.Controllers
 
         public string GetPath(int id, int for_system)
         {
-            return (new EntityControllerAdapter()).GetPath(id, for_system);
+            return (new EntityControllerAdapter(HttpContext.User.Identity.Name)).GetPath(id, for_system);
         }
 
         public string Find(string srchval, int root_entity = 0, int entity = 0)
         {
-            return (new EntityControllerAdapter()).Find(srchval, root_entity, entity);
+            return (new EntityControllerAdapter(HttpContext.User.Identity.Name)).Find(srchval, root_entity, entity);
         }
 
         public void ClearCache()
@@ -64,7 +64,7 @@ namespace Dersa.Controllers
 
         public string Range(string ids)
         {
-            return (new EntityControllerAdapter()).Range(ids);
+            return (new EntityControllerAdapter(HttpContext.User.Identity.Name)).Range(ids);
         }
 
         //public void IconForStereotype(string name)

@@ -15,14 +15,19 @@ namespace Dersa.Models
 {
     public class ProjectControllerAdapter
     {
+        private string _contextUserName;
+        public ProjectControllerAdapter(string contextUserName) : base()
+        {
+            _contextUserName = contextUserName;
+        }
         public string CreateDir(string name)
         {
             return "OK";
         }
 
-        public static void SetImagePath(int id, string fileName)
+        public void SetImagePath(int id, string fileName)
         {
-            string userName = "lanitadmin";//"lanitadmin"/*HttpContext.Current.User.Identity.Name*/;
+            string userName = _contextUserName;
             string path = "/user_resources/" + userName + "/" + fileName;
             StereotypeBaseE target = StereotypeBaseE.GetSimpleInstance(id);
             CachedObjects.CachedEntities[id] = null;
@@ -53,9 +58,9 @@ namespace Dersa.Models
             mi.Invoke(cInst, callParams);
         }
 
-        public static System.Tuple<string, string> GetPath(string clientPath)
+        public System.Tuple<string, string> GetPath(string clientPath)
         {
-            string userName = "lanitadmin";//"lanitadmin"/*HttpContext.Current.User.Identity.Name*/;
+            string userName = _contextUserName;
             string[] fileNameParts = clientPath.Split('\\');
             string fileName = fileNameParts[fileNameParts.Length - 1];
             string path = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "user_resources", userName, fileName);
@@ -67,7 +72,7 @@ namespace Dersa.Models
             IParameterCollection Params = Util.DeserializeParams(json_params);
             if (Params.Contains("file_name") && Params.Contains("file_body"))
             {
-                string userName = "lanitadmin";//"lanitadmin"/*HttpContext.Current.User.Identity.Name*/;
+                string userName = _contextUserName;
                 string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "user_resources", userName, Params["file_name"].Value.ToString());
                 StreamWriter SW = File.CreateText(path);
                 SW.Write((string)Params["file_body"].Value);

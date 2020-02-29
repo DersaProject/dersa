@@ -11,6 +11,11 @@ namespace Dersa.Models
 {
     public class EntityControllerAdapter
     {
+        private string _contextUserName;
+        public EntityControllerAdapter(string contextUserName) : base()
+        {
+            _contextUserName = contextUserName;
+        }
         public string List(string class_name, string filter = null, string order = "", int limit = -1, int offset = 0)
         {
             int rowCount = 0;
@@ -21,7 +26,7 @@ namespace Dersa.Models
         public string Find(string srchval, int root_entity, int entity)
         {
             DersaSqlManager DM = new DersaSqlManager();
-            string userName = "lanitadmin";//"lanitadmin"/*HttpContext.Current.User.Identity.Name*/;
+            string userName = _contextUserName;
             object rootArg = null;
             if (root_entity > 0)
                 rootArg = root_entity;

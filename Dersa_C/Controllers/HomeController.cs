@@ -16,11 +16,11 @@ namespace Dersa.Controllers
 	{
 		public ActionResult Index()
 		{
-            if (true)//(System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+            if (HttpContext.User.Identity.IsAuthenticated)
             {
-                //if (!Dersa.Models.User.Exists(System.Web."lanitadmin"/*HttpContext.Current.User.Identity.Name*/))
+                //if (!Dersa.Models.User.Exists(HttpContext.User.Identity.Name))
                 //    return RedirectToAction("Login", "Account");
-                string userName = "lanitadmin";//System.Web."lanitadmin"/*HttpContext.Current.User.Identity.Name*/;
+                string userName = HttpContext.User.Identity.Name;
                 ViewBag.Login = userName;
                 ViewBag.ToolBoxData = "[]";
                 try

@@ -7,10 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DERSA</title>
     <!--Styles.Render("~/Content/css")-->
-    <link rel="stylesheet" href="Content/bootstrap.css" />
-    <link rel="stylesheet" href="Content/site.css" />
-    <link rel="stylesheet" href="dist/themes/default/style.css" />
-    <link rel="stylesheet" href="css/jquery-ui.css" />
+    <link rel="stylesheet" href="~/Content/bootstrap.css" />
+    <link rel="stylesheet" href="~/Content/site.css" />
+    <link rel="stylesheet" href="~/dist/themes/default/style.css" />
+    <link rel="stylesheet" href="~/css/jquery-ui.css" />
 
     @*@Styles.Render("~/Content/bootstrap.css")
     @Styles.Render("~/Content/site.css")
@@ -35,7 +35,7 @@
                     @*<li>@Html.ActionLink("Домашняя страница", "Index", "Home")</li>*@
                     <li>@Html.ActionLink("О программе", "About", "Home")</li>
                     <li>@Html.ActionLink("Контакты", "Contact", "Home")</li>
-                    @*@if (System.Web.HttpContext.Current.User.Identity.IsAuthenticated)*@
+                    @if (User.Identity.IsAuthenticated)
                     {
                     <li>
                         @Html.ActionLink("Проект", "Index", "Project")
