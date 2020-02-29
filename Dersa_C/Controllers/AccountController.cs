@@ -1,26 +1,24 @@
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using DIOS.Common.Interfaces;
 using Dersa.Models;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Threading.Tasks;
 
 
 namespace Dersa.Controllers
 {
 	public class AccountController : Controller
 	{
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
 
         private static Hashtable cookieTable = new Hashtable();
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-        }
 
         public ActionResult Activate(string token)
 		{
@@ -50,15 +48,19 @@ namespace Dersa.Controllers
 		}
 	*/
 		[HttpPost]
-		public ActionResult Auth(string login, string password)
+
+		public async Task<IActionResult> Auth(string login, string password)
 		{
-            string authResult = AccountControllerAdapter.AuthorizeUser(login, password);
-            if (authResult == "")
-                return RedirectToAction("Index", "Home");
-            else
-            {
-                return Login(0, login, authResult);
-            }
+			string authResult = "";// AccountControllerAdapter.AuthorizeUser(login, password);
+			if (authResult == "")
+			{
+				await Authenticate(login);
+				return RedirectToAction("Index", "Home");
+			}
+			else
+			{
+				return Login(0, login, authResult);
+			}
 
 		}
 
@@ -110,7 +112,7 @@ namespace Dersa.Controllers
 	*/
 		public ActionResult Login(int userid=0, string login = "", string result = "")
 		{
-            return RedirectToAction("Index", "Home");
+            //return RedirectToAction("Index", "Home");
             //if (System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
             //{
             //    if (Dersa.Models.User.Exists(System.Web."lanitadmin"/*HttpContext.Current.User.Identity.Name*/))
@@ -137,12 +139,12 @@ namespace Dersa.Controllers
 		{
 		}
 	*/
-		public ActionResult Logout()
-		{
-            (new AccountControllerAdapter()).Logout();
-            return RedirectToAction("Index", "Home");
+		//public ActionResult Logout()
+		//{
+  //          (new AccountControllerAdapter()).Logout();
+  //          return RedirectToAction("Index", "Home");
 
-		}
+		//}
 
 	/*  code template for controller Adapter
 		public ActionResult Logout()
@@ -245,14 +247,35 @@ namespace Dersa.Controllers
             return (string)cookieTable[login];
         }
 
-	/*  code template for controller Adapter
-		public string Token(string login)
+		/*  code template for controller Adapter
+			public string Token(string login)
+			{
+				ResponseMaker M = new ResponseMaker(new ReceiveResponseHandler(doTrueResponseForToken));
+				return M.MakeResponse();
+			}
+			private string doTrueResponseForToken()
+			{
+			}
+		*/
+
+		private async Task Authenticate(string userName)
 		{
-			ResponseMaker M = new ResponseMaker(new ReceiveResponseHandler(doTrueResponseForToken));
-			return M.MakeResponse();
+			// создаем один claim
+			var claims = new List<Claim>
+			{
+				new Claim(ClaimsIdentity.DefaultNameClaimType, userName)
+			};
+			// создаем объект ClaimsIdentity
+			ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+			// установка аутентификационных куки
+			await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
 		}
-		private string doTrueResponseForToken()
+
+		public async Task<IActionResult> Logout()
 		{
+			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+			return RedirectToAction("Login", "Account");
 		}
-	*/	}
+
+	}
 }
