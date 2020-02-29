@@ -4,15 +4,25 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using DIOS.Common.Interfaces;
 using Dersa.Models;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace Dersa.Controllers
 {
 	public class AccountController : Controller
 	{
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+
         private static Hashtable cookieTable = new Hashtable();
 
-		public ActionResult Activate(string token)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+        }
+
+        public ActionResult Activate(string token)
 		{
             string login = "";
             try

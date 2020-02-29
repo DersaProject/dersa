@@ -6,11 +6,17 @@ using Dersa.Common;
 using System.Web;
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 
 namespace Dersa.Controllers
 {
     public class NodeController : Controller
     {
+        public static IHttpContextAccessor _httpContextAccessor;
+        public NodeController(IHttpContextAccessor httpContextAccessor) : base()
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
 
         public string GetInsertSubmenu(int id)
         {

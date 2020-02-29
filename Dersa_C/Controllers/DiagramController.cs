@@ -8,7 +8,7 @@ using Dersa.Common;
 using DIOS.Common;
 using DIOS.Common.Interfaces;
 using Newtonsoft.Json;
-using DersaStereotypes;
+//using DersaStereotypes;
 
 namespace Dersa.Controllers
 {
@@ -26,6 +26,7 @@ namespace Dersa.Controllers
         public string GetJson(string id)
         {
             string userName = HttpContext.User.Identity.Name;
+            userName = "lanitadmin";
             DersaSqlManager DM = new DersaSqlManager();
             DataTable T = DM.ExecuteMethod("DIAGRAM", "GetEntities", new object[] { id, userName, DersaUtil.GetPassword(userName) });
             int appIndex = 0;
@@ -55,7 +56,7 @@ namespace Dersa.Controllers
             {
             }
         */
-
+        [HttpPost]
         public string SaveDiagram(string id, string jsonObject)
         {
             //displayed_name":"OBJ","id":"n3","app_index":2,"left":407,"top":254,"width":100,"height":25,"is_selected":false,"is_visible":true 
@@ -107,7 +108,7 @@ namespace Dersa.Controllers
                     }
                     if (saveCoords)
                     {
-                        StereotypeBaseE objToSaveCoords = StereotypeBaseE.GetSimpleInstance(entity);
+                        DersaStereotypes.StereotypeBaseE objToSaveCoords = DersaStereotypes.StereotypeBaseE.GetSimpleInstance(entity);
                         objToSaveCoords.SaveCoords("", (int)X.left, (int)X.top, (int)X.width, (int)X.height);
                     }
                 }

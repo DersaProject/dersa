@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using Dersa.Common;
 using System.Xml;
-using System.Web.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace Dersa.Common
 {
@@ -42,11 +42,12 @@ namespace Dersa.Common
 
         static DersaSqlManager()
         {
-            string SqlBrandName = WebConfigurationManager.AppSettings["SqlBrand"];
-            if (SqlBrandName.ToUpper() == "ORACLE")
+            //string SqlBrandName = WebConfigurationManager.AppSettings["SqlBrand"];
+            //if (SqlBrandName.ToUpper() == "ORACLE")
                 SqlBrand = DIOS.Common.SqlBrand.ORACLE;
-            else
-                SqlBrand = DIOS.Common.SqlBrand.MSSqlServer;
+            //else
+            //    SqlBrand = DIOS.Common.SqlBrand.MSSqlServer;
+            extConfig = new ConfigurationBuilder().Build();
         }
         public DersaSqlManager(DIOS.Common.SqlBrand sqlBrand):base(sqlBrand)
         {

@@ -7,6 +7,7 @@ using DIOS.Common.Interfaces;
 using System.Data.SqlClient;
 using System.Security.Principal;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace Dersa.Models
 {
@@ -88,7 +89,7 @@ namespace Dersa.Models
         }
     }
 
-    public class User
+    public class User :IdentityUser
     {
         public string Name;
         public User(string name)

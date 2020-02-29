@@ -15,6 +15,7 @@ using DersaStereotypes;
 
 namespace Dersa.Models
 {
+
     public class NodeControllerAdapter
     {
         public string GetInsertSubmenu(int id)
@@ -687,7 +688,7 @@ namespace Dersa.Models
         {
             try
             {
-                DersaSqlManager DM = new DersaSqlManager();
+                DersaSqlManager DM = new DersaSqlManager(SqlBrand.ORACLE);
                 string userName = "lanitadmin";//"lanitadmin"/*HttpContext.Current.User.Identity.Name*/;
                 object parent = null;
                 if (!id.Contains("#"))

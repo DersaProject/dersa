@@ -22,20 +22,18 @@ namespace Dersa.Controllers
                 //    return RedirectToAction("Login", "Account");
                 string userName = "lanitadmin";//System.Web."lanitadmin"/*HttpContext.Current.User.Identity.Name*/;
                 ViewBag.Login = userName;
+                ViewBag.ToolBoxData = "[]";
                 try
                 {
-                    DersaSqlManager DM = new DersaSqlManager();
+                    DersaSqlManager DM = new DersaSqlManager(DIOS.Common.SqlBrand.ORACLE);
                     System.Data.DataTable T = DM.ExecuteMethod("DERSA_USER", "GetTextUserSetting", new object[] { userName, DersaUtil.GetPassword(userName), "toolbox JSON" });
                     string jsonData = (string)T.Rows[0][0];
                     JsonConvert.DeserializeObject(jsonData);
                     if (T != null && T.Rows.Count > 0)
                         ViewBag.ToolBoxData = jsonData;
-                    else
-                        ViewBag.ToolBoxData = "[]";
                 }
                 catch(System.Exception exc)
                 {
-
                 }
                 return View();
             }
