@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using DIOS.Common;
 
 namespace Dersa_C
 {
@@ -50,7 +51,10 @@ namespace Dersa_C
                 });
 
             services.AddControllersWithViews();
-
+            services.Configure<MyAppOptions>(options =>
+            {
+                options.CS = Configuration["ConnectionStrings:DefaultConnection"];
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,12 +86,12 @@ namespace Dersa_C
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-            //app.UseMvc(routes =>
-            //{
-            //    routes.MapRoute(
-            //        name: "default",
-            //        template: "{controller=Home}/{action=Index}/{id?}");
-            //});
+
+            new SqlManagerConfigProvider(Configuration);
         }
+    }
+    public class MyAppOptions
+    {
+        public string CS;
     }
 }

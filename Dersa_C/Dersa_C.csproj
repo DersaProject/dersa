@@ -36,7 +36,10 @@
 
   <ItemGroup>
     <Reference Include="DbManager">
-      <HintPath>bin\Debug\netcoreapp2.1\DbManager.dll</HintPath>
+      <HintPath>bin\Debug\netcoreapp3.0\DbManager.dll</HintPath>
+    </Reference>
+    <Reference Include="DbServerAdapter">
+      <HintPath>..\..\gitd\dersa\DIOS\DIOS.Server\common\DbServerAdapter.dll</HintPath>
     </Reference>
     <Reference Include="Dersa.Common">
       <HintPath>..\Dersa\bin\Dersa.Common.dll</HintPath>
@@ -54,7 +57,7 @@
       <HintPath>bin\Debug\netcoreapp2.1\Dios.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="Dios.SqlManager">
-      <HintPath>bin\Debug\netcoreapp2.1\Dios.SqlManager.dll</HintPath>
+      <HintPath>bin\Debug\netcoreapp3.0\Dios.SqlManager.dll</HintPath>
     </Reference>
     <Reference Include="DIOS.WCF.Core">
       <HintPath>bin\Debug\netcoreapp2.1\DIOS.WCF.Core.dll</HintPath>
@@ -67,6 +70,9 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\gitd\dersa\DIOS\DIOS.Server\common\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccess">
+      <HintPath>..\..\gitd\dersa\DIOS\DIOS.Server\common\Oracle.ManagedDataAccess.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Optimization">
       <HintPath>..\Dersa\bin\System.Web.Optimization.dll</HintPath>
