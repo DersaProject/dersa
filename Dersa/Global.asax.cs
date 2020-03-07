@@ -6,6 +6,9 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Optimization;
+//using Microsoft.Extensions.Configuration;
+using System.Configuration;
+using System.Web.Configuration;
 
 namespace Dersa
 {
@@ -33,6 +36,8 @@ namespace Dersa
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            Configuration configuration = WebConfigurationManager.OpenWebConfiguration("~");
+            new DIOS.Common.SqlManagerConfigProvider(configuration);
         }
         protected void Application_EndRequest() 
         {

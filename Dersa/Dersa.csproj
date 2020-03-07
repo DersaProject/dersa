@@ -62,7 +62,7 @@
     </Reference>
     <Reference Include="Dios.SqlManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Dios.SqlManager.dll</HintPath>
+      <HintPath>..\..\gitd\dersa\DIOS\DIOS.Server\common\Dios.SqlManager.dll</HintPath>
     </Reference>
     <Reference Include="DIOS.WCF.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -73,6 +73,10 @@
       <HintPath>bin\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\gitd\dersa\DIOS\DIOS.Server\common\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Owin, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Microsoft.Owin.dll</HintPath>
@@ -92,6 +96,10 @@
     <Reference Include="mxgraph, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\mxgraph.dll</HintPath>
+    </Reference>
+    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\gitd\dersa\DIOS\DIOS.Server\common\netstandard.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -223,6 +231,7 @@
     <Content Include="demo\basic\dist\jstree.js" />
     <Content Include="demo\basic\dist\jstree.min.js" />
     <Content Include="demo\basic\dist\libs\hubs.js" />
+    <Content Include="appsettings.json" />
     <None Include="demo\basic\dist\libs\jquery-1.8.2.intellisense.js" />
     <Content Include="demo\basic\dist\libs\jquery-1.8.2.js" />
     <Content Include="demo\basic\dist\libs\jquery-1.8.2.min.js" />
@@ -467,7 +476,9 @@
     <Content Include="dist\themes\default\Type.gif" />
     <Content Include="dist\themes\default\View.gif" />
     <Content Include="dist\themes\default\ViewAttribute.gif" />
+    <Content Include="dist\vue.js" />
     <Content Include="dist\vuediag.js" />
+    <Content Include="dist\vue_template.js" />
     <Content Include="Global.asax" />
     <Content Include="js\app.js" />
     <Content Include="js\editor\mxDefaultKeyHandler.js" />

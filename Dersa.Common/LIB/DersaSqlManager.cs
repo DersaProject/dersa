@@ -47,7 +47,7 @@ namespace Dersa.Common
                 SqlBrand = DIOS.Common.SqlBrand.ORACLE;
             //else
             //    SqlBrand = DIOS.Common.SqlBrand.MSSqlServer;
-            extConfig = new ConfigurationBuilder().Build();
+            //extConfig = new ConfigurationBuilder().Build();
         }
         public DersaSqlManager(DIOS.Common.SqlBrand sqlBrand):base(sqlBrand)
         {
