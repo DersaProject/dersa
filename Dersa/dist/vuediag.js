@@ -1,7 +1,4 @@
-﻿//var app;
-//var keydown_assigned = false;
-
-Vue.component('drdiv', {
+﻿Vue.component('drdiv', {
     mounted: function () {
         $('#' + this.id).draggable({
           stop: function(ev) {
@@ -64,14 +61,29 @@ function dragOver(ev) {
 		event.preventDefault();
 }
 function dragDrop(ev) {
-    console.log(ev);
+    //console.log(ev);
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', '/Node/GetCoords?id=' + ev.data.id, false);
+    xhr.send();
+    console.log(xhr.responseText);
+    let coordsObj = new Object();
+    let coordsObjFromServer = xhr.responseText == "" ? new Object() : JSON.parse(xhr.responseText);
+    coordsObj.X = coordsObjFromServer.X ? coordsObjFromServer.X : ev.offsetX;
+    coordsObj.Y = coordsObjFromServer.Y ? coordsObjFromServer.Y : ev.offsetY;
+    coordsObj.X = coordsObjFromServer.X ? coordsObjFromServer.X : ev.offsetX;
+    coordsObj.Width = coordsObjFromServer.Width ? coordsObjFromServer.Width : 100;
+    coordsObj.Height = coordsObjFromServer.Height ? coordsObjFromServer.Height : 25;
+    
 	let N = appDiagram.ctrls.length;
-    appDiagram.ctrls.push({ displayed_name: ev.data.name, id: 'n_' + ev.data.id, app_index: N, left: ev.offsetX, top: ev.offsetY, width: 100, height: 25, is_selected: false, is_visible: true });
+    appDiagram.ctrls.push({ displayed_name: ev.data.name, id: 'n_' + ev.data.id + '_' + N, app_index: N, left: coordsObj.X, top: coordsObj.Y, width: coordsObj.Width, height: coordsObj.Height, is_selected: false, is_visible: true });
 	ev.stopPropagation();
 	return false;
 }
 
-$(document).keydown(function (e) { appDiagram.ProcessKey(e.key, e.altKey, e.ctrlKey, e.shiftKey) });
+if (!keydown_assigned) {
+    $(document).keydown(function (e) { if (appDiagram) appDiagram.ProcessKey(e.key, e.altKey, e.ctrlKey, e.shiftKey) });
+    keydown_assigned = true;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -93,12 +105,12 @@ document.addEventListener("dragover", dragOver);
             var body = new Object();
             body.id = diagramId;
             body.jsonObject = JSON.stringify(appDiagram.ctrls);
-            var xhr = new XMLHttpRequest();
+            let xhr = new XMLHttpRequest();
             xhr.open('POST', '/Diagram/SaveDiagram', false);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.send(JSON.stringify(body));
-            appDiagram = null;
         }
+        appDiagram = null;
     });
     
 

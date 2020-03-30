@@ -488,7 +488,7 @@ namespace Dersa.Models
                     }
                     SetAttribute(DM, ownerType, key, Param.Name, Param.Value == null? null : Param.Value.ToString(), 0);
                 }
-                catch
+                catch(Exception exc)
                 {
                     throw;
                 }

@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using System.Linq;
 using System.Web.Mvc;
@@ -85,7 +86,31 @@ namespace Dersa.Controllers
                 ViewBag.KeyName = class_name.ToLower();
                 return View("Table", T);
             }
+        }
 
+        [HttpPost]
+        public ActionResult DisplayTable(string current_state_data)
+        {
+            dynamic jsonObj = JsonConvert.DeserializeObject<dynamic>(current_state_data);
+            string table_data = jsonObj.table_data;
+            DateTime refDate = jsonObj.current_time;
+            ViewBag.Timestamp = refDate;
+            System.Data.DataTable T = JsonConvert.DeserializeObject<DataTable>(table_data.Replace("\\", "\\\\"));
+            return View("SimpleTable", T);
+        }
+
+        public ActionResult DisplayTableFromFile()
+        {
+            using (StreamReader SR = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "TempFiles\\SystemState.json"))
+            {
+                string current_state_data = SR.ReadToEnd();// "[]";
+                dynamic jsonObj = JsonConvert.DeserializeObject<dynamic>(current_state_data);
+                string table_data = jsonObj.table_data;
+                DateTime refDate = jsonObj.current_time;
+                ViewBag.Timestamp = refDate;
+                System.Data.DataTable T = JsonConvert.DeserializeObject<DataTable>(table_data.Replace("\\", "\\\\"));
+                return View("SimpleTable", T);
+            }
         }
 
         public ActionResult Index()

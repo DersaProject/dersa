@@ -103,7 +103,7 @@ function CanDnD(src, dstNode, data)
         if (graphControl.innerHTML.trim() == data.event.target.outerHTML) {
             var instance = data.data.origin;
             var src_node = instance.get_node(src);
-            AddVertex(graph, src, src_node.text, data.event.offsetX, data.event.offsetY);
+            AddVertex(src, src_node.text, data.event.offsetX, data.event.offsetY);
             return;
         }
     }
@@ -318,244 +318,6 @@ $('#find_button').on("click", function () {
     foundpath.value = GetPath(nextId);
     addValue();
 });
-$('#dersa')
-.jstree({
-    "core": {
-        "animation": 0,
-        "check_callback": true,
-        'force_text': true,
-        "themes": { "stripes": true },
-        "data": {
-            'multiple': false,
-            "url": "/node/list",
-            "dataType": "json",
-            "data": function (node) {
-                return { "id": node.id };
-            }
-        }
-    },
-    "contextmenu" : {
-        'items': function (o, cb) {
-            var tmp = $.jstree.defaults.contextmenu.items(o, cb);
-            tmp.find.submenu = {
-                "goto_b": {
-                    "separator_before": false,
-                    "separator_after": true,
-                    "_disabled": +o.id.isNaN || o.id.split('_').length > 1 || o.id > 0, //(this.check("create_node", data.reference, {}, "last")),
-                    "label": "Go to B",
-                    "action": function (data) {
-                        var inst = $.jstree.reference(data.reference),
-                            obj = inst.get_node(data.reference);
-                        GoToB();
-                    }
-                },
-                "goto_a": {
-                    "separator_before": false,
-                    "separator_after": true,
-                    "_disabled": o.id.split('_').length < 2,
-                    "label": "Go to A",
-                    "action": function (data) {
-                        var inst = $.jstree.reference(data.reference);
-                        var strId = ' ' + inst.get_selected()
-                        GoToNode(strId.split('_')[1]);
-                    }
-                },
-                "find_in_children": {
-                    "separator_before": false,
-                    "separator_after": true,
-                    "_disabled": +o.id.isNaN || o.id.split('_').length > 1 || o.id < 0,
-                    "label": "Find lower",
-                    "action": function (data) {
-                        var inst = $.jstree.reference(data.reference);
-                        var strId = ' ' + inst.get_selected()
-                        FindInChildren(o.id);
-                    }
-                }
-                
-            };
-            tmp.edit.submenu = {
-                "restore": {
-                    "separator_before": false,
-                    "icon": false,
-                    "separator_after": true,
-                    "_disabled": o.icon != 'Recycle',
-                    "label": "Restore",
-                    "action": function (data) {
-                        var inst = $.jstree.reference(data.reference),
-                            obj = inst.get_node(data.reference);
-                        if (inst.is_selected(obj)) {
-                            selectedNodes = inst.get_selected();
-                            restoreMessage = selectedNodes.length > 1 ? "узлы" : obj.id;
-                            if (confirm('Восстановить ' + restoreMessage + '?')) {
-                                while (selectedNodes.length > 0) {
-                                    RestoreNode(selectedNodes[0]);
-                                    selectedNodes.shift();
-                                }
-                            }
-                        }
-                    }
-                },
-                "remove": {
-                    "separator_before": false,
-                    "icon": false,
-                    "separator_after": true,
-                    "_disabled": o.text == 'Entities' || o.text == 'Stereotypes',//false, //(this.check("delete_node", data.reference, this.get_parent(data.reference), "")),
-                    "label": "Delete",
-                    "action": function (data) {
-                        var currentOptionsControl = document.getElementById("tbOptions");
-                        var addInfo = "";
-                        if (currentOptionsControl.value == 4)
-                            addInfo = "без возможности восстановления "
-                        var inst = $.jstree.reference(data.reference),
-                            obj = inst.get_node(data.reference);
-                        if (inst.is_selected(obj))
-                        {
-                            selectedNodes = inst.get_selected();
-                            deleteMessage = selectedNodes.length > 1 ? "узлы" : obj.id;
-                            if (confirm('Удалить ' + addInfo + deleteMessage + '?'))
-                            {
-                                inst.delete_node(selectedNodes);
-                                while (selectedNodes.length > 0) {
-                                    RemoveNode(selectedNodes[0], currentOptionsControl.value);
-                                    selectedNodes.shift();
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (confirm('Удалить ' + addInfo + obj.id + '?'))
-                            {
-                                RemoveNode(obj.id, currentOptionsControl.value);
-                                inst.delete_node(obj);
-                            }
-                        }
-                        currentOptionsControl.value = 0;
-                    }
-                },
-                "cut":
-                {
-                    "separator_before": true,
-                    "separator_after": false,
-                    "_disabled": false,
-                    "label": "Cut",
-                    "action": function (data) {
-                        var inst = $.jstree.reference(data.reference),
-                            obj = inst.get_node(data.reference);
-                        selectedForCut = inst.get_selected(false);
-                    }
-                },
-                "copy":
-                {
-                    "separator_before": false,
-                    "separator_after": false,
-                    "_disabled": true,
-                    "label": "Copy",
-                    "action": false
-                },
-                "paste":
-                {
-                    "separator_before": false,
-                    "separator_after": true,
-                    "_disabled": !selectedForCut || selectedForCut.length < 1,
-                    "label": "Paste",
-                    "action": function (data) {
-                        var inst = $.jstree.reference(data.reference),
-                            obj = inst.get_node(data.reference);
-                        DoPaste(selectedForCut, obj.id);
-                        inst.refresh_node(obj);
-                    }
-                },
-                "editDiagram": {
-                    "separator_before": false,
-                    "separator_after": false,
-                    "_disabled": o.id[0] != "D", //(this.check("create_node", data.reference, {}, "last")),
-                    "label": "Edit diagram",
-                    "action": function (data) {
-                        var inst = $.jstree.reference(data.reference),
-                            obj = inst.get_node(data.reference);
-                        EditDiagram();
-                    }
-                },
-                "newDiagram": {
-                    "separator_before": false,
-                    "separator_after": true,
-                    "_disabled": o.text == 'Entities' || o.text == 'Stereotypes' || o.id < 0 || o.id[0] == "D", //(this.check("create_node", data.reference, {}, "last")),
-                    "label": "New diagram",
-                    "action": function (data) {
-                        var inst = $.jstree.reference(data.reference),
-                            obj = inst.get_node(data.reference);
-                        NewDiagram(obj.id);
-                    }
-                }
-            };
-            tmp.insertEntity.submenu = {};
-            if (o.id[0] == "D" || o.text == 'Entities' || o.text == 'Stereotypes' || o.id.split('_').length > 1)
-            {
-                delete tmp.insertEntity;
-                return tmp;
-            }
-
-            var xhr = new XMLHttpRequest();
-            args = "id=" + o.id;
-            xhr.open('GET', "node/GetInsertSubmenu?" + args, false);
-            xhr.send();
-            var childStereotypes = JSON.parse(xhr.responseText);
-            AddSubmenu(childStereotypes, tmp.insertEntity);
-            //if (childStereotypes.length < 1) {
-            //    delete tmp.insertEntity;
-            //    return tmp;
-            //}
-            return tmp;
-        }
-    },
-
-    "plugins": ["contextmenu", "dnd", "state"]
-})
-    .on("changed.jstree", function (e, data) {
-    if (data.selected.length) {
-        selected_id = data.instance.get_node(data.selected[0]).id;
-        SaveCurrentNode(selected_id);
-        var currentOptionsControl = document.getElementById("tbOptions");
-        currentOptionsControl.value = 0;
-        if (data.event) {
-            var options = 0;
-            if (data.event.ctrlKey)
-                options += 1;
-            if (data.event.shiftKey)
-                options += 2;
-            if (data.event.altKey)
-                options += 4;
-            currentOptionsControl.value = options;
-        }
-        var infoControl = document.getElementById("infoboard");
-        var diagControl = document.getElementById("page");
-        var graphControl = document.getElementById("graph");
-        bnEdit = document.getElementById("bnEdit");
-        if (bnEdit != null && bnEdit.checked) {
-            return;
-        }
-
-        CancelEditDiagram();
-        if (selected_id.length == 0 || selected_id[0] != "D") {
-            infoControl.style.display = "";
-            diagControl.style.display = "none";
-            infoControl.innerHTML = GetText(selected_id, "") + GetText(selected_id, "Text");
-        }
-        else {
-            infoControl.style.display = "none";
-            diagControl.style.display = "";
-            dID = document.getElementById("DiagramId");
-            dID.value = selected_id;
-            var diaghtml = GetText(selected_id, "Diagram");
-            console.log(diaghtml);
-            Editor.execute('showSavedDiagram', diaghtml);
-            //infoControl.innerHTML = GetText(selected_id, "Diagram");
-        }
-    }
-})
-//.on("loaded.jstree", function (e, data) {
-//    data.instance.load_all('312885');
-//})
 
 function EditNode(obj, obj_text) {
     var instance = $('#dersa').jstree(true);
@@ -791,7 +553,7 @@ function CancelEditDiagram() {
     laEdit.innerHTML = "";
 }
 
-function AddVertex(graph, id, text, x, y)
+function AddVertex(id, text, x, y)
 {
     Editor.execute('insertNode', id, text, x, y);
 }
@@ -878,3 +640,231 @@ function addValue() {
     }
     return true;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+$('#dersa')
+    .jstree({
+        "core": {
+            "animation": 0,
+            "check_callback": true,
+            'force_text': true,
+            "themes": { "stripes": true },
+            "data": {
+                'multiple': false,
+                "url": "/node/list",
+                "dataType": "json",
+                "data": function (node) {
+                    return { "id": node.id };
+                }
+            }
+        },
+        "contextmenu": {
+            'items': function (o, cb) {
+                var tmp = $.jstree.defaults.contextmenu.items(o, cb);
+                tmp.find.submenu = {
+                    "goto_b": {
+                        "separator_before": false,
+                        "separator_after": true,
+                        "_disabled": +o.id.isNaN || o.id.split('_').length > 1 || o.id > 0, //(this.check("create_node", data.reference, {}, "last")),
+                        "label": "Go to B",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            GoToB();
+                        }
+                    },
+                    "goto_a": {
+                        "separator_before": false,
+                        "separator_after": true,
+                        "_disabled": o.id.split('_').length < 2,
+                        "label": "Go to A",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference);
+                            var strId = ' ' + inst.get_selected()
+                            GoToNode(strId.split('_')[1]);
+                        }
+                    },
+                    "find_in_children": {
+                        "separator_before": false,
+                        "separator_after": true,
+                        "_disabled": +o.id.isNaN || o.id.split('_').length > 1 || o.id < 0,
+                        "label": "Find lower",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference);
+                            var strId = ' ' + inst.get_selected()
+                            FindInChildren(o.id);
+                        }
+                    }
+
+                };
+                tmp.edit.submenu = {
+                    "restore": {
+                        "separator_before": false,
+                        "icon": false,
+                        "separator_after": true,
+                        "_disabled": o.icon != 'Recycle',
+                        "label": "Restore",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            if (inst.is_selected(obj)) {
+                                selectedNodes = inst.get_selected();
+                                restoreMessage = selectedNodes.length > 1 ? "узлы" : obj.id;
+                                if (confirm('Восстановить ' + restoreMessage + '?')) {
+                                    while (selectedNodes.length > 0) {
+                                        RestoreNode(selectedNodes[0]);
+                                        selectedNodes.shift();
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "remove": {
+                        "separator_before": false,
+                        "icon": false,
+                        "separator_after": true,
+                        "_disabled": o.text == 'Entities' || o.text == 'Stereotypes',//false, //(this.check("delete_node", data.reference, this.get_parent(data.reference), "")),
+                        "label": "Delete",
+                        "action": function (data) {
+                            var currentOptionsControl = document.getElementById("tbOptions");
+                            var addInfo = "";
+                            if (currentOptionsControl.value == 4)
+                                addInfo = "без возможности восстановления "
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            if (inst.is_selected(obj)) {
+                                selectedNodes = inst.get_selected();
+                                deleteMessage = selectedNodes.length > 1 ? "узлы" : obj.id;
+                                if (confirm('Удалить ' + addInfo + deleteMessage + '?')) {
+                                    inst.delete_node(selectedNodes);
+                                    while (selectedNodes.length > 0) {
+                                        RemoveNode(selectedNodes[0], currentOptionsControl.value);
+                                        selectedNodes.shift();
+                                    }
+                                }
+                            }
+                            else {
+                                if (confirm('Удалить ' + addInfo + obj.id + '?')) {
+                                    RemoveNode(obj.id, currentOptionsControl.value);
+                                    inst.delete_node(obj);
+                                }
+                            }
+                            currentOptionsControl.value = 0;
+                        }
+                    },
+                    "cut":
+                    {
+                        "separator_before": true,
+                        "separator_after": false,
+                        "_disabled": false,
+                        "label": "Cut",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            selectedForCut = inst.get_selected(false);
+                        }
+                    },
+                    "copy":
+                    {
+                        "separator_before": false,
+                        "separator_after": false,
+                        "_disabled": true,
+                        "label": "Copy",
+                        "action": false
+                    },
+                    "paste":
+                    {
+                        "separator_before": false,
+                        "separator_after": true,
+                        "_disabled": !selectedForCut || selectedForCut.length < 1,
+                        "label": "Paste",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            DoPaste(selectedForCut, obj.id);
+                            inst.refresh_node(obj);
+                        }
+                    },
+                    "editDiagram": {
+                        "separator_before": false,
+                        "separator_after": false,
+                        "_disabled": o.id[0] != "D", //(this.check("create_node", data.reference, {}, "last")),
+                        "label": "Edit diagram",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            EditDiagram();
+                        }
+                    },
+                    "newDiagram": {
+                        "separator_before": false,
+                        "separator_after": true,
+                        "_disabled": o.text == 'Entities' || o.text == 'Stereotypes' || o.id < 0 || o.id[0] == "D", //(this.check("create_node", data.reference, {}, "last")),
+                        "label": "New diagram",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            NewDiagram(obj.id);
+                        }
+                    }
+                };
+                tmp.insertEntity.submenu = {};
+                if (o.id[0] == "D" || o.text == 'Entities' || o.text == 'Stereotypes' || o.id.split('_').length > 1) {
+                    delete tmp.insertEntity;
+                    return tmp;
+                }
+
+                var xhr = new XMLHttpRequest();
+                args = "id=" + o.id;
+                xhr.open('GET', "node/GetInsertSubmenu?" + args, false);
+                xhr.send();
+                var childStereotypes = JSON.parse(xhr.responseText);
+                AddSubmenu(childStereotypes, tmp.insertEntity);
+                return tmp;
+            }
+        },
+
+        "plugins": ["contextmenu", "dnd", "state"]
+    })
+    .on("changed.jstree", function (e, data) {
+        if (data.selected.length) {
+            selected_id = data.instance.get_node(data.selected[0]).id;
+            SaveCurrentNode(selected_id);
+            var currentOptionsControl = document.getElementById("tbOptions");
+            currentOptionsControl.value = 0;
+            if (data.event) {
+                var options = 0;
+                if (data.event.ctrlKey)
+                    options += 1;
+                if (data.event.shiftKey)
+                    options += 2;
+                if (data.event.altKey)
+                    options += 4;
+                currentOptionsControl.value = options;
+            }
+            var infoControl = document.getElementById("infoboard");
+            var diagControl = document.getElementById("page");
+            var graphControl = document.getElementById("graph");
+            bnEdit = document.getElementById("bnEdit");
+            if (bnEdit != null && bnEdit.checked) {
+                return;
+            }
+
+            CancelEditDiagram();
+            if (selected_id.length == 0 || selected_id[0] != "D") {
+                infoControl.style.display = "";
+                diagControl.style.display = "none";
+                infoControl.innerHTML = GetText(selected_id, "") + GetText(selected_id, "Text");
+            }
+            else {
+                infoControl.style.display = "none";
+                diagControl.style.display = "";
+                dID = document.getElementById("DiagramId");
+                dID.value = selected_id;
+                var diaghtml = GetText(selected_id, "Diagram");
+                //console.log(diaghtml);
+                Editor.execute('showSavedDiagram', diaghtml);
+                //infoControl.innerHTML = GetText(selected_id, "Diagram");
+            }
+        }
+    });

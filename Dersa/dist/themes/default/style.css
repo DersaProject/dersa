@@ -34,7 +34,7 @@
         }
 
         .block1 {
-            width: 45%;
+            width: 50%;
             min-width: 400px;
             min-height: 300px;
             padding: 5px;
@@ -44,14 +44,13 @@
         }
 
         .block2 {
-            width: 600px;
+            width: 800px;
             height: 100%;
             padding: 0px;
             left: 600px;
             top: 100px;
             position: absolute;
         }
-
         .block-mobile {
             overflow: auto;
             margin-left: 0px;
@@ -700,14 +699,20 @@
 .jstree-default .Report {
   background: url("Report.gif") 0px 0px no-repeat;
 }
+.jstree-default .Requirement {
+    background: url("Requirement.gif") 0px 0px no-repeat;
+}
 .jstree-default .Root {
   background: url("Root.gif") 0px 0px no-repeat;
 }
 .jstree-default .Script {
   background: url("Script.gif") 0px 0px no-repeat;
 }
+.jstree-default .SoftwareArtefact {
+    background: url("SoftwareArtefact.gif") 0px 0px no-repeat;
+}
 .jstree-default .StartState {
-  background: url("StartState.gif") 0px 0px no-repeat;
+    background: url("StartState.gif") 0px 0px no-repeat;
 }
 .jstree-default .State {
   background: url("State.gif") 0px 0px no-repeat;
