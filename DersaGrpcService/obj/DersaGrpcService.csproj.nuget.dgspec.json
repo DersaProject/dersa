@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\DersaProject.git\\DersaGrpcService\\DersaGrpcService.csproj": {}
+    "D:\\DersaProject.git\\dersa\\DersaGrpcService\\DersaGrpcService.csproj": {}
   },
   "projects": {
-    "D:\\DersaProject.git\\DersaGrpcService\\DersaGrpcService.csproj": {
+    "D:\\DersaProject.git\\dersa\\DersaGrpcService\\DersaGrpcService.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\DersaProject.git\\DersaGrpcService\\DersaGrpcService.csproj",
+        "projectUniqueName": "D:\\DersaProject.git\\dersa\\DersaGrpcService\\DersaGrpcService.csproj",
         "projectName": "DersaGrpcService",
-        "projectPath": "D:\\DersaProject.git\\DersaGrpcService\\DersaGrpcService.csproj",
-        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "D:\\DersaProject.git\\DersaGrpcService\\obj\\",
+        "projectPath": "D:\\DersaProject.git\\dersa\\DersaGrpcService\\DersaGrpcService.csproj",
+        "packagesPath": "C:\\Users\\Haier\\.nuget\\packages\\",
+        "outputPath": "D:\\DersaProject.git\\dersa\\DersaGrpcService\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Haier\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -64,7 +64,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.200\\RuntimeIdentifierGraph.json"
         }
       }
     }
