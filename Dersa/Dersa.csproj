@@ -45,6 +45,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DbManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\gitd\dersa\DIOS\DIOS.Server\common\DbManager.dll</HintPath>
+    </Reference>
     <Reference Include="Dersa.Common">
       <HintPath>..\Dersa.Common\bin\Debug\Dersa.Common.dll</HintPath>
     </Reference>
