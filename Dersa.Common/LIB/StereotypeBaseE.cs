@@ -167,6 +167,11 @@ namespace DersaStereotypes
             CachedObjects.CachedCompiledInstances[this.Id] = null;
         }
 
+        public virtual string GetCoords()
+        {
+            return ""; 
+        }
+
         public virtual void SaveCoords(string userName, int x, int y, int width, int height)
         {
         }
