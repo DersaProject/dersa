@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Nancy;
+using Newtonsoft.Json;
 
 namespace Dersa_N
 {
@@ -11,11 +12,19 @@ namespace Dersa_N
     {
         public HomeModule()
         {
-            //Get("/", param => "I'm Nancy Self Host Application.");
-            Get("/", parameters => {
+            Get("/", parameters =>
+            {
                 return View["index.cshtml", null];
             });
-            Get("/Node/List", param => "I'm Nancy Self Host Application.");
+
+            Func<dynamic, object> nodeListFunc = GetNodesList;
+            Get("/Node/List/{id}", nodeListFunc);
+        }
+
+        private object GetNodesList(dynamic parameters)
+        {
+            object result = new NodeControllerAdapter().List(parameters.id.ToString());
+            return JsonConvert.SerializeObject(result);
         }
     }
 }

@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using Owin;
+using Microsoft.Owin.FileSystems;
+using Microsoft.Owin.StaticFiles;
 using Nancy.ViewEngines.Razor;
 using Nancy;
+using DIOS.Common;
+using System.Configuration;
 
 [assembly: OwinStartup(typeof(Dersa_N.Startup))]
 
@@ -12,14 +16,25 @@ namespace Dersa_N
 {
     public class Startup
     {
+        private bool UserIsAuthenticated()
+        {
+            return true;
+        }
+
         public void Configuration(IAppBuilder app)
         {
+            app.UseFileServer(new FileServerOptions()
+            {
+                RequestPath = PathString.Empty,
+                FileSystem = new PhysicalFileSystem(@"..\www"),
+            });
+
+            app.UseStaticFiles("/../www");
+
             app.UseNancy();
-            //app.Run(context =>
-            //{
-            //    context.Response.ContentType = "text/html; charset=utf-8";
-            //    return context.Response.WriteAsync("<h2>Привет мир!</h2>");
-            //});
+
+            Configuration wconfig = ConfigurationManager.OpenExeConfiguration("");
+            new SqlManagerConfigProvider(wconfig, new DIOS.Common.UserIsAuthenticatedMethod(UserIsAuthenticated));
         }
     }
 
@@ -45,12 +60,12 @@ namespace Dersa_N
         }
     }
 
-    //public class CustomRootPathProvider : IRootPathProvider
-    //{
-    //    public string GetRootPath()
-    //    {
-    //        string path = AppDomain.CurrentDomain.BaseDirectory + "..\\";
-    //        return path;
-    //    }
-    //}
+    public class CustomRootPathProvider : IRootPathProvider
+    {
+        public string GetRootPath()
+        {
+            string path = AppDomain.CurrentDomain.BaseDirectory + "..\\";
+            return path;
+        }
+    }
 }
