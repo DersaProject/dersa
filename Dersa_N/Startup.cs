@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Owin;
 using Owin;
 using Nancy.ViewEngines.Razor;
+using Nancy;
 
 [assembly: OwinStartup(typeof(Dersa_N.Startup))]
 
@@ -41,6 +42,15 @@ namespace Dersa_N
         public bool AutoIncludeModelNamespace
         {
             get { return true; }
+        }
+    }
+
+    public class CustomRootPathProvider : IRootPathProvider
+    {
+        public string GetRootPath()
+        {
+            string path = AppDomain.CurrentDomain.BaseDirectory + "..\\";
+            return path;
         }
     }
 }
