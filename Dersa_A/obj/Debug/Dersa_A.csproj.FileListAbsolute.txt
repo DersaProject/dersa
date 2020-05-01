@@ -18,7 +18,6 @@ D:\DersaProject.git\Dersa_A\bin\Microsoft.Owin.StaticFiles.xml
 D:\DersaProject.git\Dersa_A\obj\Debug\Dersa_A.csproj.CopyComplete
 D:\DersaProject.git\Dersa_A\obj\Debug\Dersa_A.exe
 D:\DersaProject.git\Dersa_A\obj\Debug\Dersa_A.pdb
-D:\DersaProject.git\Dersa_A\obj\Debug\Dersa_A.csproj.CoreCompileInputs.cache
 D:\DersaProject.git\Dersa_A\bin\Microsoft.Owin.dll
 D:\DersaProject.git\Dersa_A\bin\System.Web.Mvc.dll
 D:\DersaProject.git\Dersa_A\bin\Dersa.Common.dll

@@ -6,6 +6,9 @@ using Microsoft.Owin.FileSystems;
 using Microsoft.Owin.StaticFiles;
 using System.Web.Mvc;
 using System.Web.Http;
+using DIOS.Common;
+using System.Configuration;
+using System.Web.Configuration;
 
 [assembly: OwinStartup(typeof(Dersa_A.Startup))]
 
@@ -13,6 +16,11 @@ namespace Dersa_A
 {
     public class Startup
     {
+        private bool UserIsAuthenticated()
+        {
+            return true;
+        }
+
         public void Configuration(IAppBuilder app)
         {
             //ConfigureAuth(app);
@@ -36,6 +44,10 @@ namespace Dersa_A
             app.UseStaticFiles("/../content");
 
             app.UseWebApi(config);
+
+            Configuration wconfig = ConfigurationManager.OpenExeConfiguration("");
+            new SqlManagerConfigProvider(wconfig, new DIOS.Common.UserIsAuthenticatedMethod(UserIsAuthenticated));
+
         }
 
     }

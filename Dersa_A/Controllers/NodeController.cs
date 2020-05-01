@@ -153,9 +153,10 @@ namespace Dersa.Controllers
             return "close";
         }
 
-        public string List(string id)
+        [System.Web.Http.HttpGet]
+        public IHttpActionResult List(string id)
         {
-            return (new NodeControllerAdapter()).List(id);
+            return Json(new NodeControllerAdapter().List(id));
         }
 
         public string Remove(int id, string diagram_id = null, int options = 0)

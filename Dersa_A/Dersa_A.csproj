@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DbManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\gitd\dersa\DIOS\DIOS.Server\common\DbManager.dll</HintPath>
+    </Reference>
     <Reference Include="Dersa.Common">
       <HintPath>..\Dersa.Common\bin\Debug\Dersa.Common.dll</HintPath>
     </Reference>
@@ -50,6 +54,10 @@
     <Reference Include="Dios.SqlManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\gitd\dersa\DIOS\DIOS.Server\common\Dios.SqlManager.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\gitd\dersa\DIOS\DIOS.Server\common\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Owin, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -79,11 +87,13 @@
       <HintPath>bin\Owin.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\System.Web.Http.dll</HintPath>
