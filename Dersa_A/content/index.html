@@ -35,13 +35,7 @@
     <link rel="stylesheet" href="dist/themes/default/style.css" />
     <link rel="stylesheet" href="css/jquery-ui.css" />
 
-    <script src="dist/vue.js"></script>
-    <script src="dist/vuediag.js"></script>
-    <script src="dist/jquery.js"></script>
-    <script src="dist/jquery-ui.js"></script>
-    <script src="dist/jstree.js"></script>
-    <script src="dist/dersatree.js"></script>
-    
+   
 
     <script type="text/javascript">
         var mxBasePath = '../../';
@@ -79,7 +73,7 @@
             }
     </style>
 </head>
-<body onload="createEditor('config/diagrameditor.xml');">
+<body onload="//createEditor('config/diagrameditor.xml');">
 
     <div style="float:left;width:200px;margin-top:-20px"><h1>DERSA modeler</h1></div>
     <div style="position:absolute;width: 260px;top: 96px; left: 300px;"><input id="tbSearch" style="width:100%" type="text"></div>
@@ -154,12 +148,14 @@
             }
         });
     </script>
-    
+
     <script src="dist/jquery.js"></script>
     <script src="dist/jquery-ui.js"></script>
     <script src="dist/jstree.js"></script>
     <script src="dist/dersatree.js"></script>
-    <script src="js/mxClient.js"></script>
+    <!--<script src="js/mxClient.js"></script>-->
+    <script src="dist/vue.js"></script>
+    <script src="dist/vuediag.js"></script>
 
 
     <script type="text/javascript" src="js/app.js"></script>
@@ -422,7 +418,7 @@
 
         }
 
-                                                //window.onbeforeunload = function () { return mxResources.get('changesLost'); };
+                                                    //window.onbeforeunload = function () { return mxResources.get('changesLost'); };
     </script>
     <div id="page" class="block2">
         <table border="0" width="730px">

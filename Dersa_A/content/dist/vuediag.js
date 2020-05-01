@@ -80,6 +80,8 @@ function dragDrop(ev) {
 	return false;
 }
 
+var keydown_assigned;
+
 if (!keydown_assigned) {
     $(document).keydown(function (e) { if (appDiagram) appDiagram.ProcessKey(e.key, e.altKey, e.ctrlKey, e.shiftKey) });
     keydown_assigned = true;

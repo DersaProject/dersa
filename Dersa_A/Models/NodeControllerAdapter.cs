@@ -683,7 +683,7 @@ namespace Dersa.Models
             string result = JsonConvert.SerializeObject(query);
             return result;
         }
-        public string List(string id)
+        public object List(string id)
         {
             try
             {
@@ -692,12 +692,13 @@ namespace Dersa.Models
                 object parent = null;
                 if (!id.Contains("#"))
                     parent = id;
-                string result = "[]";
+                object result = new object[0];
                 if (id == "STEREOTYPES")
                 {
-                    result = DersaUtil.GetUserSetting(userName, "root stereotypes");
+                    string stereotypes = DersaUtil.GetUserSetting(userName, "root stereotypes");
                     Regex removeDigitsEx = new Regex("[0-9]");
-                    result = removeDigitsEx.Replace(result, "*");
+                    stereotypes = removeDigitsEx.Replace(stereotypes, "*");
+                    result = JsonConvert.DeserializeObject(stereotypes);
                 }
                 else
                 {
@@ -714,13 +715,13 @@ namespace Dersa.Models
                                     erank = R["erank"],
                                     children = Convert.ToBoolean(R["children"])
                                 };
-                    result = JsonConvert.SerializeObject(query);
+                    result = query;
                 }
                 return result;
             }
             catch(Exception exc)
             {
-                return "";
+                return null;
             }
         }
         public string Description(string id, string attr_name)

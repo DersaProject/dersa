@@ -55,3 +55,10 @@ D:\DersaProject.git\Dersa_A\bin\ru\System.Web.Razor.resources.dll
 D:\DersaProject.git\Dersa_A\bin\ru\System.Web.WebPages.Razor.resources.dll
 D:\DersaProject.git\Dersa_A\bin\ru\System.Web.WebPages.resources.dll
 D:\DersaProject.git\Dersa_A\bin\ru\System.Web.WebPages.Deployment.resources.dll
+D:\DersaProject.git\Dersa_A\bin\Microsoft.Owin.Diagnostics.dll
+D:\DersaProject.git\Dersa_A\bin\Microsoft.Owin.Host.HttpListener.dll
+D:\DersaProject.git\Dersa_A\bin\Microsoft.Owin.Hosting.dll
+D:\DersaProject.git\Dersa_A\bin\Owin.dll
+D:\DersaProject.git\Dersa_A\bin\Microsoft.Owin.Diagnostics.xml
+D:\DersaProject.git\Dersa_A\bin\Microsoft.Owin.Host.HttpListener.xml
+D:\DersaProject.git\Dersa_A\bin\Microsoft.Owin.Hosting.xml

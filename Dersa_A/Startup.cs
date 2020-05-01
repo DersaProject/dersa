@@ -23,13 +23,7 @@ namespace Dersa_A
 
         public void Configuration(IAppBuilder app)
         {
-            //ConfigureAuth(app);
-            //RegisterRoutes(RouteTable.Routes);
-            //app.Run(context =>
-            //{
-            //    context.Response.ContentType = "text/html; charset=utf-8";
-            //    return context.Response.WriteAsync("<h2>Привет, мир!</h2>");
-            //});
+
             var config = new HttpConfiguration();
             config.Routes.MapHttpRoute("default", "{controller}/{action}/{id}",
                 new { controller = "Home", action = "Index", id = UrlParameter.Optional });
@@ -44,7 +38,7 @@ namespace Dersa_A
             app.UseStaticFiles("/../content");
 
             app.UseWebApi(config);
-
+            
             Configuration wconfig = ConfigurationManager.OpenExeConfiguration("");
             new SqlManagerConfigProvider(wconfig, new DIOS.Common.UserIsAuthenticatedMethod(UserIsAuthenticated));
 

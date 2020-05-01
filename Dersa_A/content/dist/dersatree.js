@@ -516,6 +516,8 @@ function EditDiagram() {
 }
 
 function CancelEditDiagram() {
+    console.log('CancelEditDiagram was commented');
+    return;
     codec = new mxCodec();
     encXml = codec.encode(Editor.graph.getModel())
     Editor.execute("clearDiagram");
