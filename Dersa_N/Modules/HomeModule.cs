@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Nancy;
 
-namespace NancyApp
+namespace Dersa_N
 {
     public class HomeModule : NancyModule
     {
@@ -15,6 +15,7 @@ namespace NancyApp
             Get("/", parameters => {
                 return View["index.cshtml", null];
             });
+            Get("/Node/List", param => "I'm Nancy Self Host Application.");
         }
     }
 }

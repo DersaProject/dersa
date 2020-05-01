@@ -45,12 +45,12 @@ namespace Dersa_N
         }
     }
 
-    public class CustomRootPathProvider : IRootPathProvider
-    {
-        public string GetRootPath()
-        {
-            string path = AppDomain.CurrentDomain.BaseDirectory + "..\\";
-            return path;
-        }
-    }
+    //public class CustomRootPathProvider : IRootPathProvider
+    //{
+    //    public string GetRootPath()
+    //    {
+    //        string path = AppDomain.CurrentDomain.BaseDirectory + "..\\";
+    //        return path;
+    //    }
+    //}
 }
