@@ -18,7 +18,23 @@ namespace Dersa.Common
             return string.Compare(X.Name, Y.Name);
         }
     }
-    [Serializable]
+	public class IdComparer : IComparer
+	{
+		public int Compare(object x, object y)
+		{
+			if (!(x is ICompiled) || !(y is ICompiled))
+				return 0;
+			ICompiled X = x as ICompiled;
+			ICompiled Y = y as ICompiled;
+			if(X.Id < Y.Id)
+				return -1;
+			if (X.Id > Y.Id)
+				return 1;
+			return 0;
+		}
+	}
+
+	[Serializable]
 	public class ChildrenCollection: ICollection, IList, IChildrenCollection
 	{
 		private ArrayList _list;

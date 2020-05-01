@@ -1,0 +1,38 @@
+﻿@model IEnumerable<DIOS.BusinessBase.RegexChecker>
+
+@{
+    ViewBag.Title = "Regular Expressions";
+}
+
+<h2>Regular Expressions</h2>
+
+<table>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.code)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.regexp)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.code)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.regexp)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "EditRegEx", new { id=item.regex_checker }) 
+        </td>
+    </tr>
+}
+</table>
+
+<div>
+    <br>
+    @Html.ActionLink("System Parameters", "Index")
+</div>

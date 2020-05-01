@@ -488,7 +488,7 @@ namespace Dersa.Models
                     }
                     SetAttribute(DM, ownerType, key, Param.Name, Param.Value == null? null : Param.Value.ToString(), 0);
                 }
-                catch
+                catch(Exception exc)
                 {
                     throw;
                 }
@@ -703,12 +703,15 @@ namespace Dersa.Models
                 {
                     DataTable T = DM.ExecuteMethod("ENTITY", "JTreeList", new object[] { parent, userName, DersaUtil.GetPassword(userName) });
                     var query = from DataRow R in T.Rows
+                                //orderby R["rank"], R["erank"], R["id"]
                                 select new
                                 {
                                     id = R["id"],
                                     text = R["text"],
                                     icon = R["icon"],
                                     data = R["data"],
+                                    rank = R["rank"],
+                                    erank = R["erank"],
                                     children = Convert.ToBoolean(R["children"])
                                 };
                     result = JsonConvert.SerializeObject(query);

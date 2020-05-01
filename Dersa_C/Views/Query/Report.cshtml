@@ -1,0 +1,40 @@
+﻿@using System.Data;
+@model DataTable
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm("TableList", "Report"))
+{
+
+
+    <table border="1">
+        <tr><strong>
+    @foreach (DataColumn item in Model.Columns)
+        {
+            <th>
+                @item.ColumnName 
+            </th>
+        }
+        </strong></tr>
+
+    @for (int r = 0; r < Model.Rows.Count; r++  )//(DataRow row in Model.Rows)
+    {
+        <tr>
+            @foreach (DataColumn col in Model.Columns)
+            {
+                <td style="padding:2px 5px">
+                    @Html.DisplayFor(T => T.Rows[r][col], "string")
+                    @*@row[col].ToString()*@
+                </td>
+            }
+            <td style="padding:2px 5px">
+                @*{@Html.ActionLink("Details", "Details", new { id = item.task_timer })}*@
+                @*@{string tAction = item.is_working ? "Stop" : "Start"; }
+            @Html.ActionLink(tAction, "Timer", new { id = item.task_timer, timerAction = tAction.ToLower() })*@
+            </td>
+        </tr>
+    }
+    </table>
+
+}
+

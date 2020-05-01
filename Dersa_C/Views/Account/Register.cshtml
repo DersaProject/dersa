@@ -1,0 +1,60 @@
+﻿@using System.Web.Optimization;
+@model Dersa.Models.RegistrationInfo
+
+@{
+    ViewBag.Title = "Register";
+}
+
+<h3>Регистрация</h3>
+
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <i>Для завершения регистрации вам нужно будет пройти по ссылке, которая будет прислана на предоставленный адрес электронной почты.</i>
+        <br>
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Login, "имя пользователя (логин):")
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Login)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Password, "пароль:")
+        </div>
+        <div class="editor-field">
+            @Html.PasswordFor(model => model.Password)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.ConfirmPassword, "подтвердите пароль:")
+        </div>
+        <div class="editor-field">
+            @Html.PasswordFor(model => model.ConfirmPassword)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Name, "имя (необязательно):")
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Name)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Email, "email:")
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Email)
+        </div>
+        <br>
+        <p>
+            <input type="submit" value="Отправить" />
+        </p>
+    </fieldset>
+}
+<span style="color: red;">@ViewBag.ErrorDescr</span>
+<br>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.168
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dersa", "Dersa.csproj", "{1456418E-8282-4E3D-B5B4-77C173ADC917}"
 EndProject
@@ -10,6 +10,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dersa.Interfaces", "..\Dersa.Interfaces\Dersa.Interfaces.csproj", "{9E5EAE04-0A90-4ADB-B0FF-1F6856B43382}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dersa.Stereotypes", "..\Dersa.Stereotypes\Dersa.Stereotypes.csproj", "{EFC922A0-9F41-41CC-8137-830E783D648F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dersa_C", "..\Dersa_C\Dersa_C.csproj", "{E3856845-2075-4B42-8B82-B6E2B36BF375}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DersaGrpcService", "..\DersaGrpcService\DersaGrpcService.csproj", "{39438169-FEA7-4F87-837B-9BE014F7A132}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dersa_A", "..\Dersa_A\Dersa_A.csproj", "{D38552C8-AEC6-483B-9731-D2BA6018B5A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dersa_N", "..\Dersa_N\Dersa_N.csproj", "{F0D06C17-25EC-49D7-B13A-AA4EA474CCD1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +41,22 @@ Global
 		{EFC922A0-9F41-41CC-8137-830E783D648F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFC922A0-9F41-41CC-8137-830E783D648F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFC922A0-9F41-41CC-8137-830E783D648F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3856845-2075-4B42-8B82-B6E2B36BF375}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3856845-2075-4B42-8B82-B6E2B36BF375}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3856845-2075-4B42-8B82-B6E2B36BF375}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3856845-2075-4B42-8B82-B6E2B36BF375}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39438169-FEA7-4F87-837B-9BE014F7A132}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39438169-FEA7-4F87-837B-9BE014F7A132}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39438169-FEA7-4F87-837B-9BE014F7A132}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39438169-FEA7-4F87-837B-9BE014F7A132}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D38552C8-AEC6-483B-9731-D2BA6018B5A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D38552C8-AEC6-483B-9731-D2BA6018B5A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D38552C8-AEC6-483B-9731-D2BA6018B5A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D38552C8-AEC6-483B-9731-D2BA6018B5A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0D06C17-25EC-49D7-B13A-AA4EA474CCD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0D06C17-25EC-49D7-B13A-AA4EA474CCD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0D06C17-25EC-49D7-B13A-AA4EA474CCD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0D06C17-25EC-49D7-B13A-AA4EA474CCD1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,6 +6,9 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Optimization;
+//using Microsoft.Extensions.Configuration;
+using System.Configuration;
+using System.Web.Configuration;
 
 namespace Dersa
 {
@@ -26,6 +29,11 @@ namespace Dersa
                 catch { }
             }
         }
+        private bool UserIsAuthenticated()
+        {
+            return System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
+        }
+
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -33,6 +41,8 @@ namespace Dersa
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            Configuration configuration = WebConfigurationManager.OpenWebConfiguration("~");
+            new DIOS.Common.SqlManagerConfigProvider(configuration, new DIOS.Common.UserIsAuthenticatedMethod(UserIsAuthenticated));
         }
         protected void Application_EndRequest() 
         {
