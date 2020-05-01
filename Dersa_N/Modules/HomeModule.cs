@@ -17,14 +17,8 @@ namespace Dersa_N
                 return View["index.cshtml", null];
             });
 
-            Func<dynamic, object> nodeListFunc = GetNodesList;
-            Get("/Node/List/{id}", nodeListFunc);
+            Get("/Node/List/{id}", p => NodeControllerAdapter.List(p.id));
         }
 
-        private object GetNodesList(dynamic parameters)
-        {
-            object result = new NodeControllerAdapter().List(parameters.id.ToString());
-            return JsonConvert.SerializeObject(result);
-        }
     }
 }
