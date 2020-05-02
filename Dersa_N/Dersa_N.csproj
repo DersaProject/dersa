@@ -188,6 +188,7 @@
     <None Include="App.config" />
     <None Include="packages.config" />
     <None Include="Views\Auth\register.cshtml" />
+    <None Include="Views\Home\close.cshtml" />
     <None Include="Views\Home\index.cshtml" />
     <None Include="Views\Home\UploadContent.cshtml" />
   </ItemGroup>
