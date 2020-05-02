@@ -112,9 +112,10 @@ function CanDnD(src, dstNode, data)
         if (dstNode.id) {
             if (src != lastDnDsource || dstNode.id != lastDnDtarget) {
                 var xhr = new XMLHttpRequest();
-                args = "src=" + src + "&dst=" + dstNode.id;
-                xhr.open('GET', "node/CanDnD?" + args, false);
+                args = "/" + src + "/" + dstNode.id;
+                xhr.open('GET', "node/CanDnD" + args, false);
                 xhr.send();
+                console.log(xhr.responseText);
                 result = xhr.responseText > 0;
                 lastDnDresult = result;
                 lastDnDsource = src;
@@ -249,8 +250,7 @@ $.jstree.defaults.contextmenu = {
                     //id.setAttribute('readonly', 'true');
 
                     var xhr = new XMLHttpRequest();
-                    args = "id=" + obj.id;
-                    xhr.open('GET', "node/PropertiesForm?" + args, false);
+                    xhr.open('GET', "node/PropertiesForm/" + obj.id, false);
                     xhr.send();
                     var attrs = JSON.parse(xhr.responseText);
                     var Props = CreateProperties(form, attrs, "Node/SetProperties");
@@ -566,15 +566,15 @@ function drawGraph(xml) {
 
 function DnD(src, dst, options) {
     var xhr = new XMLHttpRequest();
-    args = "src=" + src + "&dst=" + dst + "&options=" + options;
-    xhr.open('GET', "node/DnD?" + args, false);
+    args = src + "/" + dst + "/" + options;
+    xhr.open('POST', "node/DnD/" + args, false);
     xhr.send();
     return xhr.responseText;
 }
 
 function RenameNode(id, name) {
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', "node/rename/" + id + "?name=" + name, false);
+    xhr.open('POST', "node/rename/" + id + "/" + name, false);
     xhr.send();
     return xhr.responseText;
 }
@@ -589,20 +589,19 @@ function RestoreNode(id) {
 
 function RemoveNode(id, options) {
     var xhr = new XMLHttpRequest();
-    diagram_id = id[0] == 'D' ? id : '';
-    args = diagram_id == '' ? id : '0&diagram_id=' + diagram_id;
-    args = '?id=' + args + "&options=" + options;
-    xhr.open('POST', "node/remove" + args, false);
+    diagram_id = id[0] == 'D' ? id : '-1';
+    args = id + '/' + diagram_id + '/' + options;
+    xhr.open('POST', "node/remove/" + args, false);
     xhr.send();
     return xhr.responseText;
 }
 
 function GetText(id, attr_name) {
     var xhr = new XMLHttpRequest();
-    args = "id=" + id;
-    if (attr_name != "")
-        args = args + "&attr_name=" + attr_name;
-    xhr.open('GET', "node/description?" + args, false);
+    if (attr_name == "")
+        attr_name = "~"
+    var args = id + "/" + attr_name;
+    xhr.open('GET', "node/description/" + args, false);
     xhr.send();
     return xhr.responseText;
 }
@@ -817,8 +816,7 @@ $('#dersa')
                 }
 
                 var xhr = new XMLHttpRequest();
-                args = "id=" + o.id;
-                xhr.open('GET', "node/GetInsertSubmenu?" + args, false);
+                xhr.open('GET', "node/GetInsertSubmenu/" + o.id, false);
                 xhr.send();
                 var childStereotypes = JSON.parse(xhr.responseText);
                 AddSubmenu(childStereotypes, tmp.insertEntity);

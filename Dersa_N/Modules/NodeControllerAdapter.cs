@@ -17,7 +17,7 @@ namespace Dersa_N
 {
     public class NodeControllerAdapter
     {
-        public string GetInsertSubmenu(int id)
+        public static string GetInsertSubmenu(int id)
         {
             DataTable menuLevels = JsonConvert.DeserializeObject<DataTable>(JsonConvert.SerializeObject(
                 new object[] {
@@ -104,7 +104,7 @@ namespace Dersa_N
             }
         }
 
-        public int CanDnD(string src, int dst)
+        public static int CanDnD(string src, int dst)
         {
             if (src == dst.ToString())
                 return 0;
@@ -390,7 +390,7 @@ namespace Dersa_N
             string result = JsonConvert.SerializeObject(resObj);
             return result;
         }
-        public string PropertiesForm(int id)
+        public static string PropertiesForm(int id)
         {
             try
             {
@@ -451,7 +451,7 @@ namespace Dersa_N
             //DM.ExecuteMethod(procName, new object[] { entityId, paramName, paramValue, userName, DersaUtil.GetPassword(userName) });
         }
 
-        public string SetProperties(string json_params)
+        public static string SetProperties(string json_params)
         {
             Dersa.Common.CachedObjects.ClearCache();
             IParameterCollection Params = Util.DeserializeParams(json_params);
@@ -495,7 +495,7 @@ namespace Dersa_N
             }
             return "";
         }
-        public string Properties(int id)
+        public static string Properties(int id)
         {
             try
             {
@@ -510,7 +510,7 @@ namespace Dersa_N
             }
 
         }
-        public string DnD(string src, string dst, int options)
+        public static string DnD(string src, string dst, int options)
         {
             //try
             //{
@@ -566,7 +566,7 @@ namespace Dersa_N
             return "";
         }
 
-        public string Rename(string id, string name)
+        public static string Rename(string id, string name)
         {
             int intId = -1;
             try
@@ -599,7 +599,7 @@ namespace Dersa_N
                 }
                 return "";
             }
-            catch
+            catch(Exception exc)
             {
                 return "";
             }
@@ -630,7 +630,7 @@ namespace Dersa_N
                 return "";
             }
         }
-        public string Remove(int id, string diagram_id, int options)
+        public static string Remove(int id, string diagram_id, int options)
         {
             try
             {
@@ -722,7 +722,7 @@ namespace Dersa_N
                 return exc.Message;
             }
         }
-        public string Description(string id, string attr_name)
+        public static string Description(string id, string attr_name)
         {
             try
             {

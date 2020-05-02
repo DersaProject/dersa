@@ -184,12 +184,11 @@ function CreateProperties(form, attrs, url, ActionAfterExec, ClassName, callBack
                     return;
                 }
                 var xhr = new XMLHttpRequest();
-                var body = "json_params=" + encodeURIComponent(JSON.stringify(results));
                 if (ClassName)
-                    body += "&class_name=" + ClassName;
+                    body.class_name = ClassName;
                 xhr.open('POST', url, false);
-                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                xhr.send(body);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify(results));
                 var actionObject = null;
                 var resultAction = null;
                 try {
