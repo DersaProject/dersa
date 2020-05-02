@@ -20,19 +20,17 @@ namespace Dersa_N
             Post("/Node/Rename/{id}/{name}", p => NodeControllerAdapter.Rename(p.id, p.name));
             Post("/Node/DnD/{src}/{dst}/{options}", p => NodeControllerAdapter.DnD(p.src, p.dst, p.options));
             Get("/Node/Description/{id}/{attr_name}", p => NodeControllerAdapter.Description(p.id, p.attr_name));
-            Post("/Node/SetProperties", new Func<dynamic, object>(GetPostData));//p => NodeControllerAdapter.SetProperties(p.Request.Body));
+            Post("/Node/SetProperties", p => NodeControllerAdapter.SetProperties(GetRequestData()));
             Get("/Node/PropertiesForm/{id}", p => NodeControllerAdapter.PropertiesForm(p.id));
             Get("/Node/Properties/{id}", p => NodeControllerAdapter.Properties(p.id));
 
         }
 
-        private object GetPostData(dynamic x)
+        private string GetRequestData()
         {
             byte[] bts = new byte[this.Request.Body.Length];
             this.Request.Body.Read(bts, 0, bts.Length);
-            string jsonString = Encoding.Default.GetString(bts);
-            NodeControllerAdapter.SetProperties(jsonString);
-            return null;
+            return Encoding.Default.GetString(bts);
         }
 
     }
