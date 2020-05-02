@@ -472,7 +472,7 @@ function LoadPath() {
 
 function GetPath(id, for_system) {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', "entity/GetPath?id=" + id + "&for_system=" + for_system, false);
+    xhr.open('GET', "entity/GetPath/" + id + "/" + for_system, false);
     xhr.send();
     var response = xhr.responseText;
     return response;

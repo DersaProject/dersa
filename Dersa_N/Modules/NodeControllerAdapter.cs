@@ -74,7 +74,7 @@ namespace Dersa_N
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
-                string userName = "lanitadmin";
+                string userName = "localuser";
                 DataTable childStereotypes = DM.ExecuteMethod("ENTITY", "GetChildStereotypes", new object[] { id, userName, DersaUtil.GetPassword(userName) });
                 var result = from DataRow RL in menuLevels.Rows
                              where RL["level"].ToString() == "1" && (childStereotypes.Select("name = '" + RL["name"].ToString() + "'").Length > 0 || (bool)RL["is_submenu"])//аналог exists
@@ -111,7 +111,7 @@ namespace Dersa_N
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
-                string userName = "lanitadmin";
+                string userName = "localuser";
                 IParameterCollection Params = new ParameterCollection();
                 Params.Add("dnd_source", src);
                 Params.Add("dnd_target", dst);
@@ -131,7 +131,7 @@ namespace Dersa_N
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
-                string userName = "lanitadmin";
+                string userName = "localuser";
                 string result = JsonConvert.SerializeObject(DM.ExecuteMethod("ENTITY", "GetChildStereotypes", new object[] { id, userName, DersaUtil.GetPassword(userName) }));
                 return result;
             }
@@ -154,7 +154,7 @@ namespace Dersa_N
 
             //ICompiled cInst = ent.GetCompiledInstance();
             //MethodInfo mi = cInst.GetType().GetMethod(method_name);
-            //string userName = "lanitadmin";
+            //string userName = "localuser";
             //System.Data.DataTable T = M.ExecuteMethod("dbo.ENTITY$GetMethodParams", new object[] { id, method_name, userName, DersaUtil.GetPassword(userName) });
             //string Params = "";
             //if (T.Rows.Count > 0)
@@ -305,7 +305,7 @@ namespace Dersa_N
             {
                 string SqlExecAction = "alert";
                 DersaSqlManager DM = new DersaSqlManager();
-                string userName = "lanitadmin";
+                string userName = "localuser";
                 IParameterCollection UserParams = new ParameterCollection();
                 UserParams.Add("@login", userName);
                 UserParams.Add("@password", DersaUtil.GetPassword(userName));
@@ -357,7 +357,7 @@ namespace Dersa_N
         }
         public static string PropertyForm(int id, string prop_name, int prop_type)
         {
-            string userName = "lanitadmin";
+            string userName = "localuser";
             string attrValue = DersaUtil.GetAttributeValue(userName, id, prop_name, prop_type);
             var resObj = new object[] {
                 new
@@ -379,7 +379,7 @@ namespace Dersa_N
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
-                string userName = "lanitadmin";
+                string userName = "localuser";
                 System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "GetAttributes", new object[] { id, userName, DersaUtil.GetPassword(userName) });
                 var query =
                     from System.Data.DataRow R in T.Rows
@@ -412,7 +412,7 @@ namespace Dersa_N
         {
             DersaSqlManager DM = userName == null? new DersaSqlManager(): new DersaAnonimousSqlManager();
             if(userName == null)
-                userName = "lanitadmin";
+                userName = "localuser";
             try
             {
                 System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "SetAttribute", new object[] { entity, prop_name, prop_value, userName, DersaUtil.GetPassword(userName) });
@@ -430,7 +430,7 @@ namespace Dersa_N
 
         public static void SetAttribute(DersaSqlManager DM, AttributeOwnerType ownerType, string entityId, string paramName, string paramValue, int attrType)
         {
-            string userName = "lanitadmin";
+            string userName = "localuser";
             DersaUtil.SetAttributeValue(DM, userName, ownerType, entityId, paramName, attrType, paramValue);
             //DM.ExecuteMethod(procName, new object[] { entityId, paramName, paramValue, userName, DersaUtil.GetPassword(userName) });
         }
@@ -484,7 +484,7 @@ namespace Dersa_N
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
-                string userName = "lanitadmin";
+                string userName = "localuser";
                 string result = JsonConvert.SerializeObject(DM.ExecuteMethod("ENTITY", "GetAttributes", new object[] { id, userName, DersaUtil.GetPassword(userName) }));
                 return result;
             }
@@ -499,7 +499,7 @@ namespace Dersa_N
             //try
             //{
             //    DersaSqlManager DM = new DersaSqlManager();
-            //    string userName = "lanitadmin";
+            //    string userName = "localuser";
             //    DataTable T = DM.ExecuteMethod("ENTITY$OnDnD", new object[] { src, dst, options, userName, DersaUtil.GetPassword(userName) });
             //    string result = JsonConvert.SerializeObject(T);
             //    return result;
@@ -508,10 +508,10 @@ namespace Dersa_N
             //{
             //    return "";
             //}
-            string userName = "lanitadmin";
+            string userName = "localuser";
 
             if (src.Contains("D_"))//диаграммы
-                return DersaUtil.EntityAddChild("lanitadmin", src, dst, options);
+                return DersaUtil.EntityAddChild("localuser", src, dst, options);
             StereotypeBaseE objFrom = null;
             int intSrc = -1;
             try
@@ -563,7 +563,7 @@ namespace Dersa_N
                 try
                 {
                     DersaSqlManager DM = new DersaSqlManager();
-                    string userName = "lanitadmin";
+                    string userName = "localuser";
                     string result = JsonConvert.SerializeObject(DM.ExecuteMethod("ENTITY", "Rename", new object[] { id, name, userName, DersaUtil.GetPassword(userName) }));
                     return result;
                 }
@@ -575,7 +575,7 @@ namespace Dersa_N
             //для нормальных объектов используем объектные методы
             try
             {
-                string userName = "lanitadmin";
+                string userName = "localuser";
                 StereotypeBaseE objToRename = StereotypeBaseE.GetSimpleInstance(intId);
                 if (objToRename != null)
                 {
@@ -590,7 +590,7 @@ namespace Dersa_N
             //try
             //{
             //    DersaSqlManager DM = new DersaSqlManager();
-            //    string userName = "lanitadmin";
+            //    string userName = "localuser";
             //    string result = JsonConvert.SerializeObject(DM.ExecuteMethod("ENTITY$Rename", new object[] { id, name, userName, DersaUtil.GetPassword(userName) }));
             //    return result;
             //}
@@ -605,7 +605,7 @@ namespace Dersa_N
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
-                string userName = "lanitadmin";
+                string userName = "localuser";
                 string result = JsonConvert.SerializeObject(DM.ExecuteMethod("ENTITY", "Restore", new object[] { id, userName, DersaUtil.GetPassword(userName) }));
                 return result;
             }
@@ -618,7 +618,7 @@ namespace Dersa_N
         {
             try
             {
-                string userName = "lanitadmin";
+                string userName = "localuser";
                 StereotypeBaseE objToRemove = StereotypeBaseE.GetSimpleInstance(id);
                 if(objToRemove != null)
                 {
@@ -672,7 +672,7 @@ namespace Dersa_N
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
-                string userName = "lanitadmin";
+                string userName = "localuser";
                 object parent = null;
                 if (id != "-1" )//!id.Contains("#"))
                     parent = id;
@@ -711,7 +711,7 @@ namespace Dersa_N
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
-                string userName = "lanitadmin";
+                string userName = "localuser";
                 System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "GetDescription", new object[] { id, attr_name, userName, DersaUtil.GetPassword(userName) });
                 string result = "";
                 if (T.Rows.Count > 0)

@@ -10,12 +10,6 @@
     <!--link rel="stylesheet" href="dist/themes/default/style.css" />-->
     <!--link rel="stylesheet" href="css/wordpress.css" type="text/css" media="screen" /-->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <!--style-- type="text/css" media="screen">
-        #page {
-            background: url("images/draw/drawbg.jpg") repeat-y top;
-            border: none;
-        }
-    </style-->
     <style>
         #diag {
             width: 100%;
@@ -68,6 +62,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         .btn {
+            margin-left: -4px;
             background-color: black;
             border: none;
             color: lightgray;
@@ -91,15 +86,10 @@
     <div style="position:absolute;width:80px;top:92px;left:556px">
         <button class="btn" id="bnSearch" onclick="S=document.getElementById('tbSearch');V=S.value;if(isNaN(+V)||+V<10000){var form=new mxForm('find');var xhr=new XMLHttpRequest();args='srchval='+V;xhr.open('GET', 'Entity/Find?' + args, false);xhr.send();var attrs = JSON.parse(xhr.responseText);var Props=CreateProperties(form, attrs, '');var wnd=new mxWindow('find',Props,100,100,800,400,false,true);form.window = wnd;wnd.setVisible(true);return;}GoToNode(V)"><i class="fa fa-search"></i></button>
     </div>
-    @*<div style="float:left;width:160px;margin-left:300px;margin-top:20px"><input id="tbSearch" type="text"></div>
-        <div style="float:left;width:200px;margin-top:20px;">
-            <input id="bnSearch" onclick="S=document.getElementById('tbSearch');V=S.value;if(isNaN(+V)||+V<10000){var form=new mxForm('find');var xhr=new XMLHttpRequest();args='srchval='+V;xhr.open('GET', 'Entity/Find?' + args, false);xhr.send();var attrs = JSON.parse(xhr.responseText);var Props=CreateProperties(form, attrs, '');var wnd=new mxWindow('find',Props,100,100,800,400,false,true);form.window = wnd;wnd.setVisible(true);return;}GoToNode(V)" type="button">
-        </div>*@
     <div style="float:right;width:200px;margin-top:10px">
         <p align="right">
             <a href="#Settings" id="bnSettings"><strong><span style="color: green;">@ViewBag.Login</span></strong></a>
         </p>
-        @*&ensp;<button id="bnSet">Settings</button>*@
         &ensp;<input type="text" id="tbOptions" hidden><input type="checkbox" id="bnEdit" hidden><label id="laEdit"></label>
         <input id="displaytext" type="hidden" />
         <input id="DiagramId" type="hidden" />
@@ -114,47 +104,17 @@
         {
             foreach (DataRow item in T.Rows)
             {
-                <button class="btn" onmouseover="$('#toolhint').html('@item["hint"].ToString()'); $('#toolhint').show();" onmouseout="$('#toolhint').hide();" onclick="var xhr=new XMLHttpRequest();xhr.open('GET','/Query/GetAction?id=@item["script_id"].ToString()&MethodName=Exec', false);xhr.send();eval(xhr.responseText);"><i class="fa fa-@item["icon"].ToString()"></i></button>
-                @*<button onclick="var xhr=new XMLHttpRequest();xhr.open('GET','/Query/GetAction?id= @item["script_id"].ToString() &MethodName=Exec', false);xhr.send();eval(xhr.responseText);"> @item["icon"].ToString() </button>*@
+                <button class="btn" onmouseover="$('#toolhint').html('@item["hint"].ToString()'); $('#toolhint').show();" onmouseout="$('#toolhint').hide();" onclick="var xhr=new XMLHttpRequest();xhr.open('GET','/Query/GetAction/Exec/@item["script_id"].ToString()', false);xhr.send();eval(xhr.responseText);"><i class="fa fa-@item["icon"].ToString()"></i></button>
             }
         }
         <div id="toolhint" style="background:white;width:80px;display:none"></div>
-        @*<button onclick="var xhr=new XMLHttpRequest();xhr.open('GET','/Query/GetAction?id=10124607&MethodName=Exec', false);xhr.send();eval(xhr.responseText);">.^.</button>
-            <button onclick="var xhr=new XMLHttpRequest();xhr.open('GET','/Query/GetAction?id=10107464&MethodName=Exec', false);xhr.send();eval(xhr.responseText);">...</button>
-            <button onclick="var xhr=new XMLHttpRequest();xhr.open('GET','/Query/GetAction?id=10101029&MethodName=Exec', false);xhr.send();eval(xhr.responseText);">[[.</button>
-            <button onclick="var xhr=new XMLHttpRequest();xhr.open('GET','/Query/GetAction?id=10123320&MethodName=Exec', false);xhr.send();eval(xhr.responseText);">/..</button>
-            <button onclick="var xhr=new XMLHttpRequest();xhr.open('GET','/Query/GetAction?id=10110246&MethodName=Exec', false);xhr.send();eval(xhr.responseText);">.||</button>
-            <button onclick="var xhr=new XMLHttpRequest();xhr.open('GET','/Query/GetAction?id=10123319&MethodName=Exec', false);xhr.send();eval(xhr.responseText);">=.</button>*@
     </div>
     <br><br><p>&copy; @DateTime.Now.Year</p>
     <hr size="2" color="black">
     <br>
     <div id="dersa" class="block1">
     </div>
-    <!--button id="bnTest">Test</button-->
     <script>
-        //var npath;
-        //function load_path() {
-        //    if(npath.length == 1)
-        //    {
-        //        $('#dersa').jstree(true).load_node(npath[0]);
-        //        $('#dersa').jstree(true).select_node(npath[0]);
-        //    }
-        //    else
-        //    {
-        //        var lnode = npath[0];
-        //        console.log($('#dersa').jstree(true).get_node(lnode));
-        //        npath.shift();
-        //        $('#dersa').jstree(true).load_node(lnode, load_path);
-        //    }
-        //}
-
-        //bnTest = document.getElementById("bnTest");
-        //bnTest.addEventListener("click", function () {
-        //    console.log(Editor.graph);
-        //    //Editor.execute('exportSvg');
-        //    mxUtils.show(Editor.graph, null, 10, 10);
-        //});
         bnSettings = document.getElementById("bnSettings");
         bnSettings.addEventListener("click", function () {
             var form = new mxForm('settings');
@@ -192,12 +152,6 @@
     <script src="dist/jstree.js"></script>
     <script src="dist/dersatree.js"></script>
     <script src="js/mxClient.js"></script>
-
-    @*@section Scripts {
-            @Scripts.Render("~/bundles/jstree")
-            @Scripts.Render("~/dist/dersatree.js")
-            @Scripts.Render("~/js/mxClient.js")
-        }*@
 
     <script type="text/javascript" src="js/app.js"></script>
     <script type="text/javascript">
@@ -257,20 +211,6 @@
                     var widthField = null;
                     var heightField = null;
 
-                    // Adds fields for the location and size
-                    //if (model.isVertex(cell))
-                    //{
-                    //    geo = model.getGeometry(cell);
-
-                    //    if (geo != null)
-                    //    {
-                    //        yField = form.addText('top', geo.y);
-                    //        xField = form.addText('left', geo.x);
-                    //        widthField = form.addText('width', geo.width);
-                    //        heightField = form.addText('height', geo.height);
-                    //    }
-                    //}
-
                     var xhr = new XMLHttpRequest();
                     args = "id=" + value.entity;//cell.getId();
                     xhr.open('GET', "node/properties?" + args, false);
@@ -280,16 +220,12 @@
 
                     //// Creates textareas for each attribute of the
                     //// user object within the cell
-                    //var attrs = value.attributes;
-                    //var texts = [];
 
                     for (var i = 0; i < attrs.length; i++) {
                         // Creates a textarea with more lines for
                         // the cell label
                         var val = attrs[i].Value;
                         texts[i] = form.addText(attrs[i].Name, val, 2);
-                        //texts[i] = form.addTextarea(attrs[i].nodeName, val, 2);
-                        //(attrs[i].nodeName == 'label') ? 4 : 2);
                     }
 
                     // Adds an OK and Cancel button to the dialog
@@ -306,17 +242,6 @@
                         // XML structure / XML node attribute changes.
                         model.beginUpdate();
                         try {
-                            //if (geo != null)
-                            //{
-                            //    geo = geo.clone();
-
-                            //    geo.x = parseFloat(xField.value);
-                            //    geo.y = parseFloat(yField.value);
-                            //    geo.width = parseFloat(widthField.value);
-                            //    geo.height = parseFloat(heightField.value);
-
-                            //    model.setGeometry(cell, geo);
-                            //}
 
                             // Creates an undoable change for each
                             // attribute and executes it using the
@@ -356,8 +281,6 @@
                 return null;
             };
 
-
-
             // Defines a new action to switch between
             // XML and graphical display
             var textNode = document.getElementById('xml');
@@ -378,15 +301,6 @@
                 if (newText == "")
                     newText = diaghtml;
                 diagNode.innerHTML = newText;//diaghtml;
-                //console.log(diagNode);
-                //var child_nodes = diagNode.childNodes;
-                //child_nodes[1].removeChild(child_nodes[1].childNodes[2]);
-                //child_nodes[1].removeChild(child_nodes[1].childNodes[1]);
-                //console.log(diagNode);
-                //console.log(child_nodes[1].childNodes[1]);
-                //gradientNode = document.getElementById("mx-gradient-c3d9ff-1-black-1-s-0");
-                //gradientNode.parentNode.removeChild(gradientNode);
-                //console.log(gradientNode.parentNode);
 
                 diagNode.style.display = '';
                 graphNode.style.display = 'none';
@@ -472,13 +386,6 @@
                     vObj.entity = id;
                     vObj.label = text;
                     var v1 = editor.graph.insertVertex(null, null/*id*/, vObj, x, y, 120, 25);
-                    //v1.label = text;
-                    //var template = editor.templates['rectangle'];
-                    //var clone = editor.graph.model.cloneCell(template);
-                    //clone.geometry.x = x;
-                    //clone.geometry.y = y;
-                    //clone.setAttribute("label", text);
-                    //editor.graph.addCell(clone);
                 }
                 finally {
                     editor.graph.getModel().endUpdate();
@@ -503,19 +410,8 @@
 
         }
 
-                                                //window.onbeforeunload = function () { return mxResources.get('changesLost'); };
     </script>
     <div id="page" class="block2">
-        <!--div-- id="header">
-            <div id="headerimg" style="overflow:hidden;">
-                <h1 id="title">mxDraw</h1>
-            </div>
-        </div-->
-        <!--div-- id="mainActions"
-             style="width:100%;padding-top:8px;padding-left:24px;padding-bottom:8px;">
-        </div-->
-        <!--div-- id="selectActions" style="width:100%;padding-left:54px;padding-bottom:4px;">
-        </div-->
         <table border="0" width="730px">
             <tr>
                 <td id="toolbar" style="width:16px;padding-left:0px;" valign="top">
@@ -532,20 +428,12 @@
         </table>
         <span style="float:right;padding-right:36px;">
             <input id="source" type="checkbox" />Source
-            @*<input id="add_xml" type="checkbox" />Additional*@
         </span>
         <div id="diagram_xml">
             <input id="diag_xml_main" type="hidden" />
-            @*<input id="diag_xml_add" type="hidden" />*@
         </div>
         <div id="zoomActions" style="width:100%;padding-left:54px;padding-top:4px;">
         </div>
-        <!--div-- id="footer">
-            <p id="status">
-                Loading...
-            </p>
-            <br />
-        </div-->
     </div>
 </body>
 </html>
