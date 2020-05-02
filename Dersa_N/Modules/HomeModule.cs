@@ -12,10 +12,7 @@ namespace Dersa_N
     {
         public HomeModule()
         {
-            Get("/", parameters =>
-            {
-                return View["index.cshtml", null];
-            });
+            Get("/", p => View["index.cshtml", null]);
 
             Get("/Node/List/{id}", p => NodeControllerAdapter.List(p.id));
         }

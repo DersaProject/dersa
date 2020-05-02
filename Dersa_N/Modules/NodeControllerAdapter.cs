@@ -719,7 +719,7 @@ namespace Dersa_N
             }
             catch(Exception exc)
             {
-                return null;
+                return exc.Message;
             }
         }
         public string Description(string id, string attr_name)
