@@ -223,10 +223,10 @@ namespace Dersa.Controllers
             return (new NodeControllerAdapter()).ExecMethodForm(id, method_name);
         }
 
-        public string ChildStereotypes(int id)
-        {
-            return (new NodeControllerAdapter()).ChildStereotypes(id);
-        }
+        //public string ChildStereotypes(int id)
+        //{
+        //    return (new NodeControllerAdapter()).ChildStereotypes(id);
+        //}
 
         public string Properties(int id)
         {

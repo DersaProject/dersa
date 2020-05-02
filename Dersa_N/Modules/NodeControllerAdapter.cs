@@ -141,7 +141,7 @@ namespace Dersa_N
             }
         }
 
-        public string ExecMethodForm(int id, string method_name)
+        public static string ExecMethodForm(int id, string method_name)
         {
             //DersaSqlManager M = new DersaSqlManager();
             //System.Data.DataTable t = M.GetEntity(id.ToString());
@@ -273,12 +273,12 @@ namespace Dersa_N
             return result;
         }
 
-        private string GetOnClick(int getResultType, string methodName, int id)
+        private static string GetOnClick(int getResultType, string methodName, int id)
         {
             switch(getResultType)
             {
                 case 0:
-                    return "javascript:window.open(\"Node/DownloadMethodResult?id=" + id.ToString() + "&method_name=" + methodName + "\")";
+                    return "javascript:window.open(\"Node/DownloadMethodResult/" + id.ToString() + "/" + methodName + "\")";
                 case 2:
                     {
                         System.Text.StringBuilder sb = new System.Text.StringBuilder();
@@ -298,7 +298,7 @@ namespace Dersa_N
             return "javascript:alert('!!!*!!!')";
         }
 
-        public string MethodsForm(int id)
+        public static string MethodsForm(int id)
         {
             CachedObjects.ClearCache();
             try
@@ -340,7 +340,7 @@ namespace Dersa_N
                             Height = 800,
                             Width = 600,
                             DisplayValue = "...",
-                            InfoLink = (int)R["get_result_type"] == 1 ? "Node/ExecMethodForm?id=" + id.ToString() + "&method_name=" + R["name"].ToString() : "",
+                            InfoLink = (int)R["get_result_type"] == 1 ? "Node/ExecMethodForm/" + id.ToString() + "/" + R["name"].ToString() : "",
                             SaveLink = "Query/ExecSql",//GetSaveLink((int)R["get_result_type"], R["name"].ToString(), id),
                             OnClick = GetOnClick((int)R["get_result_type"], R["name"].ToString(), id),
                             ActionAfterExec = SqlExecAction
@@ -355,26 +355,10 @@ namespace Dersa_N
                 return "";
             }
         }
-        public string PropertyForm(int id, string prop_name, int prop_type)
+        public static string PropertyForm(int id, string prop_name, int prop_type)
         {
-            //DersaSqlManager DM = new DersaSqlManager();
             string userName = "lanitadmin";
-            //System.Data.DataTable T = DM.ExecuteMethod("ENTITY$GetAttribute", new object[] { id, prop_name, userName, DersaUtil.GetPassword(userName) });
-            //if (T.Rows.Count < 1)
-            //    return null;
             string attrValue = DersaUtil.GetAttributeValue(userName, id, prop_name, prop_type);
-            //var query =
-            //    from System.Data.DataRow R in T.Rows
-            //    select new
-            //    {
-            //        Name = R["Name"],
-            //        Value = prop_type == 4 ? "*****" : R["Value"],
-            //        DisplayValue = prop_type == 4? "*****" : R["Value"],
-            //        ControlType = "textarea",
-            //        Height = 300,
-            //        Width = 300,
-            //        InfoLink = ""
-            //    };
             var resObj = new object[] {
                 new
                 {
@@ -412,7 +396,7 @@ namespace Dersa_N
                             Height = 900,
                             Width = 600,
                             DisplayValue = (int)R["Type"] == 1 ? R["Value"] : "...",
-                            InfoLink = (int)R["Type"] == 1 ? "" : "Node/PropertyForm?id=" + id.ToString() + "&prop_name=" + R["Name"].ToString() + "&prop_type=" + R["Type"].ToString()
+                            InfoLink = (int)R["Type"] == 1 ? "" : "Node/PropertyForm/" + id.ToString() + "/" + R["Name"].ToString() + "/" + R["Type"].ToString()
                         }
                     };
                 string result = JsonConvert.SerializeObject(query);

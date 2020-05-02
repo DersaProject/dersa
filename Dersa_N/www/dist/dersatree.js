@@ -223,8 +223,7 @@ $.jstree.defaults.contextmenu = {
                     //id.setAttribute('readonly', 'true');
 
                     var xhr = new XMLHttpRequest();
-                    args = "id=" + obj.id;
-                    xhr.open('GET', "node/MethodsForm?" + args, false);
+                    xhr.open('GET', "node/MethodsForm/" + obj.id, false);
                     xhr.send();
                     var attrs = JSON.parse(xhr.responseText);
 
