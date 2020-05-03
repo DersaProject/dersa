@@ -33,11 +33,26 @@ namespace Dersa_N
 
             app.UseNancy();
 
-            Configuration wconfig = ConfigurationManager.OpenExeConfiguration("");
-            new SqlManagerConfigProvider(wconfig, new DIOS.Common.UserIsAuthenticatedMethod(UserIsAuthenticated));
+            new SqlManagerConfigProvider(AppConfiguration.Config, new DIOS.Common.UserIsAuthenticatedMethod(UserIsAuthenticated));
         }
     }
 
+    public class AppConfiguration
+    {
+        private static Configuration _config;
+        public static Configuration Config
+        {
+            get
+            {
+                return _config;
+            }
+        }
+
+        static AppConfiguration()
+        {
+            _config = ConfigurationManager.OpenExeConfiguration("");
+        }
+    }
     public class RazorConfig : IRazorConfiguration
     {
         public IEnumerable<string> GetAssemblyNames()

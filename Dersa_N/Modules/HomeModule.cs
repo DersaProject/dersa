@@ -74,7 +74,10 @@ namespace Dersa_N
                 DataTable T = QueryControllerAdapter.LogTable();
                 return View["Table", T];
             });
-            
+            Post("Query/PutHtml", _ => QueryControllerAdapter.PutString(GetRequestBodyAsString()));
+            Post("Query/GetText", p => QueryControllerAdapter.GetText(GetRequestBodyAsString()));
+            Get("edit/{textId}", p => LocalClientModule.EditText(p.textId));
+
         }
 
         private string GetRequestBodyAsString()
