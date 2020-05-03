@@ -175,7 +175,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Modules\AccountControllerAdapter.cs" />
-    <Compile Include="Modules\AuthModule.cs" />
     <Compile Include="Modules\EntityControllerAdapter.cs" />
     <Compile Include="Modules\HomeModule.cs" />
     <Compile Include="Modules\NodeControllerAdapter.cs" />
@@ -187,7 +186,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-    <None Include="Views\Auth\register.cshtml" />
     <None Include="Views\Home\close.cshtml" />
     <None Include="Views\Home\index.cshtml" />
     <None Include="Views\Home\UploadContent.cshtml" />
