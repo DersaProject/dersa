@@ -8,6 +8,7 @@ using Nancy;
 using Nancy.ModelBinding;
 using Dersa.Common;
 using Newtonsoft.Json;
+using System.Data;
 
 namespace Dersa_N
 {
@@ -69,6 +70,10 @@ namespace Dersa_N
             Get("/Account/JsSettings", p => AccountControllerAdapter.JsSettings(null));
             Post("/Account/SetUserSettings", p => AccountControllerAdapter.SetUserSettings(GetRequestBodyAsString()));
             Get("/Entity/GetPath/{id}/{for_system}", p => EntityControllerAdapter.GetPath(p.id, p.for_system));
+            Get("/Query/Logtable", p => {
+                DataTable T = QueryControllerAdapter.LogTable();
+                return View["Table", T];
+            });
             
         }
 
