@@ -59,7 +59,7 @@ namespace Dersa_N
             Get("/Node/PropertiesForm?id={id}", p => NodeControllerAdapter.PropertiesForm(p.id));
             Get("/Node/Properties/{id}", p => NodeControllerAdapter.Properties(p.id));
             Get("/Node/PropertyForm/{id}/{prop_name}/{prop_type}", p => NodeControllerAdapter.PropertyForm(p.id, p.prop_name, p.prop_type));
-            Post("/Node/SetTextProperty/{entity}/{prop_name}", p => NodeControllerAdapter.SetTextProperty(p.entity, p.prop_name, GetRequestBodyAsString()));
+            Post("/Node/SetTextProperty/{entity}/{prop_name}", p => NodeControllerAdapter.SetAttribute(null, AttributeOwnerType.Entity, p.entity, p.prop_name, GetRequestBodyAsString(), 2));//.SetTextProperty(p.entity, p.prop_name, GetRequestBodyAsString()));
             Get("/Node/MethodsForm/{id}", p => NodeControllerAdapter.MethodsForm(p.id));
             Get("/Node/ExecMethodForm/{id}/{method_name}", p => NodeControllerAdapter.ExecMethodForm(p.id, p.method_name));
             Get("/Node/DownloadString/{srcString}/{fileName}", p => DownloadObject(p.srcString, p.fileName));
@@ -76,7 +76,6 @@ namespace Dersa_N
             });
             Post("Query/PutHtml", _ => QueryControllerAdapter.PutString(GetRequestBodyAsString()));
             Post("Query/GetText", p => QueryControllerAdapter.GetText(GetRequestBodyAsString()));
-            Get("edit/{textId}", p => LocalClientModule.EditText(p.textId));
 
         }
 

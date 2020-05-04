@@ -15,13 +15,14 @@ using DIOS.Common.Interfaces;
 
 namespace Dersa_N
 {
-    class LocalClientModule//: NancyModule
+    public class LocalClientModule: NancyModule
     {
         public LocalClientModule()
         {
+            Post("edit/{textId}", p => EditText(p.textId));
         }
 
-        public static string EditText(string textId)
+        private static string EditText(string textId)
         {
             string TempDirPath = Properties.Settings.Default.TempDir; //"c:\\Temp\\";
             //QueryExecuteService.QueryExecuteServiceClient sClient = new QueryExecuteService.QueryExecuteServiceClient();
@@ -87,7 +88,15 @@ namespace Dersa_N
                 needDelFile = false;
                 try
                 {
-                    result = "OK";// sClient.SetAttrValue(attrName, entityId, result, _userToken);
+                    try
+                    {
+                        NodeControllerAdapter.SetAttribute(null, AttributeOwnerType.Entity, entityId, attrName, result, 2); //"OK";// sClient.SetAttrValue(attrName, entityId, result, _userToken);
+                        result = "";
+                    }
+                    catch(Exception exc)
+                    {
+                        result = exc.Message;
+                    }
                     needDelFile = Properties.Settings.Default.DeleteFileAfterSaveOnServer; //false;// result == "";
                     if (result == "")
                         result = "information saved successfully";
