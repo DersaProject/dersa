@@ -15,13 +15,113 @@ using DIOS.Common.Interfaces;
 
 namespace Dersa_N
 {
+
+    public class LocalClientSettings
+    {
+        public bool needSave = false;
+        public string TempDir
+        {
+            get
+            {
+                return Properties.Settings.Default.TempDir;
+            }
+            set
+            {
+                needSave = true;
+                Properties.Settings.Default.TempDir = value;
+            }
+        }
+        public string WordDir
+        {
+            get
+            {
+                return Properties.Settings.Default.WordDir;
+            }
+            set
+            {
+                needSave = true;
+                Properties.Settings.Default.WordDir = value;
+            }
+        }
+        public string EditTextCommand
+        {
+            get
+            {
+                return Properties.Settings.Default.EditTextCommand;
+            }
+            set
+            {
+                needSave = true;
+                Properties.Settings.Default.EditTextCommand = value;
+            }
+        }
+        public string AfterSaveCommand
+        {
+            get
+            {
+                return Properties.Settings.Default.AfterSaveCommand;
+            }
+            set
+            {
+                needSave = true;
+                Properties.Settings.Default.AfterSaveCommand = value;
+            }
+        }
+        public bool UseUniqueFileNames
+        {
+            get
+            {
+                return Properties.Settings.Default.UseUniqueFileNames;
+            }
+            set
+            {
+                needSave = true;
+                Properties.Settings.Default.UseUniqueFileNames = value;
+            }
+        }
+        public bool DeleteFileAfterSaveOnServer
+        {
+            get
+            {
+                return Properties.Settings.Default.DeleteFileAfterSaveOnServer;
+            }
+            set
+            {
+                needSave = true;
+                Properties.Settings.Default.DeleteFileAfterSaveOnServer = value;
+            }
+        }
+
+        public void Save()
+        {
+            if (needSave)
+            {
+                Properties.Settings.Default.Save();
+                needSave = false;
+            }
+        }
+    }
     public class LocalClientModule: NancyModule
     {
         public LocalClientModule()
         {
-            Post("edit/{textId}", p => EditText(p.textId));
+            Post("/Edit/{textId}", p => EditText(p.textId));
+
+            Get("/LocalClient/Settings", p => View["Settings", new LocalClientSettings()]);
+            Post("/LocalClient/Settings", _ => SaveModel());
         }
 
+        private object SaveModel()
+        {
+            LocalClientSettings LCS = this.Bind<LocalClientSettings>();
+            if (this.Request.Form["DeleteFileAfterSaveOnServer"] == null)
+                LCS.DeleteFileAfterSaveOnServer = false;
+            if (this.Request.Form["UseUniqueFileNames"] == null)
+                LCS.UseUniqueFileNames = false;
+            LCS.Save();
+            return View["Close", null];
+            //return View["Settings", LCS];
+        }
         private static string EditText(string textId)
         {
             string TempDirPath = Properties.Settings.Default.TempDir; //"c:\\Temp\\";

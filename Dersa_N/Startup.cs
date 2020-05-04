@@ -60,6 +60,7 @@ namespace Dersa_N
             yield return "System.Data";
             yield return "System.Web.Optimization";
             yield return "Newtonsoft.Json";
+            yield return "System.Reflection";
         }
 
         public IEnumerable<string> GetDefaultNamespaces()
@@ -67,11 +68,20 @@ namespace Dersa_N
             yield return "System.Data";
             yield return "System.Web.Optimization";
             yield return "Newtonsoft.Json";
+            yield return "System.Reflection";
         }
 
         public bool AutoIncludeModelNamespace
         {
             get { return true; }
+        }
+
+        private void S()
+        {
+            foreach (System.Reflection.PropertyInfo x in this.GetType().GetProperties())
+            {
+                //x.PropertyType
+            }
         }
     }
 

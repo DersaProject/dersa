@@ -1,0 +1,33 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Dersa_N.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="DatabaseConnectionString" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="CompareProgramPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Program Files (x86)\Meld\Meld.exe</Value>
+    </Setting>
+    <Setting Name="AfterSaveCommand" Type="System.String" Scope="User">
+      <Value Profile="(Default)">d:\dersa_attrs.git\add_to_git.bat</Value>
+    </Setting>
+    <Setting Name="DeleteFileAfterSaveOnServer" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="UseUniqueFileNames" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="EditTextCommand" Type="System.String" Scope="User">
+      <Value Profile="(Default)">notepad.exe</Value>
+    </Setting>
+    <Setting Name="TempDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)">d:\dersa_attrs.git\</Value>
+    </Setting>
+    <Setting Name="WordDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)">d:\Temp</Value>
+    </Setting>
+    <Setting Name="QueryExecuteProcedure" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+  </Settings>
+</SettingsFile>

@@ -36,17 +36,12 @@ namespace Dersa_N
                 }
                 return View["index.cshtml", null]; 
             });
-            Get("/Node/UploadContent/{id}", p => { ViewBag.PackageId = p.id; return View["UploadContent.cshtml", null]; });
-            Post("/Node/UploadContent", p => {
-                string JsonContent = GetRequestFileAsString();
-                SchemaEntity[] schemaContent = DersaUtil.GetSchema(JsonContent);
-                for (int i = 0; i < schemaContent.Length; i++)
-                {
-                    SchemaEntity schemaEntity = schemaContent[i];
-                    string entId = DersaUtil.CreateEntity(schemaEntity, this.Request.Form["id"], "localuser");
-                }
-                return View["Close"];
-        });
+            Get("/Account/JsSettings/{settingName}", p => AccountControllerAdapter.JsSettings(p.settingName));
+            Get("/Account/JsSettings", p => AccountControllerAdapter.JsSettings(null));
+            Post("/Account/SetUserSettings", p => AccountControllerAdapter.SetUserSettings(GetRequestBodyAsString()));
+
+            Get("/Entity/GetPath/{id}/{for_system}", p => EntityControllerAdapter.GetPath(p.id, p.for_system));
+
             Get("/Node/List/{id}", p => NodeControllerAdapter.List(p.id));
             Get("/Node/GetInsertSubmenu/{id}", p => NodeControllerAdapter.GetInsertSubmenu(p.id));
             Get("/Node/CanDnD/{src}/{dst}", p => NodeControllerAdapter.CanDnD(p.src, p.dst).ToString());
@@ -64,12 +59,20 @@ namespace Dersa_N
             Get("/Node/ExecMethodForm/{id}/{method_name}", p => NodeControllerAdapter.ExecMethodForm(p.id, p.method_name));
             Get("/Node/DownloadString/{srcString}/{fileName}", p => DownloadObject(p.srcString, p.fileName));
             Get("/Node/DownloadMethodResult/{id}/{method_name}", p => DownloadObject(DersaUtil.ExecMethodResult(p.id, p.method_name), p.method_name + "_" + p.id.ToString() + ".txt"));
+            Get("/Node/UploadContent/{id}", p => { ViewBag.PackageId = p.id; return View["UploadContent.cshtml", null]; });
+            Post("/Node/UploadContent", p => {
+                string JsonContent = GetRequestFileAsString();
+                SchemaEntity[] schemaContent = DersaUtil.GetSchema(JsonContent);
+                for (int i = 0; i < schemaContent.Length; i++)
+                {
+                    SchemaEntity schemaEntity = schemaContent[i];
+                    string entId = DersaUtil.CreateEntity(schemaEntity, this.Request.Form["id"], "localuser");
+                }
+                return View["Close"];
+            });
+
             Get("/Query/GetAction/{MethodName}/{id}", p => QueryControllerAdapter.GetAction(p.MethodName, p.id));
             Get("/Query/GetAction/{MethodName}/{id}/{paramString}", p => QueryControllerAdapter.GetAction(p.MethodName, p.id, p.paramString));
-            Get("/Account/JsSettings/{settingName}", p => AccountControllerAdapter.JsSettings(p.settingName));
-            Get("/Account/JsSettings", p => AccountControllerAdapter.JsSettings(null));
-            Post("/Account/SetUserSettings", p => AccountControllerAdapter.SetUserSettings(GetRequestBodyAsString()));
-            Get("/Entity/GetPath/{id}/{for_system}", p => EntityControllerAdapter.GetPath(p.id, p.for_system));
             Get("/Query/Logtable", p => {
                 DataTable T = QueryControllerAdapter.LogTable();
                 return View["Table", T];

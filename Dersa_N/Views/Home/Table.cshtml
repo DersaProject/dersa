@@ -1,0 +1,38 @@
+﻿@using System.Data;
+@model System.Data.DataTable
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <h2>@ViewBag.Title</h2>
+</head>
+<body>
+    <table border="1">
+        <tr>
+            <strong>
+                @foreach (DataColumn item in Model.Columns)
+                {
+                <th>
+                    @item.ColumnName
+                </th>
+                }
+            </strong>
+        </tr>
+
+        @for (int r = 0; r < Model.Rows.Count; r++)//(DataRow row in Model.Rows)
+        {
+        <tr>
+            @foreach (DataColumn col in Model.Columns)
+                {
+            <td style="padding:2px 5px">
+                @Model.Rows[r][col]
+            </td>
+                }
+        </tr>
+        }
+    </table>
+
+</body>
+</html>
