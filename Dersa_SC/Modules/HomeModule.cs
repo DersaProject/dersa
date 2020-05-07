@@ -8,6 +8,7 @@ using Nancy;
 using Nancy.ModelBinding;
 using Dersa.Common;
 using Newtonsoft.Json;
+using System.Data;
 
 namespace Dersa_N
 {
@@ -35,17 +36,12 @@ namespace Dersa_N
                 }
                 return View["index.cshtml", null]; 
             });
-            Get("/Node/UploadContent/{id}", p => { ViewBag.PackageId = p.id; return View["UploadContent.cshtml", null]; });
-            Post("/Node/UploadContent", p => {
-                string JsonContent = GetRequestFileAsString();
-                SchemaEntity[] schemaContent = DersaUtil.GetSchema(JsonContent);
-                for (int i = 0; i < schemaContent.Length; i++)
-                {
-                    SchemaEntity schemaEntity = schemaContent[i];
-                    string entId = DersaUtil.CreateEntity(schemaEntity, this.Request.Form["id"], "localuser");
-                }
-                return View["Close"];
-        });
+            Get("/Account/JsSettings/{settingName}", p => AccountControllerAdapter.JsSettings(p.settingName));
+            Get("/Account/JsSettings", p => AccountControllerAdapter.JsSettings(null));
+            Post("/Account/SetUserSettings", p => AccountControllerAdapter.SetUserSettings(GetRequestBodyAsString()));
+
+            Get("/Entity/GetPath/{id}/{for_system}", p => EntityControllerAdapter.GetPath(p.id, p.for_system));
+
             Get("/Node/List/{id}", p => NodeControllerAdapter.List(p.id));
             Get("/Node/GetInsertSubmenu/{id}", p => NodeControllerAdapter.GetInsertSubmenu(p.id));
             Get("/Node/CanDnD/{src}/{dst}", p => NodeControllerAdapter.CanDnD(p.src, p.dst).ToString());
@@ -58,18 +54,32 @@ namespace Dersa_N
             Get("/Node/PropertiesForm?id={id}", p => NodeControllerAdapter.PropertiesForm(p.id));
             Get("/Node/Properties/{id}", p => NodeControllerAdapter.Properties(p.id));
             Get("/Node/PropertyForm/{id}/{prop_name}/{prop_type}", p => NodeControllerAdapter.PropertyForm(p.id, p.prop_name, p.prop_type));
-            Post("/Node/SetTextProperty/{entity}/{prop_name}", p => NodeControllerAdapter.SetTextProperty(p.entity, p.prop_name, GetRequestBodyAsString()));
+            Post("/Node/SetTextProperty/{entity}/{prop_name}", p => NodeControllerAdapter.SetAttribute(null, AttributeOwnerType.Entity, p.entity, p.prop_name, GetRequestBodyAsString(), 2));//.SetTextProperty(p.entity, p.prop_name, GetRequestBodyAsString()));
             Get("/Node/MethodsForm/{id}", p => NodeControllerAdapter.MethodsForm(p.id));
             Get("/Node/ExecMethodForm/{id}/{method_name}", p => NodeControllerAdapter.ExecMethodForm(p.id, p.method_name));
             Get("/Node/DownloadString/{srcString}/{fileName}", p => DownloadObject(p.srcString, p.fileName));
             Get("/Node/DownloadMethodResult/{id}/{method_name}", p => DownloadObject(DersaUtil.ExecMethodResult(p.id, p.method_name), p.method_name + "_" + p.id.ToString() + ".txt"));
+            Get("/Node/UploadContent/{id}", p => { ViewBag.PackageId = p.id; return View["UploadContent.cshtml", null]; });
+            Post("/Node/UploadContent", p => {
+                string JsonContent = GetRequestFileAsString();
+                SchemaEntity[] schemaContent = DersaUtil.GetSchema(JsonContent);
+                for (int i = 0; i < schemaContent.Length; i++)
+                {
+                    SchemaEntity schemaEntity = schemaContent[i];
+                    string entId = DersaUtil.CreateEntity(schemaEntity, this.Request.Form["id"], "localuser");
+                }
+                return View["Close"];
+            });
+
             Get("/Query/GetAction/{MethodName}/{id}", p => QueryControllerAdapter.GetAction(p.MethodName, p.id));
             Get("/Query/GetAction/{MethodName}/{id}/{paramString}", p => QueryControllerAdapter.GetAction(p.MethodName, p.id, p.paramString));
-            Get("/Account/JsSettings/{settingName}", p => AccountControllerAdapter.JsSettings(p.settingName));
-            Get("/Account/JsSettings", p => AccountControllerAdapter.JsSettings(null));
-            Post("/Account/SetUserSettings", p => AccountControllerAdapter.SetUserSettings(GetRequestBodyAsString()));
-            Get("/Entity/GetPath/{id}/{for_system}", p => EntityControllerAdapter.GetPath(p.id, p.for_system));
-            
+            Get("/Query/Logtable", p => {
+                DataTable T = QueryControllerAdapter.LogTable();
+                return View["Table", T];
+            });
+            Post("Query/PutHtml", _ => QueryControllerAdapter.PutString(GetRequestBodyAsString()));
+            Post("Query/GetText", p => QueryControllerAdapter.GetText(GetRequestBodyAsString()));
+
         }
 
         private string GetRequestBodyAsString()

@@ -408,28 +408,30 @@ namespace Dersa_N
             }
         }
 
-        public static string SetTextProperty(int entity, string prop_name, string prop_value, string userName = null)
-        {
-            DersaSqlManager DM = userName == null? new DersaSqlManager(): new DersaAnonimousSqlManager();
-            if(userName == null)
-                userName = "localuser";
-            try
-            {
-                System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "SetAttribute", new object[] { entity, prop_name, prop_value, userName, DersaUtil.GetPassword(userName) });
-                if (T != null && T.Rows.Count > 0)
-                {
-                    return T.Rows[0][0].ToString();
-                }
-            }
-            catch
-            {
-                throw;
-            }
-            return "";
-        }
+        //public static string SetTextProperty(int entity, string prop_name, string prop_value, string userName = null)
+        //{
+        //    DersaSqlManager DM = userName == null? new DersaSqlManager(): new DersaAnonimousSqlManager();
+        //    if(userName == null)
+        //        userName = "localuser";
+        //    try
+        //    {
+        //        System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "SetAttribute", new object[] { entity, prop_name, prop_value, userName, DersaUtil.GetPassword(userName) });
+        //        if (T != null && T.Rows.Count > 0)
+        //        {
+        //            return T.Rows[0][0].ToString();
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //    return "";
+        //}
 
         public static void SetAttribute(DersaSqlManager DM, AttributeOwnerType ownerType, string entityId, string paramName, string paramValue, int attrType)
         {
+            if (DM == null)
+                DM = new DersaSqlManager(SqlBrand.ORACLE);
             string userName = "localuser";
             DersaUtil.SetAttributeValue(DM, userName, ownerType, entityId, paramName, attrType, paramValue);
             //DM.ExecuteMethod(procName, new object[] { entityId, paramName, paramValue, userName, DersaUtil.GetPassword(userName) });

@@ -175,6 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Modules\AccountControllerAdapter.cs" />
+    <Compile Include="Modules\DersaHttpModule.cs" />
     <Compile Include="Modules\EntityControllerAdapter.cs" />
     <Compile Include="Modules\HomeModule.cs" />
     <Compile Include="Modules\LocalClientModule.cs" />

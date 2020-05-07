@@ -21,7 +21,7 @@ namespace Dersa_N
             using (Microsoft.Owin.Hosting.WebApp.Start<Startup>("http://localhost:8000"))
             {
                 Console.WriteLine("Сервер запущен. Нажмите любую клавишу для завершения работы...");
-                Console.ReadLine();
+                Console.ReadKey();
             }
         }
     }

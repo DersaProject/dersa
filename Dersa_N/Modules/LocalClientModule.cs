@@ -19,6 +19,8 @@ namespace Dersa_N
     public class LocalClientSettings
     {
         public bool needSave = false;
+
+        private string _tempDir;
         public string TempDir
         {
             get
@@ -28,9 +30,11 @@ namespace Dersa_N
             set
             {
                 needSave = true;
-                Properties.Settings.Default.TempDir = value;
+                this._tempDir = value;
             }
         }
+
+        private string _wordDir;
         public string WordDir
         {
             get
@@ -40,9 +44,11 @@ namespace Dersa_N
             set
             {
                 needSave = true;
-                Properties.Settings.Default.WordDir = value;
+                this._wordDir = value;
             }
         }
+
+        private string _editTextCommand;
         public string EditTextCommand
         {
             get
@@ -52,9 +58,11 @@ namespace Dersa_N
             set
             {
                 needSave = true;
-                Properties.Settings.Default.EditTextCommand = value;
+                this._editTextCommand = value;
             }
         }
+
+        private string _afterSaveCommand;
         public string AfterSaveCommand
         {
             get
@@ -64,31 +72,49 @@ namespace Dersa_N
             set
             {
                 needSave = true;
-                Properties.Settings.Default.AfterSaveCommand = value;
+                this._afterSaveCommand = value;
             }
         }
+
+        private string _compareProgramPath;
+        public string CompareProgramPath
+        {
+            get
+            {
+                return Properties.Settings.Default.CompareProgramPath;
+            }
+            set
+            {
+                needSave = true;
+                this._compareProgramPath = value;
+            }
+        }
+
+        private bool _useUniqueFileNames = false;
         public bool UseUniqueFileNames
         {
             get
             {
-                return Properties.Settings.Default.UseUniqueFileNames;
+                return _useUniqueFileNames;
             }
             set
             {
                 needSave = true;
-                Properties.Settings.Default.UseUniqueFileNames = value;
+                this._useUniqueFileNames = value;
             }
         }
+
+        private bool _deleteFileAfterSaveOnServer = false;
         public bool DeleteFileAfterSaveOnServer
         {
             get
             {
-                return Properties.Settings.Default.DeleteFileAfterSaveOnServer;
+                return _deleteFileAfterSaveOnServer;
             }
             set
             {
                 needSave = true;
-                Properties.Settings.Default.DeleteFileAfterSaveOnServer = value;
+                this._deleteFileAfterSaveOnServer = value;
             }
         }
 
@@ -96,32 +122,76 @@ namespace Dersa_N
         {
             if (needSave)
             {
+                Properties.Settings.Default.DeleteFileAfterSaveOnServer = this._deleteFileAfterSaveOnServer;
+                Properties.Settings.Default.UseUniqueFileNames = this._useUniqueFileNames;
+                Properties.Settings.Default.CompareProgramPath = this._compareProgramPath;
+                Properties.Settings.Default.AfterSaveCommand = this._afterSaveCommand;
+                Properties.Settings.Default.EditTextCommand = this._editTextCommand;
+                Properties.Settings.Default.WordDir = this._wordDir;
+                Properties.Settings.Default.TempDir = this._tempDir;
                 Properties.Settings.Default.Save();
                 needSave = false;
             }
         }
+
+        public LocalClientSettings(): this(false) { }
+        public LocalClientSettings(bool loadSettings)
+        {
+            if(loadSettings)
+            {
+                this._deleteFileAfterSaveOnServer = Properties.Settings.Default.DeleteFileAfterSaveOnServer;
+                this._useUniqueFileNames = Properties.Settings.Default.UseUniqueFileNames;
+                this._compareProgramPath = Properties.Settings.Default.CompareProgramPath;
+                this._afterSaveCommand = Properties.Settings.Default.AfterSaveCommand;
+                this._editTextCommand = Properties.Settings.Default.EditTextCommand ;
+                this._wordDir = Properties.Settings.Default.WordDir;
+                this._tempDir = Properties.Settings.Default.TempDir;
+                Properties.Settings.Default.Save();
+
+            }
+        }
     }
-    public class LocalClientModule: NancyModule
+    public class LocalClientModule: DersaHttpModule
     {
         public LocalClientModule()
         {
             Post("/Edit/{textId}", p => EditText(p.textId));
+            Post("/Compare/{attrName}/{itemArr}", p => CompareItems(p.attrName, p.itemArr));
 
-            Get("/LocalClient/Settings", p => View["Settings", new LocalClientSettings()]);
+            Get("/LocalClient/Settings", p => View["Settings", new LocalClientSettings(true)]);
             Post("/LocalClient/Settings", _ => SaveModel());
         }
 
         private object SaveModel()
         {
             LocalClientSettings LCS = this.Bind<LocalClientSettings>();
-            if (this.Request.Form["DeleteFileAfterSaveOnServer"] == null)
-                LCS.DeleteFileAfterSaveOnServer = false;
-            if (this.Request.Form["UseUniqueFileNames"] == null)
-                LCS.UseUniqueFileNames = false;
+            //if (this.Request.Form["DeleteFileAfterSaveOnServer"] == null)
+            //    LCS.DeleteFileAfterSaveOnServer = false;
+            //if (this.Request.Form["UseUniqueFileNames"] == null)
+            //    LCS.UseUniqueFileNames = false;
             LCS.Save();
             return View["Close", null];
             //return View["Settings", LCS];
         }
+        public string CompareItems(string attr_name, string itemArrJson)
+        {
+            string[] itemArr = JsonConvert.DeserializeObject<string[]>(itemArrJson);
+            string item1 = itemArr[0];
+            string item2 = itemArr[1];
+            string attr1 = DersaUtil.GetAttributeValue("localuser", int.Parse(item1), attr_name, 2); //sClient.GetAttrValue(attr_name, item1, _userToken);
+            string attr2 = DersaUtil.GetAttributeValue("localuser", int.Parse(item2), attr_name, 2); //sClient.GetAttrValue(attr_name, item2, _userToken);
+            string TempDirPath = Properties.Settings.Default.TempDir;
+            string fileName1 = TempDirPath + item1 + "_" + attr_name + ".txt";
+            string fileName2 = TempDirPath + item2 + "_" + attr_name + ".txt";
+            File.WriteAllText(fileName1, attr1);
+            File.WriteAllText(fileName2, attr2);
+            Process proc = new Process();
+            proc.StartInfo.FileName = Properties.Settings.Default.CompareProgramPath;
+            proc.StartInfo.Arguments = fileName1 + " " + fileName2;
+            proc.Start();
+            return "";
+        }
+
         private static string EditText(string textId)
         {
             string TempDirPath = Properties.Settings.Default.TempDir; //"c:\\Temp\\";

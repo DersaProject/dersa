@@ -275,9 +275,9 @@ namespace Dersa_N
                 }
                 if (execSqlLocal)
                 {
-                    object dersaEntity = Params["entity_id"]?.Value;
-                    object objectName = Params["object_name"]?.Value;
-                    object objectType = Params["object_type"]?.Value;
+                    object dersaEntity = Params["entity_id"] == null? null : Params["entity_id"].Value;
+                    object objectName = Params["object_name"] == null ? null : Params["object_name"].Value;
+                    object objectType = Params["object_type"] == null ? null : Params["object_type"].Value;
                     string queryId = GetQueryId(sql, dersaEntity, objectName, objectType);
                     IParameterCollection UserParams = new ParameterCollection();
                     UserParams.Add("@login", userName);
