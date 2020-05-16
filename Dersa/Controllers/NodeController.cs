@@ -6,12 +6,18 @@ using Dersa.Common;
 using System.Web;
 using System;
 using System.Collections.Generic;
-using System.Web.Configuration;
+using DersaStereotypes;
 
 namespace Dersa.Controllers
 {
     public class NodeController : Controller
     {
+
+        public string GetCoords(int id)
+        {
+            StereotypeBaseE objToGetCoords = StereotypeBaseE.GetSimpleInstance(id);
+            return objToGetCoords.GetCoords();
+        }
 
         public string GetInsertSubmenu(int id)
         {

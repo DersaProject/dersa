@@ -143,8 +143,11 @@ public class Inherit: ICompiledRelation
 	#region InheritViewAttributes
 	public System.Boolean InheritViewAttributes = true;
 	#endregion
+	#region InheritClass
+	public System.Boolean InheritClass = false;
+	#endregion
 	#region NamePrefix
-	public System.String NamePrefix;
+		public System.String NamePrefix;
 	#endregion
 	#region Prefix
 	public System.String Prefix;
