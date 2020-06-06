@@ -1,0 +1,227 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="KeyName">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="class_name" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="token" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="KeyNameResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="KeyNameResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ExecMethod">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="class_name" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="method_name" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="args" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="token" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ExecMethodResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="ExecMethodResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetUserToken">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="password" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetUserTokenResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="GetUserTokenResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetObjectView">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="class_name" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="json_object" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="token" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetObjectViewResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="SetObjectViewResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetObjectView">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="className" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="id" type="xs:int" />
+        <xs:element minOccurs="0" name="token" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetObjectViewResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="GetObjectViewResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateObject">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="class_name" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="json_object" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="token" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CreateObjectResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="CreateObjectResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DropObject">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="class_name" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="id" type="xs:int" />
+        <xs:element minOccurs="0" name="token" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DropObjectResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="DropObjectResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="List">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="className" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="token" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ListResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="ListResult" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ListWithParams">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="className" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="JsonParams" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="token" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ListWithParamsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="ListWithParamsResult" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ListWithParamsPaged">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="className" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="JsonParams" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="token" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="pageNumber" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ListWithParamsPagedResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="ListWithParamsPagedResult" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="EmptyList">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="className" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="token" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="EmptyListResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="EmptyListResult" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PropertiesList">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="className" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="token" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PropertiesListResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="PropertiesListResult" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SimpleList">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="className" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="Where" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="Order" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="limit" type="xs:int" />
+        <xs:element minOccurs="0" name="offset" type="xs:int" />
+        <xs:element minOccurs="0" name="token" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SimpleListResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="SimpleListResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GenerateWordFile">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="json_args" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="templateName" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GenerateWordFileResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="GenerateWordFileResult" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
