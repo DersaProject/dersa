@@ -1,0 +1,47 @@
+﻿@using System.Reflection
+@model Dersa_N.LocalClientSettings
+
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h2>Настройки</h2>
+    <form action="/LocalClient/Settings" method="post" enctype="multipart/form-data">
+        <table>
+            @foreach (PropertyInfo pi in Model.GetType().GetProperties())
+            {
+                string controlType = pi.PropertyType.Name=="Boolean"?"checkbox":"text";
+                string controlValue = "";
+            if(pi.PropertyType.Name=="Boolean")
+            {
+                if((Boolean)pi.GetValue(Model))
+                    controlValue = "checked";
+            }
+            else
+                controlValue = "value = '" + pi.GetValue(Model).ToString() + "'";
+
+            <tr><td>@pi.Name</td>  <td><input id='@pi.Name' name='@pi.Name' style='width:400px' type='@controlType' @controlValue /></td></tr>
+            }
+        </table>
+        <br /><input type="submit" name="Submit" id="SubmitSingle" value="Save" />
+    </form>
+</body>
+</html>
+
+
+<!--<tr><input type="text" name="TempDir" value="@Model.TempDir" /></tr>
+<tr></tr>
+<input type="text" name="WordDir" value="@Model.WordDir" />
+<br />
+<input type="text" name="EditTextCommand" value="@Model.EditTextCommand" />
+<br />
+<input type="text" name="AfterSaveCommand" value="@Model.AfterSaveCommand" />
+<br />
+<input type=Boolean"checkbox" name="UseUniqueFileNames" value="@Model.UseUniqueFileNames" />
+<br />
+<input type="checkbox" name="DeleteFileAfterSaveOnServer" value="@Model.DeleteFileAfterSaveOnServer" />
+<br />-->

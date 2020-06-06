@@ -8,7 +8,6 @@ using System.Web.Mvc;
 using System.Web.Http;
 using DIOS.Common;
 using System.Configuration;
-using System.Web.Configuration;
 
 [assembly: OwinStartup(typeof(Dersa_A.Startup))]
 

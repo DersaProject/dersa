@@ -6,12 +6,18 @@ using Dersa.Common;
 using System.Web;
 using System;
 using System.Collections.Generic;
-using System.Web.Configuration;
+using DersaStereotypes;
 
 namespace Dersa.Controllers
 {
     public class NodeController : Controller
     {
+
+        public string GetCoords(int id)
+        {
+            StereotypeBaseE objToGetCoords = StereotypeBaseE.GetSimpleInstance(id);
+            return objToGetCoords.GetCoords();
+        }
 
         public string GetInsertSubmenu(int id)
         {
@@ -43,6 +49,11 @@ namespace Dersa.Controllers
                 S.Flush();
                 S.Close();
                 fi.Delete();
+            }
+            else if (execResult is Tuple<string, byte[]> && ((Tuple<string, byte[]>)execResult).Item2 != null)
+            {
+                file_name = ((Tuple<string, byte[]>)execResult).Item1;
+                bts = ((Tuple<string, byte[]>)execResult).Item2;
             }
             try
             {
@@ -223,10 +234,10 @@ namespace Dersa.Controllers
             return (new NodeControllerAdapter()).ExecMethodForm(id, method_name);
         }
 
-        public string ChildStereotypes(int id)
-        {
-            return (new NodeControllerAdapter()).ChildStereotypes(id);
-        }
+        //public string ChildStereotypes(int id)
+        //{
+        //    return (new NodeControllerAdapter()).ChildStereotypes(id);
+        //}
 
         public string Properties(int id)
         {

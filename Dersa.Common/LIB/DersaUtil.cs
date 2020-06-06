@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ServiceModel;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
@@ -143,7 +144,18 @@ namespace Dersa.Common
             //return resultText;
         }
 
+        public static byte[] GenerateWordFile(string json_table, string file_name, string serviceUrl)
+        {
+            BasicHttpBinding binding = new BasicHttpBinding();
+            binding.MaxReceivedMessageSize = 100000000;
+            //Specify the address to be used for the client.
+            EndpointAddress address =
+               new EndpointAddress(serviceUrl);
 
+            // Create a client that is configured with this address and binding.
+            WordGeneratorService.ObjectWcfServiceClient wgsClient = new WordGeneratorService.ObjectWcfServiceClient(binding, address);
+            return wgsClient.GenerateWordFile(json_table, file_name);
+        }
         public static string ObjectList(string class_name, string json_params, string order, int limit, int offset, out int rowcount)
         {
             DiosSqlManager M = new DiosSqlManager();
@@ -270,12 +282,29 @@ namespace Dersa.Common
             UserParams.Add("@login", userName);
             UserParams.Add("@password", DersaUtil.GetPassword(userName));
             UserParams.Add("@user_setting_name", settingName);
-            System.Data.DataTable VT = DM.ExecuteMethod("DERSA_USER", "GetUserSetting", UserParams);
+            System.Data.DataTable VT = DM.ExecuteMethod("DERSA_USER", "GetTextUserSetting", UserParams);
             if (VT == null || VT.Rows.Count < 1)
                 throw new Exception(string.Format("Не задано значение для параметра {0}", settingName));
             return VT.Rows[0][0].ToString();
         }
 
+        public static string SetUserSetting(string userName, string settingName, string settingValue)
+        {
+            try
+            {
+                DersaSqlManager DM = new DersaSqlManager();
+                System.Data.DataTable T = DM.ExecuteMethod("USER_SETTING", "SetValue", new object[] { settingName, settingValue, userName, DersaUtil.GetPassword(userName) });
+                if (T.Rows.Count > 0)
+                {
+                    return T.Rows[0][0].ToString();
+                }
+                return "setting was set";
+            }
+            catch (Exception exc)
+            {
+                return exc.Message;
+            }
+        }
         public static string EntitySetAttribute(string userName, int entity, string prop_name, string prop_value)
         {
             try
