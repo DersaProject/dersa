@@ -50,6 +50,11 @@ namespace Dersa.Controllers
                 S.Close();
                 fi.Delete();
             }
+            else if (execResult is Tuple<string, byte[]> && ((Tuple<string, byte[]>)execResult).Item2 != null)
+            {
+                file_name = ((Tuple<string, byte[]>)execResult).Item1;
+                bts = ((Tuple<string, byte[]>)execResult).Item2;
+            }
             try
             {
 

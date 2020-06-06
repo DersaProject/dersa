@@ -9,6 +9,7 @@ using System.Web.Optimization;
 //using Microsoft.Extensions.Configuration;
 using System.Configuration;
 using System.Web.Configuration;
+using DIOS.WCF.Core;
 
 namespace Dersa
 {
@@ -31,7 +32,12 @@ namespace Dersa
         }
         private bool UserIsAuthenticated()
         {
-            return System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
+            //if (_dbManager.IsRunningInHttpContext)
+            //{
+            //    if (UserName == "" && WcfCoreUtil.GetCurrentUserName() == "" && !Anonimous)
+            //        throw new UnauthorizedAccessException("Операция запрещена для неавторизованных пользователей.");
+            //}
+            return System.Web.HttpContext.Current.User.Identity.IsAuthenticated || WcfCoreUtil.GetCurrentUserName() != "";
         }
 
         protected void Application_Start()
