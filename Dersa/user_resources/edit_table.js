@@ -133,8 +133,7 @@ $(document).ready(function () {
                     // delete row.
                     $("#deleterowbutton").on('click', function () {
                         var selectedrowindex = $("#grid").jqxGrid('getselectedrowindex');
-                        var rowscount = $("#grid").jqxGrid('saveinformation').rowscount;
-                        if (selectedrowindex >= 0 && selectedrowindex < rowscount) {
+                        if (selectedrowindex >= 0) {
                             var id = $("#grid").jqxGrid('getrowid', selectedrowindex);
                             var commit = $("#grid").jqxGrid('deleterow', id);
                         }
