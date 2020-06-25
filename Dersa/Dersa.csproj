@@ -266,6 +266,7 @@
     <Content Include="demo\basic\index3.html" />
     <Content Include="demo\basic\index4.html" />
     <Content Include="demo\d4.html" />
+    <Content Include="DersaLayers.html" />
     <Content Include="dist\dersatree.js" />
     <Content Include="dist\jstree.js" />
     <Content Include="dist\jstree.min.js" />
@@ -634,7 +635,7 @@
     <Content Include="Views\Account\Settings.cshtml" />
     <Content Include="Views\Home\d.cshtml" />
     <None Include="Views\Home\index.cshtml" />
-    <Content Include="Views\Home\HelpPage.html" />
+    <Content Include="HelpPage.html" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
