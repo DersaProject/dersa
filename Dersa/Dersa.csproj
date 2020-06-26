@@ -483,7 +483,7 @@
     <Content Include="dist\themes\default\ViewAttribute.gif" />
     <Content Include="dist\vue.js" />
     <Content Include="dist\vuediag.js" />
-    <Content Include="dist\vue_template.js" />
+    <Content Include="dist\vue_components.js" />
     <Content Include="Global.asax" />
     <Content Include="js\app.js" />
     <Content Include="js\editor\mxDefaultKeyHandler.js" />
