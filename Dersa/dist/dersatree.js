@@ -819,9 +819,9 @@ $('#dersa')
                 diagControl.style.display = "";
                 dID = document.getElementById("DiagramId");
                 dID.value = selected_id;
-                var diaghtml = GetText(selected_id, "Diagram");
+                //
                 //console.log(diaghtml);
-                Editor.execute('showSavedDiagram', diaghtml);
+                Editor.execute('showSavedDiagram');
                 //infoControl.innerHTML = GetText(selected_id, "Diagram");
             }
         }

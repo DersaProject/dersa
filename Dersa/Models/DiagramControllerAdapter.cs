@@ -28,6 +28,8 @@ namespace Dersa.Models
         {
             XmlDocument doc = new XmlDocument();
             string decodedXml = xml.Replace("{lt;", "<").Replace("{gt;", ">");
+            doc.LoadXml(decodedXml);
+            XmlNodeList xNodes = doc.SelectNodes(".//mxCell");//.SelectSingleNode(".//mxCell", xs);
             IParameterCollection Params = new ParameterCollection();
             Params.Add("@diagram", id.Replace("D_", ""));
             Params.Add("@xml", decodedXml);

@@ -1,9 +1,4 @@
 ﻿Vue.component('tabtip', {
-    data: function () {
-        return {
-            tipwidth: 80
-        };
-    },
     computed: {
         styleTab: function () {
             return {
@@ -20,14 +15,45 @@
                 left: this.index * (this.tipwidth + 1) + 'px',
                 top: '-40px'
             }
+        },
+        tipwidth: function () {
+            return this.$root.tipwidth;
         }
     },
     props: ['displayed_name', 'id', 'index', 'is_selected'],
     template: '<div v-bind:style="styleTab" v-on:click="$emit(\'click\')"> {{ this.displayed_name }} </div>'
 });
 
-Vue.component('tabpage', {
+Vue.component('tabterminator', {
+    computed: {
+        styleTab: function () {
+            return {
+                position: 'absolute',
+                borderTop: 'none',
+                borderBottom: '2px inset black',
+                borderLeft: 'none',
+                borderRight: 'none',
+                zIndex: '100',
+                width: (this.$root.left + this.$root.width - this.left - this.tipwidth) + 'px',
+                height: '20px',
+                left: this.left + 'px',
+                top: '-39px'
+            }
+        },
+        tipwidth: function () {
+            return this.$root.tipwidth;
+        },
+        left: function () {
+            return this.$root.tabCount * (this.tipwidth + 1) + 1;
+        },
+        top: function () {
+            return (this.$root.top - 39);
+        }
+    },
+    template: '<div v-bind:style="styleTab"></div>'
+});
 
+Vue.component('tabpage', {
     computed: {
         stylePage: function () {
             return {
@@ -45,6 +71,9 @@ Vue.component('tabpage', {
                 //width: this.$root.width + 'px',
                 //height: this.$root.height + 'px'
             }
+        },
+        tipwidth: function () {
+            return this.$root.tipwidth;
         }
     },
     methods: {
@@ -60,38 +89,52 @@ Vue.component('tabpage', {
         + '<div v-bind:style="stylePage"><div v-bind:id="\'userpage\'+this.index"></div></div></div>'
 });
 
-    (function ($) {
-        $.fn.dersaTabControl = function (position, size, initArray) {
-            var innerComponents = $("<tabpage></tabpage>");
-            innerComponents.attr("v-for", "item in pages");
-            innerComponents.attr("v-bind:displayed_name", "item.displayed_name");
-            innerComponents.attr("v-bind:index", "item.index");
-            innerComponents.attr("v-bind:is_selected", "item.is_selected");
-            innerComponents.attr("v-bind:id", "item.id");
-            this.append(innerComponents);
+(function ($) {
+    $.fn.dersaTabControl = function (position, size, initArray) {
+        var innerComponents = $("<tabpage></tabpage>");
+        innerComponents.attr("v-for", "item in pages");
+        innerComponents.attr("v-bind:displayed_name", "item.displayed_name");
+        innerComponents.attr("v-bind:index", "item.index");
+        innerComponents.attr("v-bind:is_selected", "item.is_selected");
+        innerComponents.attr("v-bind:id", "item.id");
+        this.append(innerComponents);
+        var tabsTerminator = $('<div v-bind:style="styleTerm"><tabterminator></tabterminator></div>');
+        this.append(tabsTerminator);
 
-            return new Vue({
-                el: this.selector,
-                data: {
-                    selected_index: -1,
-                    width: size.width,
-                    height: size.height,
-                    left: position.X,
-                    top: position.Y,
-                    pages: initArray
+        return new Vue({
+            el: this.selector,
+            data: {
+                tipwidth: 80,
+                selected_index: -1,
+                width: size.width,
+                height: size.height,
+                left: position.X,
+                top: position.Y,
+                pages: initArray
+            },
+            computed: {
+                tabCount: function () {
+                    return this.pages.length;
                 },
-                methods: {
-                    UnselectItems() {
-                        this.$children.forEach(function (item) {
-                            item.is_selected = false;
-                        });
-                        this.selected_index = -1;
-                    },
-                    GetPage(pageindex) {
-                        return $('#userpage' + pageindex);
+                styleTerm: function () {
+                    return {
+                        position: 'absolute',
+                        left: this.left + 'px',
+                        top: this.top + 'px'
                     }
                 }
-            });
-        };
-    })(jQuery);
-
+            },
+            methods: {
+                UnselectItems() {
+                    this.$children.forEach(function (item) {
+                        item.is_selected = false;
+                    });
+                    this.selected_index = -1;
+                },
+                GetPage(pageindex) {
+                    return $('#userpage' + pageindex);
+                }
+            }
+        });
+    };
+})(jQuery);

@@ -222,24 +222,28 @@ function onInit(editor) {
     // Defines a new action to switch between
     // XML and graphical display
     var diagNode = document.getElementById('userpage0');//('diagramPresentation');
+    var diagXmlNode = document.getElementById('userpage1');//('diagramPresentation');
     var diagTCNode = document.getElementById('diagramPresentation');
     var textNode = document.getElementById('xml');
     var graphNode = editor.graph.container;
     var sourceInput = document.getElementById('source');
     sourceInput.checked = false;
 
-    var showSaved = function (editor, diaghtml) {
+    var showSaved = function (editor) {
         //Editor.execute("clearDiagram");
         dID = document.getElementById("DiagramId");
-        diagramXml = GetText(dID.value, "DiagramXml");
-        drawGraph(diagramXml);
-
+        var diagxml = GetText(dID.value, "Diagram");
+        drawGraph(diagxml);
         var diagText = graphNode.innerHTML;
-        var newText = diagText.replace(new RegExp("c3d9ff-1-white", 'g'), "c3d9ff-1-black").replace(new RegExp("cdeb8b-1-white", 'g'), "cdeb8b-1-black")
+        var newText = diagText;//.replace(new RegExp("c3d9ff-1-white", 'g'), "c3d9ff-1-black").replace(new RegExp("cdeb8b-1-white", 'g'), "cdeb8b-1-black")
+        diagXmlNode.innerHTML = newText;
 
-        if (newText == "")
-            newText = diaghtml;
-        diagNode.innerHTML = newText;//diaghtml;
+        var diagramExtXml = GetText(dID.value, "DiagramXml");
+        drawGraph(diagramExtXml);
+        diagText = graphNode.innerHTML;
+        newText = diagText.replace(new RegExp("mx-gradient", 'g'), "mx-gradientus");
+            //diagText.replace(new RegExp("c3d9ff-1-white", 'g'), "c3d9ff-1-black").replace(new RegExp("cdeb8b-1-white", 'g'), "cdeb8b-1-black")
+        diagNode.innerHTML = newText;
 
         diagTCNode.style.display = '';
         graphNode.style.display = 'none';
