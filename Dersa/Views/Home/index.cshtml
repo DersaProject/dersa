@@ -162,7 +162,7 @@
             { displayed_name: 'вид 2', id: 'p2', index: 1, is_selected: false, is_visible: true },
         ];
 
-        var TC = $('#diagramPresentation').dersaTabControl({X: 20, y: 150}, {width: 400, height: 200}, initArray);
+        var TC = $('#diagramPresentation').dersaTabControl({X: 20, y: 150}, {width: 850, height: 800}, initArray);
 
         TC.GetPage(1).text('пока нет отображения');
 
@@ -179,7 +179,7 @@ $(document).ready(function () {
 
 
     $(window).scroll(function () {
-        var pos = parseInt($(window).scrollTop());
+        var pos = parseInt($(window).scrollTop()) + 40;
         if (pos < 200) pos = 200;
         $('#tool_box').animate({ top: pos + "px" }, { queue: false, duration: 200 });
         if ($('#infotable').height() + POSITIONTOP - pos + 200 < $(window).height() || POSITIONTOP > pos + 100) {

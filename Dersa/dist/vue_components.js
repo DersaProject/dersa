@@ -2,17 +2,18 @@
     computed: {
         styleTab: function () {
             return {
+                boxSizing: 'border-box',
                 position: 'absolute',
-                borderTop: (this.is_selected ? '2px inset black' : '1px inset gray'),
-                borderBottom: (this.is_selected ? 'none' : '2px inset black'),
-                borderLeft: (this.is_selected ? '2px inset black' : '1px inset gray'),
-                borderRight: (this.is_selected ? '2px inset black' : '1px inset gray'),
+                borderTop: (this.is_selected ? '2px solid black' : '1px solid gray'),
+                borderBottom: (this.is_selected ? 'none' : '2px solid black'),
+                borderLeft: (this.is_selected ? '2px solid black' : '1px solid gray'),
+                borderRight: (this.is_selected ? '2px solid black' : '1px solid gray'),
                 zIndex: (this.is_selected ? '200' : '100'),
                 color: (this.is_selected ? 'black' : 'gray'),
                 //fontSize: '6pt',
                 width: this.tipwidth + 'px',
                 height: '20px',
-                left: this.index * (this.tipwidth + 1) + 'px',
+                left: this.index * this.tipwidth + 'px',
                 top: '-40px'
             }
         },
@@ -28,27 +29,28 @@ Vue.component('tabterminator', {
     computed: {
         styleTab: function () {
             return {
+                boxSizing: 'border-box',
                 position: 'absolute',
                 borderTop: 'none',
-                borderBottom: '2px inset black',
+                borderBottom: '2px solid black',
                 borderLeft: 'none',
                 borderRight: 'none',
                 zIndex: '100',
                 width: (this.$root.left + this.$root.width - this.left - this.tipwidth) + 'px',
                 height: '20px',
                 left: this.left + 'px',
-                top: '-39px'
+                top: '-40px'
             }
         },
         tipwidth: function () {
             return this.$root.tipwidth;
         },
         left: function () {
-            return this.$root.tabCount * (this.tipwidth + 1) + 1;
-        },
+            return this.$root.tabCount * this.tipwidth;
+        }/*,
         top: function () {
-            return (this.$root.top - 39);
-        }
+            return (this.$root.top - 40);
+        }*/
     },
     template: '<div v-bind:style="styleTab"></div>'
 });
