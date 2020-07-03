@@ -221,8 +221,8 @@ function onInit(editor) {
 
     // Defines a new action to switch between
     // XML and graphical display
-    var diagNode = document.getElementById('userpage0');//('diagramPresentation');
-    var diagXmlNode = document.getElementById('userpage1');//('diagramPresentation');
+    var diagNode = document.getElementById('userpage1');//('diagramPresentation');
+    var diagXmlNode = document.getElementById('userpage0');//('diagramPresentation');
     var diagTCNode = document.getElementById('diagramPresentation');
     var textNode = document.getElementById('xml');
     var graphNode = editor.graph.container;
