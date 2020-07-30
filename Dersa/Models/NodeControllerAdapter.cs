@@ -426,22 +426,23 @@ namespace Dersa.Models
 
         public static string SetTextProperty(int entity, string prop_name, string prop_value, string userName = null)
         {
-            DersaSqlManager DM = userName == null? new DersaSqlManager(): new DersaAnonimousSqlManager();
-            if(userName == null)
+            DersaSqlManager DM = userName == null ? new DersaSqlManager() : new DersaAnonimousSqlManager();
+            if (userName == null)
                 userName = HttpContext.Current.User.Identity.Name;
-            try
-            {
-                System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "SetAttribute", new object[] { entity, prop_name, prop_value, userName, DersaUtil.GetPassword(userName) });
-                if (T != null && T.Rows.Count > 0)
-                {
-                    return T.Rows[0][0].ToString();
-                }
-            }
-            catch
-            {
-                throw;
-            }
-            return "";
+            //try
+            //{
+            //    System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "SetAttribute", new object[] { entity, prop_name, prop_value, userName, DersaUtil.GetPassword(userName) });
+            //    if (T != null && T.Rows.Count > 0)
+            //    {
+            //        return T.Rows[0][0].ToString();
+            //    }
+            //}
+            //catch
+            //{
+            //    throw;
+            //}
+            //return "";
+            return DersaUtil.SetAttributeValue(DM, userName, AttributeOwnerType.Entity, entity.ToString(), prop_name, 2, prop_value);
         }
 
         public static void SetAttribute(DersaSqlManager DM, AttributeOwnerType ownerType, string entityId, string paramName, string paramValue, int attrType)

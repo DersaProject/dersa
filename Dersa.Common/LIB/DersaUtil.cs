@@ -147,7 +147,7 @@ namespace Dersa.Common
         public static byte[] GenerateWordFile(string json_table, string file_name, string serviceUrl)
         {
             BasicHttpBinding binding = new BasicHttpBinding();
-            binding.MaxReceivedMessageSize = 100000000;
+            binding.MaxReceivedMessageSize = 2147483647;
             //Specify the address to be used for the client.
             EndpointAddress address =
                new EndpointAddress(serviceUrl);
@@ -307,20 +307,22 @@ namespace Dersa.Common
         }
         public static string EntitySetAttribute(string userName, int entity, string prop_name, string prop_value)
         {
-            try
-            {
-                DersaSqlManager DM = new DersaSqlManager();
-                System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "SetAttribute", new object[] { entity, prop_name, prop_value, userName, DersaUtil.GetPassword(userName) });
-                if (T.Rows.Count > 0)
-                {
-                    return T.Rows[0][0].ToString();
-                }
-                return "";
-            }
-            catch
-            {
-                return "";
-            }
+            DersaSqlManager DM = new DersaSqlManager();
+            return SetAttributeValue(DM, userName, AttributeOwnerType.Entity, entity.ToString(), prop_name, 1, prop_value);
+            //try
+            //{
+            //    DersaSqlManager DM = new DersaSqlManager();
+            //    System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "SetAttribute", new object[] { entity, prop_name, prop_value, userName, DersaUtil.GetPassword(userName) });
+            //    if (T.Rows.Count > 0)
+            //    {
+            //        return T.Rows[0][0].ToString();
+            //    }
+            //    return "";
+            //}
+            //catch(Exception exc)
+            //{
+            //    return "";
+            //}
         }
 
         public static void EntitySetStereotype(string userName, int entity, string stereotype_name)

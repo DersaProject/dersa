@@ -69,6 +69,8 @@ function InsertNode(data) {
     inst.set_id(new_node, newId);
     inst.set_icon(newId, newIcon);
     inst.set_text(newId, newText);
+    var newnodeObj = inst.get_node(newId);
+    newnodeObj.data = newObjArr[0].data;
     if (obj.state.loaded) {
         inst.deselect_all();
         inst.select_node(newId);

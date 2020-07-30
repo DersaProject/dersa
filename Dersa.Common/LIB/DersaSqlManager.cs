@@ -101,12 +101,12 @@ namespace Dersa.Common
 
         public System.Data.DataTable GetAttribute(string ID)
         {
-            return GetSqlObject("ATTRIBUTE", "attribute", ID);
+            return GetSqlObject("ATTRIBUTE_VIEW", "attribute", ID);
         }
 
         public System.Data.DataTable GetAttributesForEntity(string ID)
         {
-            return GetSqlObject("ATTRIBUTE", string.Format("where owner_class = 'ENTITY' and owner_ref = {0}", ID));
+            return GetSqlObject("ATTRIBUTE_VIEW", string.Format("where owner_class = 'ENTITY' and owner_ref = {0}", ID));
         }
 
         public System.Data.DataTable GetOperationsForStereotype(string ID)
@@ -116,7 +116,7 @@ namespace Dersa.Common
 
         public System.Data.DataTable GetAttributesForRelation(string ID)
         {
-            return GetSqlObject("ATTRIBUTE", string.Format("where owner_class = 'RELATION' and owner_ref = {0}", ID));
+            return GetSqlObject("ATTRIBUTE_VIEW", string.Format("where owner_class = 'RELATION' and owner_ref = {0}", ID));
         }
 
     }
