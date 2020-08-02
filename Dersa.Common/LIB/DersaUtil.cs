@@ -32,6 +32,77 @@ namespace Dersa.Common
 
     public class DersaUtil
     {
+        public static string GetActionForParams(string json_params)
+        {
+            dynamic testObject = JsonConvert.DeserializeObject(json_params);
+            if (testObject.json_params != null)
+                json_params = testObject.json_params;   //если вызов в старом стиле  (body.json_params = x) попадает в новую оболочку (body и есть json_params)
+
+            IParameterCollection Params = Util.DeserializeParams(json_params);
+            if (Params.Contains("method_name") && Params.Contains("objectid"))
+            {
+                object[] extParams = new object[] { json_params };
+                try
+                {
+                    string result = GetAction(Params["method_name"].Value.ToString(), int.Parse(Params["objectid"].Value.ToString()), JsonConvert.SerializeObject(extParams));
+                    if (Params.Contains("result_is_already_formatted"))
+                        return result;
+                    var actionObject = new { action = result };
+                    return JsonConvert.SerializeObject(actionObject);
+                }
+                catch (Exception exc)
+                {
+                    Logger.LogStatic(exc.Message);
+                }
+            }
+            return null;
+        }
+
+        public static string GetAction(string MethodName, int id, string paramString = null)
+        {//AllowExecuteJSMethod
+            string userName = "localuser";
+            StereotypeBaseE target = StereotypeBaseE.GetSimpleInstance(id);
+            if (!target.AllowExecuteMethod(userName, MethodName))
+                return string.Format("You are not allowed to execute method {0}", MethodName);
+            CachedObjects.CachedEntities[id] = null;
+            DersaSqlManager M = new DersaSqlManager();
+            System.Data.DataTable t = M.GetEntity(id.ToString());
+            if (t == null)
+                throw new Exception(string.Format("Table is null for entity {0}", id));
+            if (t.Rows.Count < 1)
+                throw new Exception(string.Format("Table is empty for entity {0}", id));
+            DersaEntity ent = new DersaEntity(t, M);
+            CachedObjects.CachedCompiledInstances[ent.StereotypeName + id.ToString()] = null;
+            foreach (DersaEntity child in ent.Children)
+            {
+                CachedObjects.CachedCompiledInstances[child.StereotypeName + child.Id.ToString()] = null;
+            }
+
+            ICompiled cInst = ent.GetCompiledInstance();
+            MethodInfo mi = cInst.GetType().GetMethod(MethodName);
+            if (mi == null)
+            {
+                string excMessage = "Method " + MethodName + " not found ";
+                Logger.LogStatic(excMessage);
+                throw new Exception(excMessage);
+            }
+            object[] externalParams = new object[0];
+            if (paramString != null)
+                externalParams = JsonConvert.DeserializeObject<object[]>(paramString);
+            object[] callParams = new object[externalParams.Length + 1];
+            callParams[0] = userName;
+            for (int i = 0; i < externalParams.Length; i++)
+            {
+                callParams[i + 1] = externalParams[i];
+            }
+            //Logger.LogStatic(string.Format("method {0}, params count {1}", MethodName, callParams.Length));
+            object result = mi.Invoke(cInst, new object[] { callParams });
+            if (result == null)
+                return null;
+            if (result is string)
+                return result.ToString();
+            return JsonConvert.SerializeObject(result);
+        }
 
         public static string SaveDiagramFromJson(string id, string jsonObject)
         {

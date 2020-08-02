@@ -153,7 +153,7 @@ namespace Dersa_N
     }
     public class LocalClientModule: DersaHttpModule
     {
-        public LocalClientModule()
+        public LocalClientModule(): base()
         {
             Post("/Edit/{textId}", p => EditText(p.textId));
             Post("/Compare/{attrName}/{itemArr}", p => CompareItems(p.attrName, p.itemArr));
@@ -178,8 +178,8 @@ namespace Dersa_N
             string[] itemArr = JsonConvert.DeserializeObject<string[]>(itemArrJson);
             string item1 = itemArr[0];
             string item2 = itemArr[1];
-            string attr1 = DersaUtil.GetAttributeValue("localuser", int.Parse(item1), attr_name, 2); //sClient.GetAttrValue(attr_name, item1, _userToken);
-            string attr2 = DersaUtil.GetAttributeValue("localuser", int.Parse(item2), attr_name, 2); //sClient.GetAttrValue(attr_name, item2, _userToken);
+            string attr1 = DersaUtil.GetAttributeValue(this.Context.CurrentUser.Identity.Name /*"localuser"*/, int.Parse(item1), attr_name, 2); //sClient.GetAttrValue(attr_name, item1, _userToken);
+            string attr2 = DersaUtil.GetAttributeValue(this.Context.CurrentUser.Identity.Name /*"localuser"*/, int.Parse(item2), attr_name, 2); //sClient.GetAttrValue(attr_name, item2, _userToken);
             string TempDirPath = Properties.Settings.Default.TempDir;
             string fileName1 = TempDirPath + item1 + "_" + attr_name + ".txt";
             string fileName2 = TempDirPath + item2 + "_" + attr_name + ".txt";
