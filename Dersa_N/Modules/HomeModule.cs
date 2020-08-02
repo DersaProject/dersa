@@ -14,10 +14,11 @@ namespace Dersa_N
 {
     public class HomeModule : DersaHttpModule
     {
-        public HomeModule()
+        public HomeModule(): base()
         {
             Get("/", p => {
-                string userName = "localuser";
+               string userName = this.Context.CurrentUser.Identity.Name;// this.Context.CurrentUser.Identity.Name /*"localuser"*/;
+                UserDatabase.userName = userName;
                 ViewBag.Login = userName;
                 try
                 {
@@ -66,19 +67,21 @@ namespace Dersa_N
                 for (int i = 0; i < schemaContent.Length; i++)
                 {
                     SchemaEntity schemaEntity = schemaContent[i];
-                    string entId = DersaUtil.CreateEntity(schemaEntity, this.Request.Form["id"], "localuser");
+                    string entId = DersaUtil.CreateEntity(schemaEntity, this.Request.Form["id"], this.Context.CurrentUser.Identity.Name /*"localuser"*/);
                 }
                 return View["Close"];
             });
 
-            Get("/Query/GetAction/{MethodName}/{id}", p => QueryControllerAdapter.GetAction(p.MethodName, p.id));
-            Post("/Query/GetAction/{MethodName}/{id}", p => QueryControllerAdapter.GetAction(p.MethodName, p.id, GetRequestBodyAsString()));
+            Get("/Query/GetAction/{MethodName}/{id}", p => DersaUtil.GetAction(p.MethodName, p.id));
+            Post("/Query/GetAction/{MethodName}/{id}", p => DersaUtil.GetAction(p.MethodName, p.id, GetRequestBodyAsString()));
+            Post("Query/GetActionForParams", p => DersaUtil.GetActionForParams(GetRequestBodyAsString()));
             Get("/Query/Logtable", p => {
                 DataTable T = QueryControllerAdapter.LogTable();
                 return View["Table", T];
             });
             Post("Query/PutHtml", _ => QueryControllerAdapter.PutString(GetRequestBodyAsString()));
             Post("Query/GetText", p => QueryControllerAdapter.GetText(GetRequestBodyAsString()));
+            Post("Query/ExecSql", p => QueryControllerAdapter.ExecSql(GetRequestBodyAsString()));
 
         }
 
