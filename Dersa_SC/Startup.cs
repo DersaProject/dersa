@@ -80,4 +80,13 @@ namespace Dersa_N
             return path;
         }
     }
+
+    public class MyBootstrapper : DefaultNancyBootstrapper
+    {
+        public override void Configure(Nancy.Configuration.INancyEnvironment environment)
+        {
+            base.Configure(environment);
+            environment.Tracing(false, true);
+        }
+    }
 }
