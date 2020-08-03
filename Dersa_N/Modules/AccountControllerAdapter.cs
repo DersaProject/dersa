@@ -70,6 +70,12 @@ namespace Dersa_N
                 if (settingName == null)
                 {
                     System.Data.DataTable T = DM.ExecuteMethod("USER_SETTING", "List", new object[] { userName, DersaUtil.GetPassword(userName) });
+                    System.Data.DataRow Rlogout = T.NewRow();
+                    Rlogout["name"] = "logout";
+                    Rlogout["value"] = "Log out?";
+                    Rlogout["ReadOnly"] = false;
+                    Rlogout["value_type"] = 2;
+                    T.Rows.Add(Rlogout);
                     var query =
                         from System.Data.DataRow R in T.Rows
                         select new
@@ -84,7 +90,8 @@ namespace Dersa_N
                                 Height = 500,
                                 Width = 400,
                                 DisplayValue = (int)R["value_type"] == 1 ? R["value"] : "...",
-                                InfoLink = (int)R["value_type"] == 1 ? "" : "Account/JsSettings/" + R["name"].ToString()
+                                InfoLink = (int)R["value_type"] == 1 || (string)R["name"] == "logout" ? "" : "Account/JsSettings/" + R["name"].ToString(),
+                                OnClick = (string)R["name"] == "logout" ? "if(confirm('Выйти?'))window.location.href='/logout'" : ""
                             }
 
                         };

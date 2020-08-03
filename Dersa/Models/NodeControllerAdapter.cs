@@ -162,11 +162,34 @@ namespace Dersa.Models
             //object[] ParamValues = Util.GetMethodCallParameterValues(Params);
             //object res = mi.Invoke(cInst, ParamValues);
 
-            dynamic execRes = DersaUtil.ExecMethodResult(id, method_name);
             string displayText = "";
-            if (execRes is string)
+            dynamic execRes = null;
+            try
             {
-                displayText = (string)execRes;
+                execRes = DersaUtil.ExecMethodResult(id, method_name);
+                if (execRes is string)
+                {
+                    displayText = (string)execRes;
+                    execRes = new
+                    {
+                        sql = displayText,
+                        object_name = "",
+                        object_type = ""
+                    };
+                }
+                else
+                {
+                    string serializedRes = JsonConvert.SerializeObject(execRes);
+                    execRes = JsonConvert.DeserializeObject<dynamic>(serializedRes);
+                }
+                if (execRes.sql != null)
+                    displayText = execRes.sql;
+            }
+            catch(Exception exc)
+            {
+                while (exc.InnerException != null)
+                    exc = exc.InnerException;
+                displayText = exc.Message;
                 execRes = new
                 {
                     sql = displayText,
@@ -174,13 +197,6 @@ namespace Dersa.Models
                     object_type = ""
                 };
             }
-            else
-            {
-                string serializedRes = JsonConvert.SerializeObject(execRes);
-                execRes = JsonConvert.DeserializeObject<dynamic>(serializedRes);
-            }
-            if(execRes.sql != null)
-                displayText = execRes.sql;
             bool execSqlLocal = false;
             try
             {

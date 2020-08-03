@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.ServiceModel;
 using System.Collections.Generic;
 using System.Data;
@@ -10,6 +11,7 @@ using DIOS.ObjectLib;
 using Newtonsoft.Json;
 using System.Reflection;
 using DersaStereotypes;
+using System.Xml;
 
 namespace Dersa.Common
 {
@@ -30,7 +32,190 @@ namespace Dersa.Common
 
     public class DersaUtil
     {
+        public static string GetActionForParams(string json_params)
+        {
+            dynamic testObject = JsonConvert.DeserializeObject(json_params);
+            if (testObject.json_params != null)
+                json_params = testObject.json_params;   //если вызов в старом стиле  (body.json_params = x) попадает в новую оболочку (body и есть json_params)
 
+            IParameterCollection Params = Util.DeserializeParams(json_params);
+            if (Params.Contains("method_name") && Params.Contains("objectid"))
+            {
+                object[] extParams = new object[] { json_params };
+                try
+                {
+                    string result = GetAction(Params["method_name"].Value.ToString(), int.Parse(Params["objectid"].Value.ToString()), JsonConvert.SerializeObject(extParams));
+                    if (Params.Contains("result_is_already_formatted"))
+                        return result;
+                    var actionObject = new { action = result };
+                    return JsonConvert.SerializeObject(actionObject);
+                }
+                catch (Exception exc)
+                {
+                    Logger.LogStatic(exc.Message);
+                }
+            }
+            return null;
+        }
+
+        public static string GetAction(string MethodName, int id, string paramString = null)
+        {//AllowExecuteJSMethod
+            string userName = "localuser";
+            StereotypeBaseE target = StereotypeBaseE.GetSimpleInstance(id);
+            if (!target.AllowExecuteMethod(userName, MethodName))
+                return string.Format("You are not allowed to execute method {0}", MethodName);
+            CachedObjects.CachedEntities[id] = null;
+            DersaSqlManager M = new DersaSqlManager();
+            System.Data.DataTable t = M.GetEntity(id.ToString());
+            if (t == null)
+                throw new Exception(string.Format("Table is null for entity {0}", id));
+            if (t.Rows.Count < 1)
+                throw new Exception(string.Format("Table is empty for entity {0}", id));
+            DersaEntity ent = new DersaEntity(t, M);
+            CachedObjects.CachedCompiledInstances[ent.StereotypeName + id.ToString()] = null;
+            foreach (DersaEntity child in ent.Children)
+            {
+                CachedObjects.CachedCompiledInstances[child.StereotypeName + child.Id.ToString()] = null;
+            }
+
+            ICompiled cInst = ent.GetCompiledInstance();
+            MethodInfo mi = cInst.GetType().GetMethod(MethodName);
+            if (mi == null)
+            {
+                string excMessage = "Method " + MethodName + " not found ";
+                Logger.LogStatic(excMessage);
+                throw new Exception(excMessage);
+            }
+            object[] externalParams = new object[0];
+            if (paramString != null)
+                externalParams = JsonConvert.DeserializeObject<object[]>(paramString);
+            object[] callParams = new object[externalParams.Length + 1];
+            callParams[0] = userName;
+            for (int i = 0; i < externalParams.Length; i++)
+            {
+                callParams[i + 1] = externalParams[i];
+            }
+            //Logger.LogStatic(string.Format("method {0}, params count {1}", MethodName, callParams.Length));
+            object result = mi.Invoke(cInst, new object[] { callParams });
+            if (result == null)
+                return null;
+            if (result is string)
+                return result.ToString();
+            return JsonConvert.SerializeObject(result);
+        }
+
+        public static string SaveDiagramFromJson(string id, string jsonObject)
+        {
+            try
+            {
+                object[] diagArray = JsonConvert.DeserializeObject<object[]>(jsonObject);
+                var query = from dynamic N in diagArray
+                            select new { N.is_visible, N.id, N.left, N.top, N.width, N.height };
+
+                DersaSqlManager DM = new DersaSqlManager();
+                IParameterCollection Params = new ParameterCollection();
+                foreach (dynamic X in query)
+                {
+                    int diagram_entity = -1;
+                    int entity = -1;
+                    bool saveCoords = true;
+                    Params.Clear();
+                    string S = "";
+                    if (!(bool)X.is_visible)
+                    {
+                        saveCoords = false;
+                        if (((string)X.id).Substring(0, 2) == "DE")
+                        {
+                            diagram_entity = int.Parse(((string)X.id).Split('_')[1]);
+                            Params.Add("diagram_entity", diagram_entity);
+                            DM.ExecuteIntMethod("DIAGRAM", "DropEntity", Params);
+                        }
+                    }
+                    else if (((string)X.id).Substring(0, 1) == "n")
+                    {
+                        entity = int.Parse(((string)X.id).Split('_')[1]);
+                        Params.Add("diagram", id);
+                        Params.Add("entity", entity);
+                        Params.Add("left", X.left);
+                        Params.Add("top", X.top);
+                        Params.Add("w", X.width);
+                        Params.Add("h", X.height);
+                        DM.ExecuteIntMethod("DIAGRAM", "CreateEntity", Params);
+                    }
+                    else
+                    {
+                        diagram_entity = int.Parse(((string)X.id).Split('_')[1]);
+                        Params.Add("diagram_entity", diagram_entity);
+                        Params.Add("left", X.left);
+                        Params.Add("top", X.top);
+                        Params.Add("w", X.width);
+                        Params.Add("h", X.height);
+                        entity = DM.ExecuteIntMethod("DIAGRAM", "UpdateEntity", Params);
+                    }
+                    if (saveCoords)
+                    {
+                        StereotypeBaseE objToSaveCoords = StereotypeBaseE.GetSimpleInstance(entity);
+                        objToSaveCoords.SaveCoords("", (int)X.left, (int)X.top, (int)X.width, (int)X.height);
+                    }
+                }
+                string result = JsonConvert.SerializeObject(query);
+                return result;
+            }
+            catch (Exception exc)
+            {
+                return exc.Message;
+            }
+        }
+        public static string CreateDiagram(int parent, string userName)
+        {
+            IParameterCollection Params = new ParameterCollection();
+            Params.Add("@parent", parent);
+            Params.Add("@login", userName);
+            Params.Add("@password", DersaUtil.GetPassword(userName));
+            DersaSqlManager M = new DersaSqlManager();
+            int res = M.ExecuteIntMethod("DIAGRAM", "CreateDiagram", Params);
+            return res.ToString();
+        }
+        public static string GetDiagramJson(string id, string userName)
+        {
+            DersaSqlManager DM = new DersaSqlManager();
+            DataTable T = DM.ExecuteMethod("DIAGRAM", "GetEntities", new object[] { id, userName, DersaUtil.GetPassword(userName) });
+            int appIndex = 0;
+            var query = from DataRow R in T.Rows
+                        select new
+                        {
+                            displayed_name = R["name"],
+                            id = R["id"],
+                            app_index = appIndex++,
+                            left = R["left"],
+                            top = R["top"],
+                            width = R["width"],
+                            height = R["height"],
+                            is_selected = false,
+                            is_visible = true
+                        };
+            return JsonConvert.SerializeObject(query);
+        }
+        public static string SaveDiagramXml(string id, string xml)
+        {
+            string decodedXml = xml.Replace("{lt;", "<").Replace("{gt;", ">");
+            IParameterCollection Params = new ParameterCollection();
+            Params.Add("@diagram", id.Replace("D_", ""));
+            Params.Add("@xml", decodedXml);
+            string currentUser = System.Web.HttpContext.Current.User.Identity.Name;
+            Params.Add("@login", currentUser);
+            Params.Add("@password", DersaUtil.GetPassword(currentUser));
+            DersaSqlManager M = new DersaSqlManager();
+            int res = M.ExecuteIntMethod("DIAGRAM", "SaveFromXml", Params);
+            if(res != 0)
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(decodedXml);
+                XmlNodeList xNodes = doc.SelectNodes(".//mxCell");
+                //дополнительные действия с объектами внутри диаграммы
+            }
+            return res.ToString();
+        }
         public static SchemaEntity[] GetSchema(string JsonContent)
         {
             SchemaEntity[] schemaContent = JsonConvert.DeserializeObject<SchemaEntity[]>(JsonContent);
