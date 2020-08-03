@@ -199,7 +199,6 @@
     <Compile Include="Models\AccountControllerAdapter.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\DersaUserManager.cs" />
-    <Compile Include="Models\DiagramControllerAdapter.cs" />
     <Compile Include="Models\EntityControllerAdapter.cs" />
     <Compile Include="Models\NodeControllerAdapter.cs" />
     <Compile Include="Models\ProjectControllerAdapter.cs" />
@@ -266,6 +265,7 @@
     <Content Include="demo\basic\index3.html" />
     <Content Include="demo\basic\index4.html" />
     <Content Include="demo\d4.html" />
+    <Content Include="DersaLayers.html" />
     <Content Include="dist\dersatree.js" />
     <Content Include="dist\jstree.js" />
     <Content Include="dist\jstree.min.js" />
@@ -482,7 +482,7 @@
     <Content Include="dist\themes\default\ViewAttribute.gif" />
     <Content Include="dist\vue.js" />
     <Content Include="dist\vuediag.js" />
-    <Content Include="dist\vue_template.js" />
+    <Content Include="dist\vue_components.js" />
     <Content Include="Global.asax" />
     <Content Include="js\app.js" />
     <Content Include="js\editor\mxDefaultKeyHandler.js" />
@@ -634,7 +634,7 @@
     <Content Include="Views\Account\Settings.cshtml" />
     <Content Include="Views\Home\d.cshtml" />
     <None Include="Views\Home\index.cshtml" />
-    <Content Include="Views\Home\HelpPage.html" />
+    <Content Include="HelpPage.html" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

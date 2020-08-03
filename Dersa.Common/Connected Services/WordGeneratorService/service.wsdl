@@ -1,0 +1,285 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ObjectWcfService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import namespace="http://tempuri.org/" />
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IObjectWcfService_KeyName_InputMessage">
+    <wsdl:part name="parameters" element="tns:KeyName" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_KeyName_OutputMessage">
+    <wsdl:part name="parameters" element="tns:KeyNameResponse" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_ExecMethod_InputMessage">
+    <wsdl:part name="parameters" element="tns:ExecMethod" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_ExecMethod_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ExecMethodResponse" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_GetUserToken_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetUserToken" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_GetUserToken_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetUserTokenResponse" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_SetObjectView_InputMessage">
+    <wsdl:part name="parameters" element="tns:SetObjectView" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_SetObjectView_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SetObjectViewResponse" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_GetObjectView_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetObjectView" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_GetObjectView_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetObjectViewResponse" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_CreateObject_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateObject" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_CreateObject_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateObjectResponse" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_DropObject_InputMessage">
+    <wsdl:part name="parameters" element="tns:DropObject" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_DropObject_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DropObjectResponse" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_List_InputMessage">
+    <wsdl:part name="parameters" element="tns:List" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_List_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_ListWithParams_InputMessage">
+    <wsdl:part name="parameters" element="tns:ListWithParams" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_ListWithParams_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ListWithParamsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_ListWithParamsPaged_InputMessage">
+    <wsdl:part name="parameters" element="tns:ListWithParamsPaged" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_ListWithParamsPaged_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ListWithParamsPagedResponse" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_EmptyList_InputMessage">
+    <wsdl:part name="parameters" element="tns:EmptyList" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_EmptyList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:EmptyListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_PropertiesList_InputMessage">
+    <wsdl:part name="parameters" element="tns:PropertiesList" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_PropertiesList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PropertiesListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_SimpleList_InputMessage">
+    <wsdl:part name="parameters" element="tns:SimpleList" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_SimpleList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SimpleListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_GenerateWordFile_InputMessage">
+    <wsdl:part name="parameters" element="tns:GenerateWordFile" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_GenerateWordFile_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GenerateWordFileResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IObjectWcfService">
+    <wsdl:operation name="KeyName">
+      <wsdl:input wsaw:Action="http://tempuri.org/IObjectWcfService/KeyName" message="tns:IObjectWcfService_KeyName_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IObjectWcfService/KeyNameResponse" message="tns:IObjectWcfService_KeyName_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ExecMethod">
+      <wsdl:input wsaw:Action="http://tempuri.org/IObjectWcfService/ExecMethod" message="tns:IObjectWcfService_ExecMethod_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IObjectWcfService/ExecMethodResponse" message="tns:IObjectWcfService_ExecMethod_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUserToken">
+      <wsdl:input wsaw:Action="http://tempuri.org/IObjectWcfService/GetUserToken" message="tns:IObjectWcfService_GetUserToken_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IObjectWcfService/GetUserTokenResponse" message="tns:IObjectWcfService_GetUserToken_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SetObjectView">
+      <wsdl:input wsaw:Action="http://tempuri.org/IObjectWcfService/SetObjectView" message="tns:IObjectWcfService_SetObjectView_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IObjectWcfService/SetObjectViewResponse" message="tns:IObjectWcfService_SetObjectView_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetObjectView">
+      <wsdl:input wsaw:Action="http://tempuri.org/IObjectWcfService/GetObjectView" message="tns:IObjectWcfService_GetObjectView_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IObjectWcfService/GetObjectViewResponse" message="tns:IObjectWcfService_GetObjectView_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateObject">
+      <wsdl:input wsaw:Action="http://tempuri.org/IObjectWcfService/CreateObject" message="tns:IObjectWcfService_CreateObject_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IObjectWcfService/CreateObjectResponse" message="tns:IObjectWcfService_CreateObject_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DropObject">
+      <wsdl:input wsaw:Action="http://tempuri.org/IObjectWcfService/DropObject" message="tns:IObjectWcfService_DropObject_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IObjectWcfService/DropObjectResponse" message="tns:IObjectWcfService_DropObject_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="List">
+      <wsdl:input wsaw:Action="http://tempuri.org/IObjectWcfService/List" message="tns:IObjectWcfService_List_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IObjectWcfService/ListResponse" message="tns:IObjectWcfService_List_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ListWithParams">
+      <wsdl:input wsaw:Action="http://tempuri.org/IObjectWcfService/ListWithParams" message="tns:IObjectWcfService_ListWithParams_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IObjectWcfService/ListWithParamsResponse" message="tns:IObjectWcfService_ListWithParams_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ListWithParamsPaged">
+      <wsdl:input wsaw:Action="http://tempuri.org/IObjectWcfService/ListWithParamsPaged" message="tns:IObjectWcfService_ListWithParamsPaged_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IObjectWcfService/ListWithParamsPagedResponse" message="tns:IObjectWcfService_ListWithParamsPaged_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="EmptyList">
+      <wsdl:input wsaw:Action="http://tempuri.org/IObjectWcfService/EmptyList" message="tns:IObjectWcfService_EmptyList_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IObjectWcfService/EmptyListResponse" message="tns:IObjectWcfService_EmptyList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PropertiesList">
+      <wsdl:input wsaw:Action="http://tempuri.org/IObjectWcfService/PropertiesList" message="tns:IObjectWcfService_PropertiesList_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IObjectWcfService/PropertiesListResponse" message="tns:IObjectWcfService_PropertiesList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SimpleList">
+      <wsdl:input wsaw:Action="http://tempuri.org/IObjectWcfService/SimpleList" message="tns:IObjectWcfService_SimpleList_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IObjectWcfService/SimpleListResponse" message="tns:IObjectWcfService_SimpleList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GenerateWordFile">
+      <wsdl:input wsaw:Action="http://tempuri.org/IObjectWcfService/GenerateWordFile" message="tns:IObjectWcfService_GenerateWordFile_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IObjectWcfService/GenerateWordFileResponse" message="tns:IObjectWcfService_GenerateWordFile_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_IObjectWcfService" type="tns:IObjectWcfService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="KeyName">
+      <soap:operation soapAction="http://tempuri.org/IObjectWcfService/KeyName" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ExecMethod">
+      <soap:operation soapAction="http://tempuri.org/IObjectWcfService/ExecMethod" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserToken">
+      <soap:operation soapAction="http://tempuri.org/IObjectWcfService/GetUserToken" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetObjectView">
+      <soap:operation soapAction="http://tempuri.org/IObjectWcfService/SetObjectView" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetObjectView">
+      <soap:operation soapAction="http://tempuri.org/IObjectWcfService/GetObjectView" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateObject">
+      <soap:operation soapAction="http://tempuri.org/IObjectWcfService/CreateObject" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DropObject">
+      <soap:operation soapAction="http://tempuri.org/IObjectWcfService/DropObject" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="List">
+      <soap:operation soapAction="http://tempuri.org/IObjectWcfService/List" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ListWithParams">
+      <soap:operation soapAction="http://tempuri.org/IObjectWcfService/ListWithParams" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ListWithParamsPaged">
+      <soap:operation soapAction="http://tempuri.org/IObjectWcfService/ListWithParamsPaged" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EmptyList">
+      <soap:operation soapAction="http://tempuri.org/IObjectWcfService/EmptyList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PropertiesList">
+      <soap:operation soapAction="http://tempuri.org/IObjectWcfService/PropertiesList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SimpleList">
+      <soap:operation soapAction="http://tempuri.org/IObjectWcfService/SimpleList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenerateWordFile">
+      <soap:operation soapAction="http://tempuri.org/IObjectWcfService/GenerateWordFile" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ObjectWcfService">
+    <wsdl:port name="BasicHttpBinding_IObjectWcfService" binding="tns:BasicHttpBinding_IObjectWcfService">
+      <soap:address location="http://localhost:12345/" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

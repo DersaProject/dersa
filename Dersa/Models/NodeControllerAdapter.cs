@@ -162,11 +162,34 @@ namespace Dersa.Models
             //object[] ParamValues = Util.GetMethodCallParameterValues(Params);
             //object res = mi.Invoke(cInst, ParamValues);
 
-            dynamic execRes = DersaUtil.ExecMethodResult(id, method_name);
             string displayText = "";
-            if (execRes is string)
+            dynamic execRes = null;
+            try
             {
-                displayText = (string)execRes;
+                execRes = DersaUtil.ExecMethodResult(id, method_name);
+                if (execRes is string)
+                {
+                    displayText = (string)execRes;
+                    execRes = new
+                    {
+                        sql = displayText,
+                        object_name = "",
+                        object_type = ""
+                    };
+                }
+                else
+                {
+                    string serializedRes = JsonConvert.SerializeObject(execRes);
+                    execRes = JsonConvert.DeserializeObject<dynamic>(serializedRes);
+                }
+                if (execRes.sql != null)
+                    displayText = execRes.sql;
+            }
+            catch(Exception exc)
+            {
+                while (exc.InnerException != null)
+                    exc = exc.InnerException;
+                displayText = exc.Message;
                 execRes = new
                 {
                     sql = displayText,
@@ -174,13 +197,6 @@ namespace Dersa.Models
                     object_type = ""
                 };
             }
-            else
-            {
-                string serializedRes = JsonConvert.SerializeObject(execRes);
-                execRes = JsonConvert.DeserializeObject<dynamic>(serializedRes);
-            }
-            if(execRes.sql != null)
-                displayText = execRes.sql;
             bool execSqlLocal = false;
             try
             {
@@ -426,22 +442,23 @@ namespace Dersa.Models
 
         public static string SetTextProperty(int entity, string prop_name, string prop_value, string userName = null)
         {
-            DersaSqlManager DM = userName == null? new DersaSqlManager(): new DersaAnonimousSqlManager();
-            if(userName == null)
+            DersaSqlManager DM = userName == null ? new DersaSqlManager() : new DersaAnonimousSqlManager();
+            if (userName == null)
                 userName = HttpContext.Current.User.Identity.Name;
-            try
-            {
-                System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "SetAttribute", new object[] { entity, prop_name, prop_value, userName, DersaUtil.GetPassword(userName) });
-                if (T != null && T.Rows.Count > 0)
-                {
-                    return T.Rows[0][0].ToString();
-                }
-            }
-            catch
-            {
-                throw;
-            }
-            return "";
+            //try
+            //{
+            //    System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "SetAttribute", new object[] { entity, prop_name, prop_value, userName, DersaUtil.GetPassword(userName) });
+            //    if (T != null && T.Rows.Count > 0)
+            //    {
+            //        return T.Rows[0][0].ToString();
+            //    }
+            //}
+            //catch
+            //{
+            //    throw;
+            //}
+            //return "";
+            return DersaUtil.SetAttributeValue(DM, userName, AttributeOwnerType.Entity, entity.ToString(), prop_name, 2, prop_value);
         }
 
         public static void SetAttribute(DersaSqlManager DM, AttributeOwnerType ownerType, string entityId, string paramName, string paramValue, int attrType)

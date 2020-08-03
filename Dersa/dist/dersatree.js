@@ -1,48 +1,4 @@
-﻿$(document).ready(function () {
-    // Значение отступа, выше которого блок не поднимается,
-    // когда ползунок прокрутки на самом верху
-    var MIN_TOP = 200;
-    // Отступ от левого края блока контента,
-    // может быть положительным или отрицательным
-    var POSITIONLEFT = - 25;
-    // Центрирование окна
-    //var width_minus = Math.floor(parseInt($('#message_box').css("width")) / 2);
-
-    var POSITIONTOP = 0;
-
-    $('#page').css("left", +$('#dersa').width() + 75 + "px");
-    $('#page').css("top", "200px");
-    $('#page').hide();
-    $('#infoboard').css("left", +$('#dersa').width() + 75 + "px");
-    $('#infoboard').css("top", "200px");
-    $('#infoboard').show();
-
-
-    $(window).scroll(function () {
-        var pos = parseInt($(window).scrollTop());
-        if (pos < 200) pos = 200;
-        $('#tool_box').animate({ top: pos + "px" }, { queue: false, duration: 200 });
-        //console.log(POSITIONTOP);
-        //console.log(pos);
-        if ($('#infotable').height() + POSITIONTOP - pos + 200 < $(window).height() || POSITIONTOP > pos + 100) {
-            $('#infoboard').animate({ top: pos + "px" }, { queue: false, duration: 200 });
-            $('#page').animate({ top: pos + "px" }, { queue: false, duration: 200 });
-            POSITIONTOP = pos;
-        }
-        //if (POSITIONTOP > pos + 100)
-        //    console.log('need move');
-        //console.log('left block height:' + $('#dersa').height() + '; right block height: ' + $('#infotable').height() + '; window height: ' + $(window).height() + '; scroll:' + $(window).scrollTop());
-    });
-
-    $(window).resize(function () {
-        //    $('#message_box').css("left", $('#mycontent').offset().left + POSITIONLEFT + "px");
-        $('#infoboard').animate({ left: +$('#dersa').width() + 75 + "px" }, { queue: false, duration: 200 });
-    });
-
-});
-
-
-$.jstree.defaults.dnd = {
+﻿$.jstree.defaults.dnd = {
         copy: false,//function (data) { console.log(data.event.target.id); return data.event.target.id === "Entity_anchor"; },//true,//{ return nodes[0].id == "Attribute" || nodes[0].id == "Entity"; },
         always_copy: false,
         open_timeout: 500,
@@ -69,6 +25,8 @@ function InsertNode(data) {
     inst.set_id(new_node, newId);
     inst.set_icon(newId, newIcon);
     inst.set_text(newId, newText);
+    var newnodeObj = inst.get_node(newId);
+    newnodeObj.data = newObjArr[0].data;
     if (obj.state.loaded) {
         inst.deselect_all();
         inst.select_node(newId);
@@ -843,7 +801,7 @@ $('#dersa')
                 currentOptionsControl.value = options;
             }
             var infoControl = document.getElementById("infoboard");
-            var diagControl = document.getElementById("page");
+            var diagControl = document.getElementById("mxDiagramDiv");//("userpage0");//
             var graphControl = document.getElementById("graph");
             bnEdit = document.getElementById("bnEdit");
             if (bnEdit != null && bnEdit.checked) {
@@ -861,9 +819,9 @@ $('#dersa')
                 diagControl.style.display = "";
                 dID = document.getElementById("DiagramId");
                 dID.value = selected_id;
-                var diaghtml = GetText(selected_id, "Diagram");
+                //
                 //console.log(diaghtml);
-                Editor.execute('showSavedDiagram', diaghtml);
+                Editor.execute('showSavedDiagram');
                 //infoControl.innerHTML = GetText(selected_id, "Diagram");
             }
         }
