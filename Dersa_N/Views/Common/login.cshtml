@@ -1,0 +1,39 @@
+﻿@{
+    ViewBag.Title = "Вход";
+}
+    <html>
+    <head>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <h2>Вход</h2>
+        <span style="color: red;">@ViewBag.AuthResult</span>
+        <br>
+        <br>
+        <form method="POST">
+
+            <fieldset>
+                <div class="editor-label">
+                    <label for="tblogin">login</label>
+                </div>
+                <div class="editor-field">
+                    <input type="text" id="tblogin" name="Username" />
+                </div>
+                <div class="editor-label">
+                    <label for="tbpassword">password</label>
+                </div>
+                <div class="editor-field">
+                    <input type="password" id="tbpassword" name="Password" />
+                </div>
+                <br>
+                <p>
+                    <input type="submit" value="Login" />
+                </p>
+            </fieldset>
+        </form>
+        @if (Model.Errored)
+        {
+            <div id="errorBox" class="floatingError">Invalid Username or Password</div>
+        }
+    </body>
+    </html>
