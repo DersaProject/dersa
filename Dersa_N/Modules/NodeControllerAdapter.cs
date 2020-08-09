@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -197,94 +198,141 @@ namespace Dersa_N
                     object_type = ""
                 };
             }
-            bool execSqlLocal = false;
+            //bool execSqlLocal = false;
+            //try
+            //{
+            //    execSqlLocal = true;// QueryControllerAdapter.GetLocalSqlExecution();
+            //}
+            //catch (Exception exc)
+            //{
+            //}
+            //var resultArray = new object[0];
+            //if(execSqlLocal)
+            //    resultArray = new object[]{
+            //    new
+            //    {
+            //        Name = "SQL",
+            //        Value = displayText,
+            //        DisplayValue = displayText,
+            //        ControlType = "textarea",
+            //        Height = 200,
+            //        Width = 300,
+            //        WriteUnchanged = true
+            //    },
+            //    new
+            //    {
+            //        Name = "entity_id",
+            //        Value = id,
+            //        DisplayValue = "",
+            //        ControlType = "hidden",
+            //        WriteUnchanged = true
+            //    },
+            //    new
+            //    {
+            //        Name = "object_name",
+            //        Value = execRes.object_name,
+            //        DisplayValue = "",
+            //        ControlType = "text",
+            //        WriteUnchanged = true
+            //    },
+            //    new
+            //    {
+            //        Name = "object_type",
+            //        Value = execRes.object_type,
+            //        DisplayValue = "",
+            //        ControlType = "text",
+            //        WriteUnchanged = true
+            //    }
+            //};
+
+            //else
+            //    resultArray = new object[]{
+            //    new
+            //    {
+            //        Name = "SQL",
+            //        Value = displayText,
+            //        DisplayValue = displayText,
+            //        ControlType = "textarea",
+            //        Height = 200,
+            //        Width = 300,
+            //        WriteUnchanged = true
+            //    },
+            //    new
+            //    {
+            //        Name = "Server",
+            //        Value = "",
+            //        DisplayValue = "",
+            //        ControlType = "text"
+            //    },
+            //    new
+            //    {
+            //        Name = "Database",
+            //        Value = "",
+            //        DisplayValue = "",
+            //        ControlType = "text"
+            //    },
+            //    new
+            //    {
+            //        Name = "Login",
+            //        Value = "",
+            //        DisplayValue = "",
+            //        ControlType = "text"
+            //    },
+            //    new
+            //    {
+            //        Name = "Password",
+            //        Value = "",
+            //        DisplayValue = "",
+            //        ControlType = "password"
+            //    }
+            //};
+            var resultArray = new ArrayList();
+            resultArray.Add(new
+            {
+                Name = "SQL",
+                Value = displayText,
+                DisplayValue = displayText,
+                ControlType = "textarea",
+                Height = 200,
+                Width = 300,
+                WriteUnchanged = true
+            });
+            resultArray.Add(new
+            {
+                Name = "entity_id",
+                Value = id,
+                DisplayValue = "",
+                ControlType = "hidden",
+                WriteUnchanged = true
+            });
+            resultArray.Add(new
+            {
+                Name = "object_name",
+                Value = execRes.object_name,
+                DisplayValue = "",
+                ControlType = "text",
+                WriteUnchanged = true
+            });
+            resultArray.Add(new
+            {
+                Name = "object_type",
+                Value = execRes.object_type,
+                DisplayValue = "",
+                ControlType = "text",
+                WriteUnchanged = true
+            });
             try
             {
-                execSqlLocal = true;// QueryControllerAdapter.GetLocalSqlExecution();
+                resultArray.Add(new
+                {
+                    Name = "conn_string",
+                    Value = execRes.connection_strings,
+                    DisplayValue = "",
+                    ControlType = "combo",
+                    WriteUnchanged = true
+                });
             }
-            catch (Exception exc)
-            {
-            }
-            var resultArray = new object[0];
-            if(execSqlLocal)
-                resultArray = new object[]{
-                new
-                {
-                    Name = "SQL",
-                    Value = displayText,
-                    DisplayValue = displayText,
-                    ControlType = "textarea",
-                    Height = 200,
-                    Width = 300,
-                    WriteUnchanged = true
-                },
-                new
-                {
-                    Name = "entity_id",
-                    Value = id,
-                    DisplayValue = "",
-                    ControlType = "hidden",
-                    WriteUnchanged = true
-                },
-                new
-                {
-                    Name = "object_name",
-                    Value = execRes.object_name,
-                    DisplayValue = "",
-                    ControlType = "text",
-                    WriteUnchanged = true
-                },
-                new
-                {
-                    Name = "object_type",
-                    Value = execRes.object_type,
-                    DisplayValue = "",
-                    ControlType = "text",
-                    WriteUnchanged = true
-                }
-            };
-
-            else
-                resultArray = new object[]{
-                new
-                {
-                    Name = "SQL",
-                    Value = displayText,
-                    DisplayValue = displayText,
-                    ControlType = "textarea",
-                    Height = 200,
-                    Width = 300,
-                    WriteUnchanged = true
-                },
-                new
-                {
-                    Name = "Server",
-                    Value = "",
-                    DisplayValue = "",
-                    ControlType = "text"
-                },
-                new
-                {
-                    Name = "Database",
-                    Value = "",
-                    DisplayValue = "",
-                    ControlType = "text"
-                },
-                new
-                {
-                    Name = "Login",
-                    Value = "",
-                    DisplayValue = "",
-                    ControlType = "text"
-                },
-                new
-                {
-                    Name = "Password",
-                    Value = "",
-                    DisplayValue = "",
-                    ControlType = "password"
-                }
-            };
+            catch { }
             string result = JsonConvert.SerializeObject(resultArray);
             return result;
         }
