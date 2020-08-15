@@ -311,9 +311,9 @@ namespace Dersa.Models
                         SqlManager ExecM = new SqlManager(connectionStringIndex);
                         result = ExecM.ExecMultiPartSql(sql);
                     }
-                    else if (Params.Contains("CSIndex") && Params["CSIndex"].Value != null)
+                    else if (Params.Contains("conn_string") && Params["conn_string"].Value != null)
                     {
-                        int connectionStringIndex = (int)Params["CSIndex"].Value;
+                        int connectionStringIndex = int.Parse(Params["conn_string"].Value.ToString());
                         SqlManager ExecM = new SqlManager(connectionStringIndex);
                         result = ExecM.ExecMultiPartSql(sql);
                     }
