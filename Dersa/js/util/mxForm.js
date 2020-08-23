@@ -128,7 +128,7 @@ function CreateProperties(form, attrs, url, ActionAfterExec, ClassName, callBack
     for (var i = 0; i < attrs.length; i++) {
         var fControl = null;
         if (attrs[i].ControlType == "textarea")
-            fControl = texts[i] = form.addTextarea('', attrs[i].Value, attrs[i].Height / 10, attrs[i].Width);
+            fControl = texts[i] = form.addTextarea(attrs[i]);
         else if (attrs[i].ControlType == "combo") {
             var items = new Array();
             if (attrs[i].Value)
@@ -148,6 +148,12 @@ function CreateProperties(form, attrs, url, ActionAfterExec, ClassName, callBack
     // Defines the function to be executed when the
     // OK button is pressed in the dialog
     var okFunction = mxUtils.bind(this, function () {
+        for (var i = 0; i < attrs.length; i++) {
+            if (attrs[i].CheckAttrs) {
+                if(!attrs[i].CheckAttrs(attrs, texts))
+                    return;
+            }
+        }
         // Hides the dialog
         form.window.setVisible(false);
         var sendResult = false;
@@ -290,20 +296,24 @@ mxForm.prototype.addCheckbox = function(name, value)
  * 
  * Adds a textarea for the given name and value and returns the textarea.
  */
-mxForm.prototype.addTextarea = function(name, value, rows, Width)
+mxForm.prototype.addTextarea = function(elem)
 {
-	var input = document.createElement('textarea');
-	
+    var input = document.createElement('textarea');
+
+    var rows = elem.Height / 10;
 	if (mxClient.IS_NS)
 	{
 		rows--;
 	}
 	
-	input.setAttribute('style', 'width:' + Width + "px");
-	input.setAttribute('rows', rows || 2);
-	input.value = value;
-	
-	return this.addField(name, input);
+    input.setAttribute('style', 'width:' + elem.Width + "px");
+    input.setAttribute('rows', rows || 2);
+    input.value = elem.Value;
+
+    var caption = elem.Name;
+    //if (elem.NotNull)
+    //    caption += " *";
+    return this.addField(caption, input);
 };
 
 /**
@@ -363,6 +373,9 @@ mxForm.prototype.addOption = function(combo, label, value, isSelected)
  */
 mxForm.prototype.addField = function(name, input)
 {
+    if (this.SingleColumn)
+        return this.addFieldSingleColumn(name, input);
+
 	var tr = document.createElement('tr');
 	var td = document.createElement('td');
 	mxUtils.write(td, name);
@@ -374,6 +387,34 @@ mxForm.prototype.addField = function(name, input)
 	this.body.appendChild(tr);
 	
 	return input;
+};
+
+/**
+ * Function: addField
+ * 
+ * Adds 2 new rows with the name and the input field in two columns (first is eempty) and
+ * returns the given input.
+ */
+mxForm.prototype.addFieldSingleColumn = function (name, input) {
+    var tr = document.createElement('tr');
+    var td = document.createElement('td');
+    mxUtils.write(td, '');
+    tr.appendChild(td);
+    td = document.createElement('td');
+    mxUtils.write(td, name);
+    tr.appendChild(td);
+    this.body.appendChild(tr);
+
+    tr = document.createElement('tr');
+    td = document.createElement('td');
+    mxUtils.write(td, '');
+    tr.appendChild(td);
+    td = document.createElement('td');
+    td.appendChild(input);
+    tr.appendChild(td);
+    this.body.appendChild(tr);
+
+    return input;
 };
 
 /**

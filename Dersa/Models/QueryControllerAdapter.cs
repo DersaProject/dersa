@@ -307,14 +307,13 @@ namespace Dersa.Models
                     if (Params.Contains("Server") && Params["Server"].Value != null)
                     {
                         string connectionString = string.Format("Server={0};Database={1};user={2};password={3}", Params["Server"].Value, Params["Database"].Value, Params["Login"].Value, Params["Password"].Value);
-                        int connectionStringIndex = SqlManager.ConnectionStringIndex(connectionString);
-                        SqlManager ExecM = new SqlManager(connectionStringIndex);
+                        SqlManager ExecM = new SqlManager(connectionString);
                         result = ExecM.ExecMultiPartSql(sql);
                     }
                     else if (Params.Contains("conn_string") && Params["conn_string"].Value != null)
                     {
-                        int connectionStringIndex = int.Parse(Params["conn_string"].Value.ToString());
-                        SqlManager ExecM = new SqlManager(connectionStringIndex);
+                        string connectionStringAlias = Params["conn_string"].Value.ToString();
+                        SqlManager ExecM = new SqlManager(connectionStringAlias);
                         result = ExecM.ExecMultiPartSql(sql);
                     }
                     else
