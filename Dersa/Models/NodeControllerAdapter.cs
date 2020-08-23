@@ -322,15 +322,29 @@ namespace Dersa.Models
             });
             try
             {
-                if(execRes.connection_strings != null)
-                resultArray.Add(new
+                if (QueryControllerAdapter.GetLocalSqlExecution())
                 {
-                    Name = "conn_string",
-                    Value = execRes.connection_strings,
-                    DisplayValue = "",
-                    ControlType = "combo",
-                    WriteUnchanged = true
-                });
+                    resultArray.Add(new
+                    {
+                        Name = "note",
+                        Value = "local SQL execution",
+                        DisplayValue = "local SQL execution",
+                        ControlType = "text",
+                        ReadOnly = true
+                    });
+                }
+                else
+                {
+                    if (execRes.connection_strings != null)
+                        resultArray.Add(new
+                        {
+                            Name = "conn_string",
+                            Value = execRes.connection_strings,
+                            DisplayValue = "",
+                            ControlType = "combo",
+                            WriteUnchanged = true
+                        });
+                }
             }
             catch { }
             string result = JsonConvert.SerializeObject(resultArray);

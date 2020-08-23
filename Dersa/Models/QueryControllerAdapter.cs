@@ -237,14 +237,15 @@ namespace Dersa.Models
                 return result.ToString();
             return JsonConvert.SerializeObject(result);
         }
-        public static string GetQueryId(string query, object dersaEntity, object objectName, object objectType)
+        public static string GetQueryId(string query, object dersaEntity, object objectName, object objectType, object changerComment)
         {
             var queryStruct = new
             {
                 dersa_entity = dersaEntity,
                 object_name = objectName,
                 object_type = objectType,
-                query_text = query
+                query_text = query,
+                comment = changerComment == null? "executed via local DERSA service" : changerComment
             };
             string UserName = HttpContext.Current.User.Identity.Name;
             if (string.IsNullOrEmpty(UserName))
@@ -275,12 +276,13 @@ namespace Dersa.Models
                 {
                     return exc.Message;
                 }
+                object dersaEntity = Params["entity_id"]?.Value;
+                object objectName = Params["object_name"]?.Value;
+                object objectType = Params["object_type"]?.Value;
+                object changerComment = Params["comment"]?.Value;
                 if (execSqlLocal)
                 {
-                    object dersaEntity = Params["entity_id"]?.Value;
-                    object objectName = Params["object_name"]?.Value;
-                    object objectType = Params["object_type"]?.Value;
-                    string queryId = GetQueryId(sql, dersaEntity, objectName, objectType);
+                    string queryId = GetQueryId(sql, dersaEntity, objectName, objectType, changerComment);
                     IParameterCollection UserParams = new ParameterCollection();
                     UserParams.Add("@login", userName);
                     UserParams.Add("@password", DersaUtil.GetPassword(userName));
@@ -314,6 +316,24 @@ namespace Dersa.Models
                     {
                         string connectionStringAlias = Params["conn_string"].Value.ToString();
                         SqlManager ExecM = new SqlManager(connectionStringAlias);
+                        if (dersaEntity != null)
+                        {
+                            try
+                            {
+                                IParameterCollection preExecParams = new DIOS.Common.ParameterCollection();
+                                preExecParams.Add("dersa_entity", dersaEntity);
+                                preExecParams.Add("changer", userName);
+                                preExecParams.Add("object_name", objectName);
+                                preExecParams.Add("object_type", objectType);
+                                preExecParams.Add("new_ddl", sql);
+                                preExecParams.Add("changer_comment", changerComment);
+                                ExecM.ExecuteIntMethod("QUERY_AUDIT", "OnQuery", preExecParams);
+                            }
+                            catch(Exception exc)
+                            {
+                                Logger.LogStatic(exc.Message);
+                            }
+                        }
                         result = ExecM.ExecMultiPartSql(sql);
                     }
                     else

@@ -148,12 +148,8 @@ function CreateProperties(form, attrs, url, ActionAfterExec, ClassName, callBack
     // Defines the function to be executed when the
     // OK button is pressed in the dialog
     var okFunction = mxUtils.bind(this, function () {
-        for (var i = 0; i < attrs.length; i++) {
-            if (attrs[i].CheckAttrs) {
-                if(!attrs[i].CheckAttrs(attrs, texts))
-                    return;
-            }
-        }
+        if (form.CheckAttrs && !form.CheckAttrs(attrs, texts))
+                return;
         // Hides the dialog
         form.window.setVisible(false);
         var sendResult = false;
