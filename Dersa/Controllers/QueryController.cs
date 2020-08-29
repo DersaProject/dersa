@@ -15,6 +15,33 @@ namespace Dersa.Controllers
     public class QueryController : Controller
     {
 
+        public void DownloadSavedHtml(string Id, bool doCompress = false, string fileName = "result.html")
+        {
+            try
+            {
+                string content = QueryControllerAdapter.GetString(Id, true);
+                byte[] bts = System.Text.Encoding.Default.GetBytes(content);
+                if (doCompress)
+                    bts = Serializer.CompressZlib(bts, 9);
+                Response.ContentType = "application/force-download";
+                string Header = "Attachment; Filename=" + fileName;
+                Response.AppendHeader("Content-Disposition", Header);
+                //var SW = new System.IO.StreamWriter(Response.OutputStream, System.Text.Encoding.Default);
+                //SW.Write(bts);
+                //SW.Flush();
+                //SW.Close();
+                Response.OutputStream.Write(bts, 0, bts.Length);
+                Response.End();
+            }
+            catch (Exception exc)
+            {
+                Response.OutputStream.Flush();
+                Response.OutputStream.Close();
+                Response.ContentType = "TEXT/HTML";
+                Response.ClearHeaders();
+                Response.Write(exc.Message);
+            }
+        }
         public void DownloadContent(string urlId, string fileName="result.html") 
         {
             try

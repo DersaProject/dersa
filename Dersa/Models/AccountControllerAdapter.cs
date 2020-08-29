@@ -26,6 +26,20 @@ namespace Dersa.Models
     }
     public class AccountControllerAdapter
     {
+        public static string ChangePassword(string old_password, string new_password)
+        {
+            string user_name = HttpContext.Current.User.Identity.Name;
+            int userStatus = DersaUtil.GetUserStatus(user_name, old_password);
+            if (userStatus != (int)DersaUserStatus.active)
+                throw new Exception("You can't change password");
+            DersaSqlManager M = new DersaSqlManager();
+            IParameterCollection Params = new ParameterCollection();
+            Params.Add("login", user_name);
+            Params.Add("password", new_password);
+            M.ExecuteIntMethod("DERSA_USER", "SetPassword", Params);
+            return "OK";
+        }
+
         public string Info(string login)
         {
             DersaSqlManager DM = new DersaSqlManager();
@@ -194,12 +208,7 @@ namespace Dersa.Models
             string result = "Unknown user name or password.";
             try
             {
-                IParameterCollection Params = new ParameterCollection();
-                Params.Add("@login", user_name);
-                Params.Add("@password", password);
-                SqlManager M = new DersaAnonimousSqlManager();
-                int checkresult = M.ExecuteIntMethod("DERSA_USER", "CanAuthorize", Params);
-                //int checkresult = M.ExecuteSPWithResult("DERSA_USER$CanAuthorize", false, Params);
+                int checkresult = DersaUtil.GetUserStatus(user_name, password);
                 if (checkresult == (int)DersaUserStatus.active)
                 {
                     IAuthenticationManager authenticationManager = HttpContext.Current.GetOwinContext().Authentication;

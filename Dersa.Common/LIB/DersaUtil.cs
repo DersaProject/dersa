@@ -32,6 +32,15 @@ namespace Dersa.Common
 
     public class DersaUtil
     {
+        public static int GetUserStatus(string user_name, string password)
+        {
+            IParameterCollection Params = new ParameterCollection();
+            Params.Add("@login", user_name);
+            Params.Add("@password", password);
+            SqlManager M = new DersaAnonimousSqlManager();
+            int checkresult = M.ExecuteIntMethod("DERSA_USER", "CanAuthorize", Params);
+            return checkresult;
+        }
         public static string GetActionForParams(string json_params)
         {
             dynamic testObject = JsonConvert.DeserializeObject(json_params);

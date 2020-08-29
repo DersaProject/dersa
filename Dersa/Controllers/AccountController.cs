@@ -29,16 +29,30 @@ namespace Dersa.Controllers
 
 		}
 
-	/*  code template for controller Adapter
-		public ActionResult Activate(string token)
+		/*  code template for controller Adapter
+			public ActionResult Activate(string token)
+			{
+				ResponseMaker M = new ResponseMaker(new ReceiveResponseHandler(doTrueResponseForActivate));
+				return M.MakeResponse();
+			}
+			private string doTrueResponseForActivate()
+			{
+			}
+		*/
+
+		[HttpPost]
+		public string ChangePassword(string old_password, string new_password)
 		{
-			ResponseMaker M = new ResponseMaker(new ReceiveResponseHandler(doTrueResponseForActivate));
-			return M.MakeResponse();
+			try
+			{
+				return AccountControllerAdapter.ChangePassword(old_password, new_password);
+			}
+			catch(System.Exception exc)
+			{
+				return exc.Message;
+			}
 		}
-		private string doTrueResponseForActivate()
-		{
-		}
-	*/
+
 		[HttpPost]
 		public ActionResult Auth(string login, string password)
 		{
