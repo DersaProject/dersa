@@ -20,17 +20,35 @@ namespace Dersa.Controllers
             try
             {
                 string content = QueryControllerAdapter.GetString(Id, true);
-                byte[] bts = System.Text.Encoding.Default.GetBytes(content);
-                if (doCompress)
-                    bts = Serializer.CompressZlib(bts, 9);
                 Response.ContentType = "application/force-download";
-                string Header = "Attachment; Filename=" + fileName;
-                Response.AppendHeader("Content-Disposition", Header);
-                //var SW = new System.IO.StreamWriter(Response.OutputStream, System.Text.Encoding.Default);
-                //SW.Write(bts);
-                //SW.Flush();
-                //SW.Close();
-                Response.OutputStream.Write(bts, 0, bts.Length);
+                if (doCompress)
+                {
+                    dynamic fileArray = JsonConvert.DeserializeObject(content);
+//                    Response.ContentType = "application/zip";
+                    Response.AppendHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
+                    using (Ionic.Zip.ZipOutputStream zOut = new Ionic.Zip.ZipOutputStream(Response.OutputStream))
+                    {
+                        foreach (dynamic fileUnit in fileArray)
+                        {
+                            string fName = fileUnit.name;
+                            zOut.PutNextEntry(fName);
+                            string fileBody = fileUnit.data;
+                            byte[] bts = System.Convert.FromBase64String(fileBody);
+                            zOut.Write(bts, 0, bts.Length);
+                        }
+                    }
+                }
+                else
+                {
+                    string Header = "Attachment; Filename=" + fileName;
+                    Response.AppendHeader("Content-Disposition", Header);
+                    using (var SW = new System.IO.StreamWriter(Response.OutputStream, System.Text.Encoding.Default))
+                    {
+                        SW.Write(content);
+                        SW.Flush();
+                        SW.Close();
+                    }
+                }
                 Response.End();
             }
             catch (Exception exc)
