@@ -15,7 +15,7 @@ namespace Dersa.Controllers
     public class QueryController : Controller
     {
 
-        public void DownloadSavedHtml(string Id, bool doCompress = false, string fileName = "result.html")
+        public void DownloadSavedHtml(string Id, bool doCompress = false, string fileName = "result.html", string password = "")
         {
             try
             {
@@ -28,6 +28,8 @@ namespace Dersa.Controllers
                     Response.AppendHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
                     using (Ionic.Zip.ZipOutputStream zOut = new Ionic.Zip.ZipOutputStream(Response.OutputStream))
                     {
+                        if (password != "")
+                            zOut.Password = password;
                         foreach (dynamic fileUnit in fileArray)
                         {
                             string fName = fileUnit.name;
