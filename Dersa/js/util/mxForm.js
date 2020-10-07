@@ -19,7 +19,8 @@ function mxForm(className, owner)
 	
 	this.table.appendChild(this.body);
 
-	this.window = owner;
+    this.window = owner;
+
 };
 
 mxForm.prototype.window = null;
@@ -95,7 +96,25 @@ mxForm.prototype.addButtons = function(okFunct, cancelFunct)
 mxForm.prototype.addText = function(name, value, type, childFormAttrs, ParentForm, Width)
 {
     var input = document.createElement('input');
-	
+    var owner = this;
+
+    mxEvent.addListener(input, 'keydown', function (event) {
+        if (event.key == "Enter") {
+                if (owner.okClick)
+                    owner.okClick();
+                else
+                    alert('okClick undefined');
+            return;
+        }
+        if (event.key == "Escape") {
+            if (owner.cancelclick)
+                owner.cancelclick();
+            else
+                alert('cancelclick undefined');
+            return;
+        }
+    });
+
     input.setAttribute('type', type || 'text');
     if(Width)
         input.setAttribute('style', 'width:' + Width + "px");
@@ -244,6 +263,7 @@ function CreateProperties(form, attrs, url, ActionAfterExec, ClassName, callBack
 
     form.addButtons(okFunction, cancelFunction);
     form.okClick = okFunction;
+    form.cancelclick = cancelFunction;
     return form.table;
 };
 
