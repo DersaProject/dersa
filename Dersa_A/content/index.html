@@ -344,7 +344,7 @@
 
             editor.addAction('clearDiagram', clearDiag);
 
-            var funct = function (editor) {
+            var fSwitchView = function (editor) {
                 if (sourceInput.checked) {
                     graphNode.style.display = 'none';
                     textNode.style.display = 'inline';
@@ -379,7 +379,7 @@
                 }
             };
 
-            editor.addAction('switchView', funct);
+            editor.addAction('switchView', fSwitchView);
 
             // Defines a new action to switch between
             // XML and graphical display

@@ -18,10 +18,9 @@
             width: 100%;
         }
     </style>
-    <script type="text/javascript">
-        var mxBasePath = '../../';
-    </script>
     <script>
+        var initialNodeId = undefined;
+        var mxBasePath = '../../';
         var appDiagram;
         var keydown_assigned = false;
         function dragDrop(ev) {
@@ -32,6 +31,7 @@
         }
 
     </script>
+    @Html.Raw("<script> initialNodeId = " + ViewBag.initialNodeId.ToString() + "; </script>");
 
 
     <!-- Add icon library -->
@@ -192,7 +192,6 @@ $(document).ready(function () {
     $(window).resize(function () {
         $('#infoboard').animate({ left: +$('#dersa').width() + 75 + "px" }, { queue: false, duration: 200 });
     });
-
 });
 
     </script>

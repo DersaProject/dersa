@@ -14,7 +14,7 @@ namespace Dersa.Controllers
 {
 	public class HomeController : Controller
 	{
-		public ActionResult Index()
+		public ActionResult Index(int node = 0)
 		{
             if (System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
             {
@@ -22,6 +22,7 @@ namespace Dersa.Controllers
                     return RedirectToAction("Login", "Account");
                 string userName = System.Web.HttpContext.Current.User.Identity.Name;
                 ViewBag.Login = userName;
+                ViewBag.initialNodeId = node < 1 ? 0 : node;
                 try
                 {
                     DersaSqlManager DM = new DersaSqlManager();

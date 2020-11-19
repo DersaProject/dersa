@@ -784,6 +784,11 @@ $('#dersa')
 
         "plugins": ["contextmenu", "dnd", "state"]
     })
+    .on("loaded.jstree", function (e, data) {
+        if (initialNodeId) {
+            GoToNode(initialNodeId); initialNodeId = undefined;
+        } //console.log GoToNode
+    })
     .on("changed.jstree", function (e, data) {
         if (data.selected.length) {
             selected_id = data.instance.get_node(data.selected[0]).id;
