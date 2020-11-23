@@ -231,7 +231,9 @@ function CreateProperties(form, attrs, url, ActionAfterExec, ClassName, callBack
                 else if (ActionAfterExec == "exec" || resultAction) {
                     if (actionObject && resultAction && actionObject.arg_name && actionObject.arg) {
                         var f = new Function(actionObject.arg_name, resultAction);
-                        var R = f(actionObject.arg);
+                        var arg = JSON.parse(actionObject.arg);
+                        arg = arg.constructor === Array ? arg : [arg];      //если передали массив - так и оставляем, а если одиночный объект - преобразуем в массив (нужно для передачи более одного аргумента)
+                        var R = f.apply(this, arg);
                         if (ActionAfterExec == "alert")
                             alert(R);
                     }
