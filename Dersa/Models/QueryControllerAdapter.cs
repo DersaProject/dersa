@@ -172,7 +172,7 @@ namespace Dersa.Models
 
         public string GetActionForParams(string json_params)
         {
-            IParameterCollection Params = Util.DeserializeParams(json_params);
+            IParameterCollection Params = Util.ConvertJsonToParameterCollection(json_params); //Util.DeserializeParams(json_params);
             if (Params.Contains("method_name") && Params.Contains("objectid"))
             {
                 object[] extParams = new object[] { json_params };

@@ -88,6 +88,21 @@
     </script>
 
     <div id="tool_box" style="top: 120px; left: 5px; width: 20px; height: 100px; position: absolute;">
+        <script>
+            function OnToolButtonClick(item) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/Query/GetAction?id=' + item + '&MethodName=Exec', false);
+                xhr.send();
+                var code = xhr.responseText;
+                try {
+                    var actionObject = JSON.parse(code);
+                    eval(actionObject.action);
+                }
+                catch (err) {
+                    eval(code);
+                }
+            }
+        </script>
         @{
             DataTable T = null;
             if (ViewBag.ToolBoxData != null)
@@ -97,7 +112,7 @@
         {
             foreach (DataRow item in T.Rows)
             {
-                <button class="btn" onmouseover="$('#toolhint').html('@item["hint"].ToString()'); $('#toolhint').show();" onmouseout="$('#toolhint').hide();" onclick="var xhr=new XMLHttpRequest();xhr.open('GET','/Query/GetAction?id=@item["script_id"].ToString()&MethodName=Exec', false);xhr.send();eval(xhr.responseText);"><i class="fa fa-@item["icon"].ToString()"></i></button>
+                <button class="btn" onmouseover="$('#toolhint').html('@item["hint"].ToString()'); $('#toolhint').show();" onmouseout="$('#toolhint').hide();" onclick="OnToolButtonClick(@item["script_id"].ToString())"><i class="fa fa-@item["icon"].ToString()"></i></button>
             }
         }
         <div id="toolhint" style="background:white;width:80px;display:none"></div>
