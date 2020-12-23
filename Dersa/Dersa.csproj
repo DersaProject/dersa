@@ -210,6 +210,9 @@
     <Compile Include="QueryExecuteService.svc.cs">
       <DependentUpon>QueryExecuteService.svc</DependentUpon>
     </Compile>
+    <Compile Include="SocketHandler.ashx.cs">
+      <DependentUpon>SocketHandler.ashx</DependentUpon>
+    </Compile>
     <Content Include="app_code\Startup.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="Global.asax.cs">
@@ -637,6 +640,7 @@
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\Settings.cshtml" />
     <Content Include="Views\Home\d.cshtml" />
+    <Content Include="SocketHandler.ashx" />
     <None Include="Views\Home\index.cshtml" />
     <Content Include="HelpPage.html" />
     <Content Include="Web.config">
