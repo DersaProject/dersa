@@ -18,9 +18,11 @@ namespace Dersa.Controllers
 		{
             if (System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
             {
-                if (!Dersa.Models.User.Exists(System.Web.HttpContext.Current.User.Identity.Name))
-                    return RedirectToAction("Login", "Account");
                 string userName = System.Web.HttpContext.Current.User.Identity.Name;
+                if (!Dersa.Models.User.Exists(userName))
+                {
+                    return RedirectToAction("Unauthorized");
+                }
                 ViewBag.Login = userName;
                 ViewBag.initialNodeId = node < 1 ? 0 : node;
                 try
@@ -47,6 +49,14 @@ namespace Dersa.Controllers
         {
             return View();
         }
+        public ActionResult Unauthorized()
+        {
+            string userName = System.Web.HttpContext.Current.User.Identity.Name;
+            ViewBag.Title = "сообщение системы авторизации";
+            ViewBag.Message = "”важаемый пользователь " + userName + ", дл€ работы в системе DERSA нужно получить разрешение. ќбратитесь к администраторам системы.";
+            return View();
+        }
+        
         public ActionResult Contact()
         {
             return View();
