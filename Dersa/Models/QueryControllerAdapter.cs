@@ -170,9 +170,9 @@ namespace Dersa.Models
             return JsonConvert.SerializeObject(result);
         }
 
-        public string GetActionForParams(string json_params)
+        public static string GetActionForParams(string json_params)
         {
-            IParameterCollection Params = Util.ConvertJsonToParameterCollection(json_params); //Util.DeserializeParams(json_params);
+            IParameterCollection Params = Util.DeserializeParams(json_params);
             if (Params.Contains("method_name") && Params.Contains("objectid"))
             {
                 object[] extParams = new object[] { json_params };
@@ -192,12 +192,8 @@ namespace Dersa.Models
             return null;
         }
 
-        public string GetAction(string MethodName, int id, string paramString = null)
-        {//AllowExecuteJSMethod
-            string userName = HttpContext.Current.User.Identity.Name;
-            StereotypeBaseE target = StereotypeBaseE.GetSimpleInstance(id);
-            if(!target.AllowExecuteMethod(userName, MethodName))
-                return string.Format("You are not allowed to execute method {0}", MethodName);
+        public static Tuple<ICompiled, MethodInfo> GetMethodInfo(string MethodName, int id, string paramString = null)
+        {
             CachedObjects.CachedEntities[id] = null;
             DersaSqlManager M = new DersaSqlManager();
             System.Data.DataTable t = M.GetEntity(id.ToString());
@@ -220,6 +216,16 @@ namespace Dersa.Models
                 Logger.LogStatic(excMessage);
                 throw new Exception(excMessage);
             }
+            return new Tuple<ICompiled, MethodInfo>(cInst, mi);
+        }
+
+        public static string GetAction(string MethodName, int id, string paramString = null)
+        {//AllowExecuteJSMethod
+            StereotypeBaseE target = StereotypeBaseE.GetSimpleInstance(id);
+            string userName = HttpContext.Current.User.Identity.Name;
+            if (!target.AllowExecuteMethod(userName, MethodName))
+                return string.Format("You are not allowed to execute method {0}", MethodName);
+            Tuple<ICompiled, MethodInfo> MI = GetMethodInfo(MethodName, id, paramString);
             object[] externalParams = new object[0];
             if (paramString != null)
                 externalParams = JsonConvert.DeserializeObject<object[]>(paramString);
@@ -230,7 +236,8 @@ namespace Dersa.Models
                 callParams[i + 1] = externalParams[i];
             }
             //Logger.LogStatic(string.Format("method {0}, params count {1}", MethodName, callParams.Length));
-            object result = mi.Invoke(cInst, new object[] { callParams });
+            object result = MI.Item2.Invoke(MI.Item1, new object[] { callParams });
+
             if (result == null)
                 return null;
             if(result is string)

@@ -15,6 +15,12 @@ using System.Xml;
 
 namespace Dersa.Common
 {
+    public class DersaIO
+    {
+        public Func<string> ReadLine;
+        public Action<string> WriteLine;
+    }
+
     public enum AttributeOwnerType : int { Entity = 0, Relation = 1 }
 
     public class SchemaEntity
@@ -733,6 +739,8 @@ namespace Dersa.Common
                             value = "";
                         if (value != null)
                         {
+                            if (value.ToString() == "" && fi.FieldType != typeof(string))
+                                continue;
                             object ConvertedValue = DIOS.Common.TypeUtil.Convert(value, fi.FieldType);
                             fi.SetValue(res, ConvertedValue);
                         }

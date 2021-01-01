@@ -208,12 +208,12 @@ namespace Dersa.Controllers
 
         public string GetActionForParams(string json_params)
         {
-            return (new QueryControllerAdapter()).GetActionForParams(json_params);
+            return QueryControllerAdapter.GetActionForParams(json_params);
         }
 
         public string GetAction(string MethodName, int id, string paramString = null) 
         {
-            return (new QueryControllerAdapter()).GetAction(MethodName, id, paramString);
+            return QueryControllerAdapter.GetAction(MethodName, id, paramString);
         }
 
         //public string GetQueryId(string query)
