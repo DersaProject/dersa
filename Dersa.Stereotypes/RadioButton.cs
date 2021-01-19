@@ -5,7 +5,7 @@ using Dersa.Interfaces;
 namespace DersaStereotypes
 {
 	[Serializable()]
-	public class RadioButton: FormControl, ICompiledEntity
+	public class RadioButton: StereotypeBaseE, ICompiledEntity
 	{
 		public RadioButton(){}
 
@@ -19,8 +19,8 @@ namespace DersaStereotypes
 			}
 		}
 		public string Value = "";
-		public bool IsDefault;
 		public string Caption = "";
+		public bool IsDefault;
 
 		#region Ìועמהû
 		#endregion

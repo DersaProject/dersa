@@ -5,7 +5,7 @@ using Dersa.Interfaces;
 namespace DersaStereotypes
 {
 	[Serializable()]
-	public class RadioGroup: StereotypeBaseE, ICompiledEntity, IFilterControl
+	public class RadioGroup: StereotypeBaseE, ICompiledEntity
 	{
 		public RadioGroup(){}
 
@@ -34,6 +34,12 @@ namespace DersaStereotypes
 		#endregion
 
 		#region Ìועמהû
+		#region GenerateCS
+		public string GenerateCS()
+		{
+return "";
+		}
+		#endregion
 		#endregion
 	}
 }

@@ -19,28 +19,38 @@ namespace DersaStereotypes
 			}
 		}
 		public System.String Visibility = "public";
-		public System.String Description = "";
 		public System.String Return = "";
-		public System.String Source = "SQL";
-		public System.String PrefixDelimiter = "$";
 		public System.String CallingServer = "";
 		public System.Boolean MakePrefix = true;
+		public System.String PrefixDelimiter = "$";
 		public System.String SQL = "";
-		public System.String Params = "()";
+		public System.String BeforeSQL = "";
+		public System.String AfterSQL = "";
+		public System.String Source = "SQL";
+		public System.String Description = "";
 
 		#region Ìועמהû
-		#region IsCompact
-		public bool IsCompact()
+		#region GetText
+		public string GetText(bool ForDeclaration)
 		{
-	Regex regEx = new Regex("(PROCEDURE|FUNCTION)[\\s\\S]*?[\\s)][AI]S",  RegexOptions.Singleline);  //(PROCEDURE|FUNCTION) .*? [AI]S
-				MatchCollection Matches = regEx.Matches(this.SQL);
-				return Matches.Count < 1;
-		}
-		#endregion
-		#region sqlGenerate
-		public object sqlGenerate()
-		{
-return Generate(null);
+string sqlText = this.SQL;
+			if(this.IsCompact())
+				sqlText = "FUNCTION " + this.Name + sqlText;
+			if(ForDeclaration)
+			{
+				string procType = "PROCEDURE";
+				if(!sqlText.Replace(" ","").Contains("PROCEDURE"+this.Name))
+			    		procType = "FUNCTION";
+				Regex regEx = new Regex("(" + procType + ".*?)[\\s)][AI]S\\s.*",  RegexOptions.Singleline);
+				string result = regEx.Replace(sqlText, "$1;");
+				sqlText = result;
+				if(!string.IsNullOrEmpty(this.AfterSQL))
+					sqlText += "\r\n  " + this.AfterSQL;
+			}
+			sqlText = "  " + this.Description.Trim() + "\r\n  " + sqlText;
+			
+			return sqlText;
+			
 		}
 		#endregion
 		#region GetSqlName
@@ -68,6 +78,20 @@ if (MakePrefix)
 			{
 				return this.Name;
 			}
+		}
+		#endregion
+		#region sqlGenerate
+		public object sqlGenerate()
+		{
+return Generate(null);
+		}
+		#endregion
+		#region IsCompact
+		public bool IsCompact()
+		{
+	Regex regEx = new Regex("(PROCEDURE|FUNCTION)[\\s\\S]*?[\\s)][AI]S",  RegexOptions.Singleline);  //(PROCEDURE|FUNCTION) .*? [AI]S
+				MatchCollection Matches = regEx.Matches(this.SQL);
+				return Matches.Count < 1;
 		}
 		#endregion
 		#region Generate
@@ -103,29 +127,6 @@ if (owner == null)
 				object_name = sqlName,
 				object_type = "FUNCTION"
 			};
-		}
-		#endregion
-		#region GetText
-		public string GetText(bool ForDeclaration)
-		{
-string sqlText = this.SQL;
-			if(this.IsCompact())
-				sqlText = "FUNCTION " + this.Name + sqlText;
-			if(ForDeclaration)
-			{
-				string procType = "PROCEDURE";
-				if(!sqlText.Replace(" ","").Contains("PROCEDURE"+this.Name))
-			    		procType = "FUNCTION";
-				Regex regEx = new Regex("(" + procType + ".*?)[\\s)][AI]S\\s.*",  RegexOptions.Singleline);
-				string result = regEx.Replace(sqlText, "$1;");
-				return result;
-			}
-			else
-			{
-				sqlText = this.Description.Trim() + "\r\n" + sqlText;
-			}
-			return sqlText;
-			
 		}
 		#endregion
 		#endregion

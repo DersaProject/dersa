@@ -25,15 +25,18 @@ namespace DersaStereotypes
 		public string GetSetting(string settingName)
 		{
 System.Collections.IList children = this.Children;
-for (int i = 0; i < children.Count; i++)
-{
-	ICompiledEntity obj = (ICompiledEntity)children[i];
-	if ((obj is Const)&&(obj.Name == settingName))
-	{
-		return ((Const)obj).Value;
-	}
-}
-return children.Count.ToString();
+			for (int i = 0; i < children.Count; i++)
+			{
+				ICompiledEntity obj = (ICompiledEntity)children[i];
+				if ((obj is Const)&&(obj.Name == settingName))
+				{
+					if(!string.IsNullOrEmpty(((Const)obj).Value))
+						return ((Const)obj).Value;
+					else
+						return ((Const)obj).TextValue;
+				}
+			}
+			return children.Count.ToString();
 		}
 		#endregion
 		#endregion
