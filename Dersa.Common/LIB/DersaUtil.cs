@@ -18,6 +18,7 @@ namespace Dersa.Common
     public class DersaIO
     {
         public Func<string> ReadLine;
+        public Func<string> ReadLineVirtually;
         public Action<string> WriteLine;
     }
 
@@ -355,6 +356,18 @@ namespace Dersa.Common
             // Create a client that is configured with this address and binding.
             WordGeneratorService.ObjectWcfServiceClient wgsClient = new WordGeneratorService.ObjectWcfServiceClient(binding, address);
             return wgsClient.GenerateWordFile(json_table, file_name);
+        }
+        public static byte[] GenerateWordFileFromBytes(string json_table, string file_name, byte[] template, string serviceUrl)
+        {
+            BasicHttpBinding binding = new BasicHttpBinding();
+            binding.MaxReceivedMessageSize = 2147483647;
+            //Specify the address to be used for the client.
+            EndpointAddress address =
+               new EndpointAddress(serviceUrl);
+
+            // Create a client that is configured with this address and binding.
+            WordGeneratorService.ObjectWcfServiceClient wgsClient = new WordGeneratorService.ObjectWcfServiceClient(binding, address);
+            return wgsClient.GenerateWordFileFromBytes(json_table, file_name, template);
         }
         public static string ObjectList(string class_name, string json_params, string order, int limit, int offset, out int rowcount)
         {
