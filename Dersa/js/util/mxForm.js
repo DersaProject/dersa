@@ -146,7 +146,13 @@ function CreateProperties(form, attrs, url, ActionAfterExec, ClassName, callBack
     var texts = [];
     for (var i = 0; i < attrs.length; i++) {
         var fControl = null;
-        if (attrs[i].ControlType == "textarea")
+        if (attrs[i].ControlType == "custom_button") {
+            var prev_i = i - 1;
+            fControl = texts[i] = form.addButton(attrs[i], (text) => {
+                texts[prev_i].value = text;
+            });
+        }
+        else if (attrs[i].ControlType == "textarea")
             fControl = texts[i] = form.addTextarea(attrs[i]);
         else if (attrs[i].ControlType == "combo") {
             var items = new Array();
@@ -175,6 +181,8 @@ function CreateProperties(form, attrs, url, ActionAfterExec, ClassName, callBack
         var results = [];
         var j = 0;
         for (var i = 0; i < attrs.length; i++) {
+            if (attrs[i].Skip)
+                continue;
             var iValue = attrs[i].Value;
             if (iValue == null)
                 iValue = "";
@@ -311,6 +319,32 @@ mxForm.prototype.addCheckbox = function(name, value)
 };
 
 /**
+ * Function: addButton
+ * 
+ * Adds a button for the given name and click handler and returns the button.
+ */
+mxForm.prototype.addButton = function (elem, clickHandler) {
+    var input = document.createElement('input');
+
+    input.setAttribute('type', 'file');
+    //input.setAttribute('style', 'width:' + elem.Width + "px");
+    input.setAttribute('style', 'width:200px');
+    input.onchange = e => {
+        var file = e.target.files[0];
+        var reader = new FileReader();
+        reader.readAsText(file, 'UTF-8');
+        reader.onload = readerEvent => {
+            var content = readerEvent.target.result; // this is the content!
+            clickHandler(content);
+        }
+    }
+    //input.addEventListener('click', clickHandler);
+    var caption = elem.Name;
+    //input.value = caption;
+    return this.addField('', input);
+};
+
+/**
  * Function: addTextarea
  * 
  * Adds a textarea for the given name and value and returns the textarea.
@@ -332,7 +366,25 @@ mxForm.prototype.addTextarea = function(elem)
     var caption = elem.Name;
     //if (elem.NotNull)
     //    caption += " *";
-    return this.addField(caption, input);
+    this.addField(caption, input);
+
+    if (!elem.NoButtons) {
+        var file_input = document.createElement('input');
+        file_input.type = 'file';
+        file_input.setAttribute('style', 'width:' + elem.Width + "px");
+        //input.setAttribute('style', 'width:200px');
+        file_input.onchange = e => {
+            var file = e.target.files[0];
+            var reader = new FileReader();
+            reader.readAsText(file, 'windows-1251');
+            reader.onload = readerEvent => {
+                input.value = readerEvent.target.result; // this is the content!
+            }
+        }
+        this.addField('', file_input);
+    }
+
+    return input;
 };
 
 /**
