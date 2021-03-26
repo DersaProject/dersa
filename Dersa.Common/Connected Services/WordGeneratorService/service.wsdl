@@ -90,6 +90,12 @@
   <wsdl:message name="IObjectWcfService_GenerateWordFile_OutputMessage">
     <wsdl:part name="parameters" element="tns:GenerateWordFileResponse" />
   </wsdl:message>
+  <wsdl:message name="IObjectWcfService_GenerateWordFileFromBytes_InputMessage">
+    <wsdl:part name="parameters" element="tns:GenerateWordFileFromBytes" />
+  </wsdl:message>
+  <wsdl:message name="IObjectWcfService_GenerateWordFileFromBytes_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GenerateWordFileFromBytesResponse" />
+  </wsdl:message>
   <wsdl:portType name="IObjectWcfService">
     <wsdl:operation name="KeyName">
       <wsdl:input wsaw:Action="http://tempuri.org/IObjectWcfService/KeyName" message="tns:IObjectWcfService_KeyName_InputMessage" />
@@ -146,6 +152,10 @@
     <wsdl:operation name="GenerateWordFile">
       <wsdl:input wsaw:Action="http://tempuri.org/IObjectWcfService/GenerateWordFile" message="tns:IObjectWcfService_GenerateWordFile_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IObjectWcfService/GenerateWordFileResponse" message="tns:IObjectWcfService_GenerateWordFile_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GenerateWordFileFromBytes">
+      <wsdl:input wsaw:Action="http://tempuri.org/IObjectWcfService/GenerateWordFileFromBytes" message="tns:IObjectWcfService_GenerateWordFileFromBytes_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IObjectWcfService/GenerateWordFileFromBytesResponse" message="tns:IObjectWcfService_GenerateWordFileFromBytes_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_IObjectWcfService" type="tns:IObjectWcfService">
@@ -269,6 +279,15 @@
     </wsdl:operation>
     <wsdl:operation name="GenerateWordFile">
       <soap:operation soapAction="http://tempuri.org/IObjectWcfService/GenerateWordFile" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GenerateWordFileFromBytes">
+      <soap:operation soapAction="http://tempuri.org/IObjectWcfService/GenerateWordFileFromBytes" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>

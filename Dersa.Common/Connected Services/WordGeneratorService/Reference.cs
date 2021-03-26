@@ -98,6 +98,12 @@ namespace Dersa.Common.WordGeneratorService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IObjectWcfService/GenerateWordFile", ReplyAction="http://tempuri.org/IObjectWcfService/GenerateWordFileResponse")]
         System.Threading.Tasks.Task<byte[]> GenerateWordFileAsync(string json_args, string templateName);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IObjectWcfService/GenerateWordFileFromBytes", ReplyAction="http://tempuri.org/IObjectWcfService/GenerateWordFileFromBytesResponse")]
+        byte[] GenerateWordFileFromBytes(string json_args, string templateName, byte[] template);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IObjectWcfService/GenerateWordFileFromBytes", ReplyAction="http://tempuri.org/IObjectWcfService/GenerateWordFileFromBytesResponse")]
+        System.Threading.Tasks.Task<byte[]> GenerateWordFileFromBytesAsync(string json_args, string templateName, byte[] template);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -237,6 +243,14 @@ namespace Dersa.Common.WordGeneratorService {
         
         public System.Threading.Tasks.Task<byte[]> GenerateWordFileAsync(string json_args, string templateName) {
             return base.Channel.GenerateWordFileAsync(json_args, templateName);
+        }
+        
+        public byte[] GenerateWordFileFromBytes(string json_args, string templateName, byte[] template) {
+            return base.Channel.GenerateWordFileFromBytes(json_args, templateName, template);
+        }
+        
+        public System.Threading.Tasks.Task<byte[]> GenerateWordFileFromBytesAsync(string json_args, string templateName, byte[] template) {
+            return base.Channel.GenerateWordFileFromBytesAsync(json_args, templateName, template);
         }
     }
 }

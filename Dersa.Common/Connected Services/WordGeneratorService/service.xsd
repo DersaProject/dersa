@@ -224,4 +224,20 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:element name="GenerateWordFileFromBytes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="json_args" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="templateName" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="template" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GenerateWordFileFromBytesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="GenerateWordFileFromBytesResult" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
 </xs:schema>
