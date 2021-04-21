@@ -23,6 +23,11 @@ namespace Dersa
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
+            routes.MapRoute(
+                name: "ConfigByPath",
+                url: "Query/{config_folder}/GetAction/{id}/{MethodName}",
+                defaults: new { controller = "Query", action = "GetActionWithConfig", config_folder = UrlParameter.Optional, id = UrlParameter.Optional, MethodName = UrlParameter.Optional }
+            );
         }
     }
 }

@@ -211,11 +211,33 @@ namespace Dersa.Controllers
             return QueryControllerAdapter.GetActionForParams(json_params);
         }
 
-        public string GetAction(string MethodName, int id, string paramString = null) 
+        public string GetAction(string MethodName, int id, string paramString = null, bool redirect = true) 
         {
-            return QueryControllerAdapter.GetAction(MethodName, id, paramString);
+            try
+            {
+                return QueryControllerAdapter.GetAction(MethodName, id, paramString);
+            }
+            catch(Exception exc)
+            {
+                while (exc.InnerException != null)
+                    exc = exc.InnerException;
+                if (redirect && exc is RouteRedirectException)
+                {
+                    string configFolder = (exc as RouteRedirectException).configFolder;
+                    Response.Redirect("/Query/" + configFolder + "/GetAction/" + id.ToString() + "/" + MethodName + "?paramString=" + paramString);
+                    return "redirected";
+                }
+                else
+                    return "alert('" + exc.Message + "');";
+            }
         }
 
+        public string GetActionWithConfig(string config_folder, string MethodName, int id, string paramString = null)
+        {
+            return GetAction(MethodName, id, paramString, false);
+            //return config_folder + "_" + MethodName + "_" + id.ToString();
+            //return Request.Path;
+        }
         //public string GetQueryId(string query)
         //{
         //    return QueryControllerAdapter.GetQueryId(query);

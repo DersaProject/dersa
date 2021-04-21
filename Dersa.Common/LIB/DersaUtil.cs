@@ -15,6 +15,14 @@ using System.Xml;
 
 namespace Dersa.Common
 {
+    public class RouteRedirectException: Exception
+    {
+        public string configFolder;
+        public RouteRedirectException(string _configFolder, string message) : base(message)
+        {
+            configFolder = _configFolder;
+        }
+    }
     public class DersaIO
     {
         public Func<string> ReadLine;
