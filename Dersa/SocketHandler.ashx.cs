@@ -89,8 +89,12 @@ namespace Dersa
                     //    WriteLine = new Action<string>((s) => SendTextToClient(s))
                     //};
                     object scriptResult = MIinner.Item2.Invoke(MIinner.Item1, new object[] { userName, communicationObject });
-                    string responseString = scriptResult is string ? (string)scriptResult : "result of execution " + entityId + " is not a string";
+                    if (scriptResult != null)
+                    {
+                        string responseString = scriptResult is string ? (string)scriptResult : "\n<br>result of execution " + entityId + " is not a string";
 
+                        await SendTextToClient(responseString);
+                    }
                     //object scriptResult = QueryControllerAdapter.GetMethodResult("Exec", int.Parse(entityId), "[0]");
                     //string responseString = scriptResult is string ? (string)scriptResult : "result of execution " + entityId + " is not a string";
                     //string responseString = QueryControllerAdapter.GetActionForParams(JsonConvert.SerializeObject(
