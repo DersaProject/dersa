@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.ServiceModel;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
@@ -12,6 +13,7 @@ using Newtonsoft.Json;
 using System.Reflection;
 using DersaStereotypes;
 using System.Xml;
+using System.Web;
 
 namespace Dersa.Common
 {
@@ -47,6 +49,26 @@ namespace Dersa.Common
 
     public class DersaUtil
     {
+        private static Hashtable hashTable = new Hashtable();
+
+        public static string PutString(string src, string userName = null)
+        {
+            if (userName == null && HttpContext.Current != null)
+                userName = HttpContext.Current.User.Identity.Name;
+            string Id = Guid.NewGuid().ToString();
+            hashTable[userName + Id] = src;
+            return Id;
+        }
+        public static string GetString(string Id, bool viewSource, string userName = null)
+        {
+            if (userName == null && HttpContext.Current != null)
+                userName = HttpContext.Current.User.Identity.Name;
+            string result = hashTable[userName + Id].ToString();
+            if (!viewSource)
+                result = result.Replace("$lt$", "<").Replace("$gt$", ">");
+            hashTable.Remove(userName + Id);
+            return result;
+        }
         public static int GetUserStatus(string user_name, string password)
         {
             IParameterCollection Params = new ParameterCollection();

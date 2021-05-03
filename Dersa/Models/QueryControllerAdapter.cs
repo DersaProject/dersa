@@ -16,8 +16,6 @@ namespace Dersa.Models
 {
     public class QueryControllerAdapter
     {
-        //public static string _query;
-        private static Hashtable hashTable = new Hashtable();
 
         internal static bool GetLocalSqlExecution()
         {
@@ -44,7 +42,7 @@ namespace Dersa.Models
 
         public IParameterCollection GetViewParams(string cshtmlId)
         {
-            string json_params = GetString(cshtmlId, false);
+            string json_params = DersaUtil.GetString(cshtmlId, false);
             IParameterCollection Params = Util.DeserializeParams(json_params);
             if (Params.Contains("cshtml"))
             {
@@ -74,25 +72,6 @@ namespace Dersa.Models
                 }
             }
             return fileName;
-        }
-        public static string PutString(string src)
-        {
-            string userName = "";
-            if(HttpContext.Current != null)
-                userName = HttpContext.Current.User.Identity.Name;
-            string Id = Guid.NewGuid().ToString();
-            hashTable[userName+Id] = src;
-            return Id;
-        }
-        public static string GetString(string Id, bool viewSource, string userName = null)
-        {
-            if (userName == null && HttpContext.Current != null)
-                userName = HttpContext.Current.User.Identity.Name;
-            string result = hashTable[userName+Id].ToString();
-            if(!viewSource)
-                result = result.Replace("$lt$", "<").Replace("$gt$", ">");
-            hashTable.Remove(Id);
-            return result;
         }
         public string GetText(string json_params)
         {
@@ -141,7 +120,7 @@ namespace Dersa.Models
             IParameterCollection Params = Util.DeserializeParams(json_params);
             if (Params.Contains("html"))
             {
-                string Id = PutString(Params["html"].Value.ToString());
+                string Id = DersaUtil.PutString(Params["html"].Value.ToString());
                 var result = new { action = "window.open('Query/GetHtml?Id=" + Id + "','user html', 'width=400,height=400,status=1,menubar=1');" };
                 return JsonConvert.SerializeObject(result);
             }
@@ -261,7 +240,7 @@ namespace Dersa.Models
             string encodedQueryStruct = Cryptor.Encrypt(JsonConvert.SerializeObject(queryStruct), token);
             //_query = encodedQuery;
             //return Guid.NewGuid().ToString();
-            return PutString(encodedQueryStruct);
+            return DersaUtil.PutString(encodedQueryStruct);
         }
 
         public string ExecSql(string json_params)

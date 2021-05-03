@@ -19,7 +19,7 @@ namespace Dersa.Controllers
         {
             try
             {
-                string content = QueryControllerAdapter.GetString(Id, true);
+                string content = DersaUtil.GetString(Id, true);
                 Response.ContentType = "application/force-download";
                 if (doCompress)
                 {
@@ -66,7 +66,7 @@ namespace Dersa.Controllers
         {
             try
             {
-                string url = QueryControllerAdapter.GetString(urlId, true);
+                string url = DersaUtil.GetString(urlId, true);
                 System.Net.HttpWebRequest req = System.Net.HttpWebRequest.CreateHttp(url);
                 req.Method = "GET";
                 req.Timeout = 600000;
@@ -276,7 +276,7 @@ namespace Dersa.Controllers
 
         public string PutCSHtml(string json_params, bool addController = true)
         {
-            string resultId = QueryControllerAdapter.PutString(json_params);
+            string resultId = DersaUtil.PutString(json_params);
             if (addController)
                 resultId = "/Query/GetViewById?cshtmlId=" + resultId;
             return resultId;
@@ -284,17 +284,17 @@ namespace Dersa.Controllers
 
         public string PutHtml(string html)
         {
-            return QueryControllerAdapter.PutString(html);
+            return DersaUtil.PutString(html);
         }
 
         public string PutText(string text)
         {
-            return QueryControllerAdapter.PutString(text);
+            return DersaUtil.PutString(text);
         }
 
         public string GetHtml(string Id, bool viewSource = false)
         {
-            return QueryControllerAdapter.GetString(Id, viewSource);
+            return DersaUtil.GetString(Id, viewSource);
         }
 
         [HttpPost]

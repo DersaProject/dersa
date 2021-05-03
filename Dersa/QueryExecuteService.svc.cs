@@ -23,7 +23,7 @@ namespace Dersa
             string userName = WcfCoreUtil.VerifyUser(token);
             //string userName = Cryptor.Decrypt(token, "DERSA");
 
-            return QueryControllerAdapter.GetString(TextId, false, userName);//._query;
+            return DersaUtil.GetString(TextId, false, userName);//._query;
         }
         public string GetUserToken(string name, string password)
         {
@@ -50,7 +50,7 @@ namespace Dersa
                 }
                 else
                 {
-                    result = QueryControllerAdapter.GetString(entityId, false, userName);
+                    result = DersaUtil.GetString(entityId, false, userName);
                 }
                 return result;
             }
