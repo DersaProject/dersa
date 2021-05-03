@@ -40,15 +40,6 @@ namespace Dersa.Common
             //dbManager.ExecuteMethod("ACTIVITY_LOG$Log", new object[] { query.Replace("'", "''"), methodName});
         }
 
-        static DersaSqlManager()
-        {
-            //string SqlBrandName = WebConfigurationManager.AppSettings["SqlBrand"];
-            //if (SqlBrandName.ToUpper() == "ORACLE")
-                SqlBrand = DIOS.Common.SqlBrand.ORACLE;
-            //else
-            //    SqlBrand = DIOS.Common.SqlBrand.MSSqlServer;
-            //extConfig = new ConfigurationBuilder().Build();
-        }
         public DersaSqlManager(DIOS.Common.SqlBrand sqlBrand):base(sqlBrand)
         {
         }
