@@ -77,7 +77,7 @@ namespace Dersa.Models
             return result;
         }
 
-        public string GetPath(int id, int for_system)
+        public static string GetPath(int id, int for_system)
         {
             DersaSqlManager DM = new DersaSqlManager();
             System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "GetPath", new object[] { id, 1/*for_system*/ });

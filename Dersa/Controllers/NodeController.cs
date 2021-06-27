@@ -21,12 +21,12 @@ namespace Dersa.Controllers
 
         public string GetInsertSubmenu(int id)
         {
-            return (new NodeControllerAdapter()).GetInsertSubmenu(id);
+            return NodeControllerAdapter.GetInsertSubmenu(id);
         }
 
         public int CanDnD(string src, int dst)
         {
-            return (new NodeControllerAdapter()).CanDnD(src, dst);
+            return NodeControllerAdapter.CanDnD(src, dst);
         }
 
         public void DownloadMethodResult(int id, string method_name)
@@ -167,7 +167,7 @@ namespace Dersa.Controllers
 
         public string Restore(int id)
         {
-            return (new NodeControllerAdapter()).Restore(id);
+            return NodeControllerAdapter.Restore(id);
         }
 
         public string Close()
@@ -177,33 +177,33 @@ namespace Dersa.Controllers
 
         public string List(string id)
         {
-            return (new NodeControllerAdapter()).List(id);
+            return NodeControllerAdapter.List(id);
         }
 
         public string Remove(int id, string diagram_id = null, int options = 0)
         {
-            return (new NodeControllerAdapter()).Remove(id, diagram_id, options);
+            return NodeControllerAdapter.Remove(id, diagram_id, options);
         }
 
         public string Rename(string id, string name)
         {
-            return (new NodeControllerAdapter()).Rename(id, name);
+            return NodeControllerAdapter.Rename(id, name);
         }
 
         public string DnD(string src, string dst, int options)
         {
-            return (new NodeControllerAdapter()).DnD(src, dst, options);
+            return NodeControllerAdapter.DnD(src, dst, options);
         }
 
         public string Description(string id, string attr_name)
         {
-            return (new NodeControllerAdapter()).Description(id, attr_name);
+            return NodeControllerAdapter.Description(id, attr_name);
         }
 
         [HttpPost]
         public string SetProperties(string json_params)
         {
-            return (new NodeControllerAdapter()).SetProperties(json_params);
+            return NodeControllerAdapter.SetProperties(json_params);
         }
 
         [HttpPost]
@@ -216,32 +216,32 @@ namespace Dersa.Controllers
 
         public string PropertiesForm(int id)
         {
-            return (new NodeControllerAdapter()).PropertiesForm(id);
+            return NodeControllerAdapter.PropertiesForm(id);
         }
 
         public string PropertyForm(int id, string prop_name, int prop_type)
         {
-            return (new NodeControllerAdapter()).PropertyForm(id, prop_name, prop_type);
+            return NodeControllerAdapter.PropertyForm(id, prop_name, prop_type);
         }
 
         public string MethodsForm(int id)
         {
-            return (new NodeControllerAdapter()).MethodsForm(id);
+            return NodeControllerAdapter.MethodsForm(id);
         }
 
         public string ExecMethodForm(int id, string method_name)
         {
-            return (new NodeControllerAdapter()).ExecMethodForm(id, method_name);
+            return NodeControllerAdapter.ExecMethodForm(id, method_name);
         }
 
         //public string ChildStereotypes(int id)
         //{
-        //    return (new NodeControllerAdapter()).ChildStereotypes(id);
+        //    return NodeControllerAdapter.ChildStereotypes(id);
         //}
 
-        public string Properties(int id)
-        {
-            return (new NodeControllerAdapter()).Properties(id);
-        }
+        //public string Properties(int id)
+        //{
+        //    return NodeControllerAdapter.Properties(id);
+        //}
     }
 }

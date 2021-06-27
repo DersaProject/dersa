@@ -49,7 +49,7 @@ namespace Dersa.Controllers
 
         public string GetPath(int id, int for_system)
         {
-            return (new EntityControllerAdapter()).GetPath(id, for_system);
+            return EntityControllerAdapter.GetPath(id, for_system);
         }
 
         public string Find(string srchval, int root_entity = 0, int entity = 0)

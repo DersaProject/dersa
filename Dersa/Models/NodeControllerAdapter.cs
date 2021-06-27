@@ -9,7 +9,7 @@ using DIOS.Common;
 using DIOS.Common.Interfaces;
 using Newtonsoft.Json;
 using System.Xml;
-using System.Reflection;
+using System.IO;
 using System.Data;
 using DersaStereotypes;
 
@@ -17,7 +17,7 @@ namespace Dersa.Models
 {
     public class NodeControllerAdapter
     {
-        public string GetInsertSubmenu(int id)
+        public static string GetInsertSubmenu(int id)
         {
             DataTable menuLevels = JsonConvert.DeserializeObject<DataTable>(JsonConvert.SerializeObject(
                 new object[] {
@@ -104,7 +104,7 @@ namespace Dersa.Models
             }
         }
 
-        public int CanDnD(string src, int dst)
+        public static int CanDnD(string src, int dst)
         {
             if (src == dst.ToString())
                 return 0;
@@ -141,7 +141,7 @@ namespace Dersa.Models
             }
         }
 
-        public string ExecMethodForm(int id, string method_name)
+        public static string ExecMethodForm(int id, string method_name)
         {
             //DersaSqlManager M = new DersaSqlManager();
             //System.Data.DataTable t = M.GetEntity(id.ToString());
@@ -351,7 +351,7 @@ namespace Dersa.Models
             return result;
         }
 
-        private string GetOnClick(int getResultType, string methodName, int id)
+        private static string GetOnClick(int getResultType, string methodName, int id)
         {
             switch(getResultType)
             {
@@ -376,7 +376,7 @@ namespace Dersa.Models
             return "javascript:alert('!!!*!!!')";
         }
 
-        public string MethodsForm(int id)
+        public static string MethodsForm(int id)
         {
             CachedObjects.ClearCache();
             try
@@ -433,7 +433,7 @@ namespace Dersa.Models
                 return "";
             }
         }
-        public string PropertyForm(int id, string prop_name, int prop_type)
+        public static string PropertyForm(int id, string prop_name, int prop_type)
         {
             //DersaSqlManager DM = new DersaSqlManager();
             string userName = HttpContext.Current.User.Identity.Name;
@@ -468,13 +468,14 @@ namespace Dersa.Models
             string result = JsonConvert.SerializeObject(resObj);
             return result;
         }
-        public string PropertiesForm(int id)
+        public static string PropertiesForm(int id)
         {
             try
             {
-                DersaSqlManager DM = new DersaSqlManager();
                 string userName = HttpContext.Current.User.Identity.Name;
-                System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "GetAttributes", new object[] { id, userName, DersaUtil.GetPassword(userName) });
+                DersaSqlManager DM = new DersaSqlManager();
+                DersaUtil.SaveEntityToFile(id, userName);
+                var T = DM.ExecuteMethod("ENTITY", "GetAttributes", new object[] { id, userName, DersaUtil.GetPassword(userName) });
                 var query =
                     from System.Data.DataRow R in T.Rows
                     select new
@@ -530,7 +531,7 @@ namespace Dersa.Models
             //DM.ExecuteMethod(procName, new object[] { entityId, paramName, paramValue, userName, DersaUtil.GetPassword(userName) });
         }
 
-        public string SetProperties(string json_params)
+        public static string SetProperties(string json_params)
         {
             Dersa.Common.CachedObjects.ClearCache();
             IParameterCollection Params = Util.DeserializeParams(json_params);
@@ -574,22 +575,22 @@ namespace Dersa.Models
             }
             return "";
         }
-        public string Properties(int id)
-        {
-            try
-            {
-                DersaSqlManager DM = new DersaSqlManager();
-                string userName = HttpContext.Current.User.Identity.Name;
-                string result = JsonConvert.SerializeObject(DM.ExecuteMethod("ENTITY", "GetAttributes", new object[] { id, userName, DersaUtil.GetPassword(userName) }));
-                return result;
-            }
-            catch
-            {
-                return "";
-            }
+        //public string Properties(int id)
+        //{
+        //    try
+        //    {
+        //        DersaSqlManager DM = new DersaSqlManager();
+        //        string userName = HttpContext.Current.User.Identity.Name;
+        //        string result = JsonConvert.SerializeObject(DM.ExecuteMethod("ENTITY", "GetAttributes", new object[] { id, userName, DersaUtil.GetPassword(userName) }));
+        //        return result;
+        //    }
+        //    catch
+        //    {
+        //        return "";
+        //    }
 
-        }
-        public string DnD(string src, string dst, int options)
+        //}
+        public static string DnD(string src, string dst, int options)
         {
             //try
             //{
@@ -645,7 +646,7 @@ namespace Dersa.Models
             return "";
         }
 
-        public string Rename(string id, string name)
+        public static string Rename(string id, string name)
         {
             int intId = -1;
             try
@@ -695,7 +696,7 @@ namespace Dersa.Models
             //}
         }
 
-        public string Restore(int id)
+        public static string Restore(int id)
         {
             try
             {
@@ -709,7 +710,7 @@ namespace Dersa.Models
                 return "";
             }
         }
-        public string Remove(int id, string diagram_id, int options)
+        public static string Remove(int id, string diagram_id, int options)
         {
             try
             {
@@ -762,7 +763,7 @@ namespace Dersa.Models
             string result = JsonConvert.SerializeObject(query);
             return result;
         }
-        public string List(string id)
+        public static string List(string id)
         {
             try
             {
@@ -802,7 +803,7 @@ namespace Dersa.Models
                 return "";
             }
         }
-        public string Description(string id, string attr_name)
+        public static string Description(string id, string attr_name)
         {
             try
             {
