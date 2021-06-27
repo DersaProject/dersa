@@ -37,10 +37,20 @@ namespace Dersa
 
         public void ProcessRequest(HttpContext context)
         {
+            DIOS.Common.Logger.LogStatic("socket handler invoked");
             if (context.IsWebSocketRequest)
             {
-                context.AcceptWebSocketRequest(WebSocketRequest);
-                entityId = context.Request["id"];
+                DIOS.Common.Logger.LogStatic("request is of WS type");
+                try
+                {
+                    context.AcceptWebSocketRequest(WebSocketRequest);
+                    entityId = context.Request["id"];
+                    DIOS.Common.Logger.LogStatic($"entity id = {entityId}");
+                }
+                catch(Exception exc)
+                {
+                    DIOS.Common.Logger.LogStatic($"error {exc.Message}");
+                }
             }
         }
 
@@ -54,6 +64,7 @@ namespace Dersa
 
         private async Task WebSocketRequest(AspNetWebSocketContext context)
         {
+            DIOS.Common.Logger.LogStatic("start processing the request");
             lastContext = context;
             string userName = context.User.Identity.Name;
             //Получаем сокет клиента из контекста запроса
