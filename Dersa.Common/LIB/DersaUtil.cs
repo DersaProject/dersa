@@ -52,25 +52,32 @@ namespace Dersa.Common
     {
         private static Hashtable hashTable = new Hashtable();
 
-        public static void SaveEntityToFile(int id, string userName, string attrName = "", string attrValue = "")
-        {
+        public static void SaveEntityToFile(int id, string userName, string attrName = "")
+        {//сохраняем предыдущие значения, если это отдельный атрибут, то сохраняем и значение атрибута отдельно тоже
             DersaSqlManager DM = new DersaSqlManager();
             string path = HttpContext.Current.Server.MapPath("~/GitDir");
+            string fileName = string.Format("{0}\\{1}.json", path, id);
 
-            string fileName = string.Format("{0}\\{1}.json", path, "\\", id);
+            var entInfo = new Dictionary<string, object>();
+            var TEnt = DM.ExecuteMethod("ENTITY", "GetInfo", new object[] { id, userName, DersaUtil.GetPassword(userName) });
+            var entRow = TEnt.Rows[0];
+            foreach (DataColumn C in TEnt.Columns)
+            {
+                entInfo.Add(C.ColumnName, entRow[C]);
+            }
             var TAttrs = DM.ExecuteMethod("ENTITY", "GetFullAttributes", new object[] { id, userName, DersaUtil.GetPassword(userName) });
-            string info = JsonConvert.SerializeObject(TAttrs);
+            entInfo.Add("attributes", TAttrs);
             using (var SW = new System.IO.StreamWriter(fileName))
             {
-                SW.Write(info);
+                SW.Write(JsonConvert.SerializeObject(entInfo));
             }
             if (attrName != "")
             {
-                fileName = string.Format("{0}\\{1}.{2}.txt", path, "\\", id, attrName);
-                info = attrValue;
+                string attrValue = GetAttributeValue(userName, id, attrName, -1);
+                fileName = string.Format("{0}\\{1}.{2}.txt", path, id, attrName);
                 using (var SW = new System.IO.StreamWriter(fileName))
                 {
-                    SW.Write(info);
+                    SW.Write(attrValue);
                 }
             }
             try
@@ -480,7 +487,7 @@ namespace Dersa.Common
 
         public static string SetAttributeValue(DersaSqlManager DM, string userName, AttributeOwnerType ownerType, string entityId, string attrName, int attrType, string attrValue)
         {
-            SaveEntityToFile(int.Parse(entityId), userName, attrName, attrValue);
+            SaveEntityToFile(int.Parse(entityId), userName, attrName);
             IParameterCollection Params = new ParameterCollection();
             string className = "";
             switch (ownerType)
@@ -532,7 +539,7 @@ namespace Dersa.Common
 
         public static string GetAttributeValue(string userName, int entityId, string attrName, int attrType)
         {
-            if(attrName.Contains("()"))
+            if (attrName.Contains("()"))
             {
                 object res = ExecMethodResult(entityId, attrName.Replace("()", ""));
                 if (res == null)
