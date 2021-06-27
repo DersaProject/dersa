@@ -54,24 +54,24 @@ namespace Dersa.Common
 
         public static void SaveEntityToFile(int id, string userName, string attrName = "", string attrValue = "")
         {
-            string info = "";
-            string fileName = "";
             DersaSqlManager DM = new DersaSqlManager();
             string path = HttpContext.Current.Server.MapPath("~/GitDir");
-            if (attrName == "")
-            {
-                fileName = string.Format("{0}\\{1}.json", path, "\\", id);
-                var TAttrs = DM.ExecuteMethod("ENTITY", "GetFullAttributes", new object[] { id, userName, DersaUtil.GetPassword(userName) });
-                info = JsonConvert.SerializeObject(TAttrs);
-            }
-            else 
-            {
-                fileName = string.Format("{0}\\{1}.{2}.txt", path, "\\", id, attrName);
-                info = attrValue;
-            }
+
+            string fileName = string.Format("{0}\\{1}.json", path, "\\", id);
+            var TAttrs = DM.ExecuteMethod("ENTITY", "GetFullAttributes", new object[] { id, userName, DersaUtil.GetPassword(userName) });
+            string info = JsonConvert.SerializeObject(TAttrs);
             using (var SW = new System.IO.StreamWriter(fileName))
             {
                 SW.Write(info);
+            }
+            if (attrName != "")
+            {
+                fileName = string.Format("{0}\\{1}.{2}.txt", path, "\\", id, attrName);
+                info = attrValue;
+                using (var SW = new System.IO.StreamWriter(fileName))
+                {
+                    SW.Write(info);
+                }
             }
             try
             {
@@ -480,6 +480,7 @@ namespace Dersa.Common
 
         public static string SetAttributeValue(DersaSqlManager DM, string userName, AttributeOwnerType ownerType, string entityId, string attrName, int attrType, string attrValue)
         {
+            SaveEntityToFile(int.Parse(entityId), userName, attrName, attrValue);
             IParameterCollection Params = new ParameterCollection();
             string className = "";
             switch (ownerType)
