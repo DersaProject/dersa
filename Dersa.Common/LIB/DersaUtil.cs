@@ -14,6 +14,7 @@ using System.Reflection;
 using DersaStereotypes;
 using System.Xml;
 using System.Web;
+using System.Diagnostics;
 
 namespace Dersa.Common
 {
@@ -50,6 +51,52 @@ namespace Dersa.Common
     public class DersaUtil
     {
         private static Hashtable hashTable = new Hashtable();
+
+        public static void SaveEntityToFile(int id, string userName, string attrName = "", string attrValue = "")
+        {
+            string info = "";
+            string fileName = "";
+            DersaSqlManager DM = new DersaSqlManager();
+            string path = HttpContext.Current.Server.MapPath("~/GitDir");
+            if (attrName == "")
+            {
+                fileName = string.Format("{0}\\{1}.json", path, "\\", id);
+                var TAttrs = DM.ExecuteMethod("ENTITY", "GetFullAttributes", new object[] { id, userName, DersaUtil.GetPassword(userName) });
+                info = JsonConvert.SerializeObject(TAttrs);
+            }
+            else 
+            {
+                fileName = string.Format("{0}\\{1}.{2}.txt", path, "\\", id, attrName);
+                info = attrValue;
+            }
+            using (var SW = new System.IO.StreamWriter(fileName))
+            {
+                SW.Write(info);
+            }
+            try
+            {
+                var startInfo = new System.Diagnostics.ProcessStartInfo();
+                startInfo.FileName = path + "\\save_to_git.bat";
+                startInfo.Arguments = string.Format("{0} {1} {2}", id, userName, attrName);
+                startInfo.UseShellExecute = false;
+                startInfo.RedirectStandardOutput = true;
+                startInfo.RedirectStandardError = true;
+                using (System.Diagnostics.Process process = System.Diagnostics.Process.Start(startInfo))
+                using (System.IO.StreamReader reader = process.StandardOutput)
+                using (System.IO.StreamReader errReader = process.StandardError)
+                {
+                    process.WaitForExit();
+                    //Logger.LogStatic(reader.ReadToEnd());
+                    string execError = errReader.ReadToEnd();
+                    if (!string.IsNullOrEmpty(execError))
+                        Logger.LogStatic(execError);
+                }
+            }
+            catch (Exception exc)
+            {
+                Logger.LogStatic(string.Format("Method DersaUtil.SaveEntityToFile, entity {0}, user {1}, error: {2}", id, userName, exc.Message));
+            }
+        }
 
         public static string PutString(string src, string userName = null)
         {
