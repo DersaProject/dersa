@@ -56,30 +56,39 @@ namespace Dersa.Common
         {//сохраняем предыдущие значения, если это отдельный атрибут, то сохраняем и значение атрибута отдельно тоже
             DersaSqlManager DM = new DersaSqlManager();
             string path = HttpContext.Current.Server.MapPath("~/GitDir");
-            string fileName = string.Format("{0}\\{1}.json", path, id);
+            string fileName = "";
+            string fileText = "";
 
-            var entInfo = new Dictionary<string, object>();
-            var TEnt = DM.ExecuteMethod("ENTITY", "GetInfo", new object[] { id, userName, DersaUtil.GetPassword(userName) });
-            var entRow = TEnt.Rows[0];
-            foreach (DataColumn C in TEnt.Columns)
-            {
-                entInfo.Add(C.ColumnName, entRow[C]);
-            }
-            var TAttrs = DM.ExecuteMethod("ENTITY", "GetFullAttributes", new object[] { id, userName, DersaUtil.GetPassword(userName) });
-            entInfo.Add("attributes", TAttrs);
-            using (var SW = new System.IO.StreamWriter(fileName))
-            {
-                SW.Write(JsonConvert.SerializeObject(entInfo));
-            }
             if (attrName != "")
             {
                 string attrValue = GetAttributeValue(userName, id, attrName, -1);
                 fileName = string.Format("{0}\\{1}.{2}.txt", path, id, attrName);
-                using (var SW = new System.IO.StreamWriter(fileName))
-                {
-                    SW.Write(attrValue);
-                }
+                fileText = attrValue;
             }
+            else
+            {
+                fileName = string.Format("{0}\\{1}.json", path, id);
+                var entInfo = new Dictionary<string, object>();
+                var TEnt = DM.ExecuteMethod("ENTITY", "GetInfo", new object[] { id, userName, DersaUtil.GetPassword(userName) });
+                var entRow = TEnt.Rows[0];
+                foreach (DataColumn C in TEnt.Columns)
+                {
+                    entInfo.Add(C.ColumnName, entRow[C]);
+                }
+                var TAttrs = DM.ExecuteMethod("ENTITY", "GetFullAttributes", new object[] { id, userName, DersaUtil.GetPassword(userName) });
+                entInfo.Add("attributes", TAttrs);
+                fileText = JsonConvert.SerializeObject(entInfo);
+            }
+            using (var SW = new System.IO.StreamWriter(fileName))
+            {
+                SW.Write(fileText);
+            }
+
+        }
+
+        public static void CommitToGit(int id, string userName, string attrName = "")
+        {
+            string path = HttpContext.Current.Server.MapPath("~/GitDir");
             try
             {
                 var startInfo = new System.Diagnostics.ProcessStartInfo();

@@ -66,6 +66,7 @@ namespace Dersa
                 string userName = WcfCoreUtil.VerifyUser(token);
                 //Cryptor.Decrypt(token, "DERSA");
                 DersaUtil.SetAttributeValue(new DersaAnonimousSqlManager(), userName, AttributeOwnerType.Entity, entity_id, attr_name, -1, attr_value);
+                DersaUtil.CommitToGit(int.Parse(entity_id), userName, attr_name);
                 //NodeControllerAdapter.SetTextProperty(int.Parse(entity_id), attr_name, attr_value, userName);
                 return "";
             }

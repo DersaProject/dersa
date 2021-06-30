@@ -573,6 +573,8 @@ namespace Dersa.Models
                     throw;
                 }
             }
+            DersaUtil.CommitToGit(int.Parse(key), HttpContext.Current.User.Identity.Name);
+
             return "";
         }
         //public string Properties(int id)
