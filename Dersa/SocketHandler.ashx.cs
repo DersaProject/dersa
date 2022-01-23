@@ -20,7 +20,7 @@ namespace Dersa
     /// </summary>
     public class SocketHandler : IHttpHandler
     {
-        private int ticker = 0;
+        //private int ticker = 0;
         //private System.Timers.Timer theTimer = new System.Timers.Timer(1000);
         private AspNetWebSocketContext lastContext;
         private string entityId;

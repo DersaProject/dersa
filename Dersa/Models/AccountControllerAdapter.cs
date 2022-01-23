@@ -209,13 +209,15 @@ namespace Dersa.Models
             try
             {
                 int checkresult = DersaUtil.GetUserStatus(user_name, password);
-                if (checkresult == (int)DersaUserStatus.active)
+                if (checkresult == (int)DersaUserStatus.active || checkresult == (int)DersaUserStatus.not_dersauser)
                 {
                     IAuthenticationManager authenticationManager = HttpContext.Current.GetOwinContext().Authentication;
                     authenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
                     var User = new UserProvider(user_name);
                     System.Security.Claims.ClaimsIdentity identity = new System.Security.Claims.ClaimsIdentity(User.Identity, null, "ApplicationCookie", null, null);
                     authenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = false }, identity);
+                    if (checkresult == (int)DersaUserStatus.not_dersauser)
+                        return "user is unknown";
                     return "";
                 }
                 switch (checkresult)

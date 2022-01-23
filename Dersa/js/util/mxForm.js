@@ -293,7 +293,7 @@ function ChildForm(Name, Input, UrlIn, UrlOut, Height, Width, ActionAfterExec, P
     form.Result = Input;
     var Props = CreateProperties(form, formAttrs, UrlOut, ActionAfterExec, "", this.CloseForm, ParentForm);
     var wnd = new mxWindow(Name,
-        Props, 100, +$(window).scrollTop() + 50, Width || 250, Height || 400, false, true);
+        Props, 100, +$(window).scrollTop() + 200, Width || 250, Height || 400, false, true);
     form.window = wnd;
     wnd.setVisible(true);
 }

@@ -38,39 +38,27 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DbManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\gitd\dersa\DIOS\DIOS.Server\common\DbManager.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="DbManager">
+      <HintPath>..\..\gitd\DIOS\DIOS\DIOS.Server\common\DbManager.dll</HintPath>
     </Reference>
-    <Reference Include="Dersa.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Dersa.Interfaces.dll</HintPath>
+    <Reference Include="Dersa.Interfaces">
+      <HintPath>..\..\gitd\DIOS\DIOS\DIOS.Server\common\Dersa.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Dios">
-      <HintPath>..\Dersa\bin\Dios.dll</HintPath>
-    </Reference>
-    <Reference Include="Dios.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dersa\bin\Dios.Common.dll</HintPath>
+    <Reference Include="Dios.Common">
+      <HintPath>..\..\gitd\DIOS\DIOS\DIOS.Server\common\Dios.Common.dll</HintPath>
     </Reference>
     <Reference Include="Dios.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dersa\bin\Dios.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Dios.SqlManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\gitd\dersa\DIOS\DIOS.Server\common\Dios.SqlManager.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Dios.SqlManager">
+      <HintPath>..\..\gitd\DIOS\DIOS\DIOS.Server\common\Dios.SqlManager.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>..\bin\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Configuration">
-      <HintPath>..\..\gitd\dersa\DIOS\DIOS.Server\common\Microsoft.Extensions.Configuration.dll</HintPath>
+      <HintPath>..\..\gitd\DIOS\DIOS\DIOS.Server\common\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.Configuration.Abstractions">
-      <HintPath>..\..\gitd\dersa\DIOS\DIOS.Server\common\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+      <HintPath>..\..\gitd\DIOS\DIOS\DIOS.Server\common\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -86,9 +74,8 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Microsoft ASP.NET\ASP.NET MVC 4\Assemblies\System.Web.Mvc.dll</HintPath>
+    <Reference Include="System.Web.Mvc">
+      <HintPath>..\..\gitd\DIOS\DIOS\DIOS.Server\common\System.Web.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -114,7 +101,6 @@
     <Compile Include="LIB\DersaSqlManager.cs" />
     <Compile Include="LIB\DersaUserStatus.cs" />
     <Compile Include="LIB\DersaEntity.cs" />
-    <Compile Include="LIB\Entity.cs" />
     <Compile Include="LIB\EntityChildrenCollection.cs" />
     <Compile Include="LIB\Relation.cs" />
     <Compile Include="LIB\SqlProperty.cs" />

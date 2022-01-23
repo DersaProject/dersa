@@ -157,14 +157,14 @@ namespace Dersa.Common
             this.childrenInitialized = true;
         }
 
-        public static IObjectCollection List(IParameterCollection Params)
-        {
-            if (Params == null)
-            {
-                Params = new ParameterCollection();
-            }
-            return Entity.GetFactory().List(Params);            
-        }
+        //public static IObjectCollection List(IParameterCollection Params)
+        //{
+        //    if (Params == null)
+        //    {
+        //        Params = new ParameterCollection();
+        //    }
+        //    return Entity.GetFactory().List(Params);            
+        //}
 
         public static List<ICompiledEntity> Range(string[] ids_str, DersaSqlManager M)
         {

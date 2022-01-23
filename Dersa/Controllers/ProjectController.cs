@@ -19,6 +19,10 @@ namespace Dersa.Controllers
     public class ProjectController : Controller
     {
 
+        public ActionResult UserProject(string ProjectName)
+        {
+            return View(ProjectName);
+        }
         public string CreateDir(string name)
         {
             return (new ProjectControllerAdapter()).CreateDir(name);

@@ -24,3 +24,4 @@ Dersa/UpgradeLog.htm
 *.cache
 Dersa/packages/
 Dersa/jqwidgets-vue/
+DersaModules/obj/Debug/

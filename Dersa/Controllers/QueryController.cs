@@ -1,5 +1,5 @@
 using System.Data;
-using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 using Dersa.Models;
 using DIOS.Common;
@@ -8,12 +8,65 @@ using Dersa.Common;
 using Newtonsoft.Json;
 using System.IO;
 using System;
+using System.Web;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web.WebSockets;
+using System.Net.WebSockets;
 
 
 namespace Dersa.Controllers
 {
     public class QueryController : Controller
     {
+        private AspNetWebSocketContext lastContext;
+        public static string SocketMessage = "";
+
+        public void TestSocket(string message)
+        {
+            SocketMessage = message;
+        }
+        public void Socket()
+        {
+            var context = HttpContext;
+            if (context.IsWebSocketRequest)
+            {
+                DIOS.Common.Logger.LogStatic("request is of WS type");
+                try
+                {
+                    context.AcceptWebSocketRequest(WebSocketRequest);
+                }
+                catch (Exception exc)
+                {
+                    DIOS.Common.Logger.LogStatic($"error {exc.Message}");
+                }
+            }
+        }
+
+        private async Task WebSocketRequest(AspNetWebSocketContext context)
+        {
+            DIOS.Common.Logger.LogStatic("start processing the request");
+            lastContext = context;
+            string userName = context.User.Identity.Name;
+            //ѕолучаем сокет клиента из контекста запроса
+            var socket = context.WebSocket;
+            while (true)
+            {
+                if (SocketMessage != "")
+                {
+                    await SendTextToClient(SocketMessage);
+                    SocketMessage = "";
+                }
+                Thread.Sleep(100);
+            }
+        }
+
+        private async Task SendTextToClient(string text)
+        {
+            var socket = lastContext.WebSocket;
+            var sendBuff = new ArraySegment<byte>(Encoding.UTF8.GetBytes(text));
+            socket.SendAsync(sendBuff, WebSocketMessageType.Text, true, CancellationToken.None);
+        }
 
         public void DownloadSavedHtml(string Id, bool doCompress = false, string fileName = "result.html", string password = "")
         {

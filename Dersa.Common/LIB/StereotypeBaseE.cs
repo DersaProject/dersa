@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Dersa.Interfaces;
 using Dersa.Common;
 using System.Data;
@@ -9,6 +10,15 @@ using DIOS.Common.Interfaces;
 
 namespace DersaStereotypes
 {
+    public class CacheableAttribute : Attribute
+    {
+    }
+    public class CallFromUIAttribute : Attribute
+    {
+    }
+    public class LongStringAttribute : Attribute
+    {
+    }
     public class StereotypeBaseE : ICompiledEntity
     {
         public StereotypeBaseE() { }
@@ -35,6 +45,12 @@ namespace DersaStereotypes
         }
 
         protected IDersaEntity _object;
+        protected string _cachedId;
+
+        public void SetCachedId(string cachedId)
+        {
+            this._cachedId = cachedId;
+        }
         public IDersaEntity Object
         {
             get { return _object; }
@@ -44,7 +60,10 @@ namespace DersaStereotypes
         protected System.String _name;
         public virtual System.String Name
         {
-            get { return _name; }
+            get 
+            {
+                return _name; 
+            }
             set { _name = value; }
         }
         #endregion
@@ -66,7 +85,12 @@ namespace DersaStereotypes
                     Dersa.Interfaces.IDersaEntity parent = null;
                     if (_object != null)
                         parent = _object.Parent;
-                    if (parent != null) _parent = parent.GetInstance();
+                    if (parent != null) 
+                        _parent = parent.GetInstance();
+                    else if (this._cachedId != null)
+                    {
+                        _parent = DersaCache.GetParent(this._cachedId);
+                    }
                     return _parent;
                 }
                 else
@@ -84,7 +108,10 @@ namespace DersaStereotypes
             {
                 if (_children == null)
                 {
-                    _children = _object.ChildrenInstance();
+                    if (_object != null)
+                        _children = _object.ChildrenInstance();
+                    else if (_cachedId != null)
+                        _children = DersaCache.GetChildren(_cachedId);
                     return _children;
                 }
                 else
@@ -102,7 +129,10 @@ namespace DersaStereotypes
             {
                 if (_aRelations == null)
                 {
-                    _aRelations = _object.ARelationsInstance();
+                    if (_object != null)
+                        _aRelations = _object.ARelationsInstance();
+                    else
+                        _aRelations = new ArrayList();
                     return _aRelations;
                 }
                 else
@@ -120,7 +150,10 @@ namespace DersaStereotypes
             {
                 if (_bRelations == null)
                 {
-                    _bRelations = _object.BRelationsInstance();
+                    if (_object != null)
+                        _bRelations = _object.BRelationsInstance();
+                    else
+                        _bRelations = new ArrayList();
                     return _bRelations;
                 }
                 else

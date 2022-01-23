@@ -16,7 +16,7 @@ var selectedForCut;
 function InsertNode(data) {
     var inst = $.jstree.reference(data.reference);
     obj = inst.get_node(data.reference);
-    var result = DnD(data.item.label, obj.id, 0);
+    var result = DnD(data.item.stereotype, obj.id, 0);
     var newObjArr = JSON.parse(result);
     var newId = newObjArr[0].id;
     var newIcon = newObjArr[0].icon;
@@ -36,22 +36,23 @@ function InsertNode(data) {
         RefreshNode(newId);  
 }
 
-function AddSubmenu(items, dest) {
-    dest.submenu = {};
-    for (var i = 0; i < items.length; i++) {
-        dest.submenu[i] = {
-            "label": items[i].label,
-            "icon": items[i].icon,
+function AddSubmenu(items, dest, prefix = '') {
+    dest.submenu = [];
+    items.forEach( function(item, i){
+        var subitem = {
+            "label": item.label,
+            "icon": item.icon,
+            "stereotype": prefix + item.label,
             "action": function (data) {
                 InsertNode(data);
             }
         };
-        if (items[i].children && items[i].children.length > 0) {
-            dest.submenu[i].action = null;
-            AddSubmenu(items[i].children, dest.submenu[i]);
+        if (item.children && item.children.length > 0) {
+            subitem.action = null;
+            AddSubmenu(item.children, subitem, prefix);
         }
-
-    }
+        dest.submenu.push(subitem);
+    });
 }
 
 function CanDnD(src, dstNode, data)
@@ -127,7 +128,7 @@ $.jstree.defaults.contextmenu = {
             "refresh": {
                 "separator_before": false,
                 "separator_after": true,
-                "_disabled": o.id < 0 || o.id[0] == "D",//this.check("create_node", data.reference, {}, "last"),
+                "_disabled": o.id < 0 || (o.id.indexOf("_") >= 0 && o.id[0] !== "D" && o.id[0] !== "C"),//this.check("create_node", data.reference, {}, "last"),
                 "label": "Refresh",
                 "action": function (data) {
                     var inst = $.jstree.reference(data.reference),
@@ -138,7 +139,7 @@ $.jstree.defaults.contextmenu = {
             "rename": {
                 "separator_before": false,
                 "separator_after": false,
-                "_disabled": o.text == 'Entities' || o.text == 'Stereotypes',//false, //(this.check("rename_node", data.reference, this.get_parent(data.reference), "")),
+                "_disabled": isNaN(o.id) && o.id[0] !== "D" && o.id[0] !== "C",//o.text == 'Entities' || o.text == 'Stereotypes',//false, //(this.check("rename_node", data.reference, this.get_parent(data.reference), "")),
                 "label": "Rename",
                 "action": function (data) {
                     var inst = $.jstree.reference(data.reference),
@@ -226,7 +227,15 @@ $.jstree.defaults.contextmenu = {
                         "label": "Insert",
                         "action": false,
                         "sumbenu": {}
-                    }
+            },
+            "insertCachedEntity": {
+                        "separator_before": true,
+                        "icon": false,
+                        "separator_after": false,
+                        "label": "Ins Cache",
+                        "action": false,
+                        "sumbenu": {}
+            }
         }
     }
 }
@@ -652,6 +661,20 @@ $('#dersa')
                             var strId = ' ' + inst.get_selected()
                             FindInChildren(o.id);
                         }
+                    },
+                    "find_history": {
+                        "separator_before": false,
+                        "separator_after": false,
+                        "_disabled": false,
+                        "label": "History",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference);
+                            var strId = inst.get_selected();
+                            var defaultUrl = inst.settings.core.data.url;
+                            inst.settings.core.data.url = 'node/history'
+                            inst.refresh_node(strId);
+                            inst.settings.core.data.url = defaultUrl;
+                        }
                     }
 
                 };
@@ -767,9 +790,11 @@ $('#dersa')
                     }
                 };
                 tmp.insertEntity.submenu = {};
+                tmp.insertCachedEntity.submenu = {};
                 if (o.id[0] == "D" || o.text == 'Entities' || o.text == 'Stereotypes' || o.id.split('_').length > 1) {
                     delete tmp.insertEntity;
-                    return tmp;
+                if (o.id[0] == "D" )
+                    delete tmp.insertCachedEntity;
                 }
 
                 var xhr = new XMLHttpRequest();
@@ -777,7 +802,10 @@ $('#dersa')
                 xhr.open('GET', "node/GetInsertSubmenu?" + args, false);
                 xhr.send();
                 var childStereotypes = JSON.parse(xhr.responseText);
-                AddSubmenu(childStereotypes, tmp.insertEntity);
+                if(tmp.insertEntity)
+                	AddSubmenu(childStereotypes, tmp.insertEntity);
+                if(tmp.insertCachedEntity)
+                	AddSubmenu(childStereotypes, tmp.insertCachedEntity, 'CACHE_');
                 return tmp;
             }
         },
@@ -827,7 +855,7 @@ $('#dersa')
                 //
                 //console.log(diaghtml);
                 Editor.execute('showSavedDiagram');
-                //infoControl.innerHTML = GetText(selected_id, "Diagram");
+                userpage0.innerHTML = GetText(selected_id, "Diagram");
             }
         }
     });

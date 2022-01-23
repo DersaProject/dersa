@@ -19,6 +19,11 @@ namespace Dersa
             //    defaults: new { controller = "Project", action = "Index", class_name = UrlParameter.Optional }
             //);
             routes.MapRoute(
+                name: "ProjectByName",
+                url: "Project/UserProject/{ProjectName}",
+                defaults: new { controller = "Project", action = "UserProject", ProjectName = UrlParameter.Optional }
+            );
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }

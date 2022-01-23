@@ -23,13 +23,25 @@ namespace Dersa.Controllers
 
 		}
 
-        public string GetJson(string id)
-        {
+		public string GetJson(string id)
+		{
 			id = id.Replace("D_", "");
-            return DersaUtil.GetDiagramJson(id, HttpContext.User.Identity.Name);
-        }
+			return DersaUtil.GetDiagramJson(id, HttpContext.User.Identity.Name);
+		}
 
-        public string SaveDiagram(string id, string jsonObject)
+		public string GetEntities(string id)
+		{
+			id = id.Replace("D_", "");
+			return DersaUtil.GetDiagramEntities(id, HttpContext.User.Identity.Name);
+		}
+
+		public string GetRelations(string id)
+		{
+			id = id.Replace("D_", "");
+			return DersaUtil.GetDiagramRelations(id, HttpContext.User.Identity.Name);
+		}
+
+		public string SaveDiagram(string id, string jsonObject)
         {
 			return DersaUtil.SaveDiagramFromJson(id, jsonObject);
         }

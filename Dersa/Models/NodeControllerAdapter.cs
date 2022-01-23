@@ -17,7 +17,7 @@ namespace Dersa.Models
 {
     public class NodeControllerAdapter
     {
-        public static string GetInsertSubmenu(int id)
+        public static string GetInsertSubmenu(string id)
         {
             DataTable menuLevels = JsonConvert.DeserializeObject<DataTable>(JsonConvert.SerializeObject(
                 new object[] {
@@ -75,7 +75,19 @@ namespace Dersa.Models
             {
                 DersaSqlManager DM = new DersaSqlManager();
                 string userName = HttpContext.Current.User.Identity.Name;
-                DataTable childStereotypes = DM.ExecuteMethod("ENTITY", "GetChildStereotypes", new object[] { id, userName, DersaUtil.GetPassword(userName) });
+                DataTable childStereotypes = null;
+                if (id.Contains("CACHE_"))
+                {
+                    var classNames = DersaUtil.GetCacheableClasses();
+                    childStereotypes = JsonConvert.DeserializeObject<DataTable>(JsonConvert.SerializeObject(
+                        from string className in classNames
+                        select new{
+                                    name = className,
+                                    icon_path = "icons/Entity.gif"
+                                   }));
+                }
+                else
+                    childStereotypes = DM.ExecuteMethod("ENTITY", "GetChildStereotypes", new object[] { id, userName, DersaUtil.GetPassword(userName) });
                 var result = from DataRow RL in menuLevels.Rows
                              where RL["level"].ToString() == "1" && (childStereotypes.Select("name = '" + RL["name"].ToString() + "'").Length > 0 || (bool)RL["is_submenu"])//аналог exists
                              select
@@ -93,7 +105,8 @@ namespace Dersa.Models
                                             }
                              };
 
-                return JsonConvert.SerializeObject(result);
+                string jsonResult = JsonConvert.SerializeObject(result);
+                return jsonResult;
             }
             catch(Exception exc)
             {
@@ -141,7 +154,7 @@ namespace Dersa.Models
             }
         }
 
-        public static string ExecMethodForm(int id, string method_name)
+        public static string ExecMethodForm(string id, string method_name)
         {
             //DersaSqlManager M = new DersaSqlManager();
             //System.Data.DataTable t = M.GetEntity(id.ToString());
@@ -166,7 +179,15 @@ namespace Dersa.Models
             dynamic execRes = null;
             try
             {
-                execRes = DersaUtil.ExecMethodResult(id, method_name);
+                if (id.Contains("CACHE_"))
+                {
+                    execRes = DersaCache.ExecMethodResult(id, method_name);
+                }
+                else
+                {
+                    int intId = int.Parse(id);
+                    execRes = DersaUtil.ExecMethodResult(intId, method_name);
+                }
                 if (execRes is string)
                 {
                     displayText = (string)execRes;
@@ -351,7 +372,7 @@ namespace Dersa.Models
             return result;
         }
 
-        private static string GetOnClick(int getResultType, string methodName, int id)
+        private static string GetOnClick(int getResultType, string methodName, string id)
         {
             switch(getResultType)
             {
@@ -376,7 +397,7 @@ namespace Dersa.Models
             return "javascript:alert('!!!*!!!')";
         }
 
-        public static string MethodsForm(int id)
+        public static string MethodsForm(string id)
         {
             CachedObjects.ClearCache();
             try
@@ -402,7 +423,11 @@ namespace Dersa.Models
                 //    }
                 //}
 
-                System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "GetMethods", new object[] { id, userName, DersaUtil.GetPassword(userName) });
+                System.Data.DataTable T = null;
+                if (id.Contains("CACHE_"))
+                    T = DersaCache.GetMethods(id);
+                else
+                    T = DM.ExecuteMethod("ENTITY", "GetMethods", new object[] { id, userName, DersaUtil.GetPassword(userName) });
                 int i = 1;
                 var query =
                     from System.Data.DataRow R in T.Rows
@@ -433,26 +458,17 @@ namespace Dersa.Models
                 return "";
             }
         }
-        public static string PropertyForm(int id, string prop_name, int prop_type)
+        public static string PropertyForm(string id, string prop_name, int prop_type)
         {
-            //DersaSqlManager DM = new DersaSqlManager();
             string userName = HttpContext.Current.User.Identity.Name;
-            //System.Data.DataTable T = DM.ExecuteMethod("ENTITY$GetAttribute", new object[] { id, prop_name, userName, DersaUtil.GetPassword(userName) });
-            //if (T.Rows.Count < 1)
-            //    return null;
-            string attrValue = DersaUtil.GetAttributeValue(userName, id, prop_name, prop_type);
-            //var query =
-            //    from System.Data.DataRow R in T.Rows
-            //    select new
-            //    {
-            //        Name = R["Name"],
-            //        Value = prop_type == 4 ? "*****" : R["Value"],
-            //        DisplayValue = prop_type == 4? "*****" : R["Value"],
-            //        ControlType = "textarea",
-            //        Height = 300,
-            //        Width = 300,
-            //        InfoLink = ""
-            //    };
+            string attrValue = "";
+            if (id.Contains("CACHE_"))
+                attrValue = DersaCache.GetAttributeValue(id, prop_name);
+            else
+            {
+                int intId = int.Parse(id);
+                attrValue = DersaUtil.GetAttributeValue(userName, intId, prop_name, prop_type);
+            }
             var resObj = new object[] {
                 new
                 {
@@ -468,14 +484,27 @@ namespace Dersa.Models
             string result = JsonConvert.SerializeObject(resObj);
             return result;
         }
-        public static string PropertiesForm(int id)
+        public static string PropertiesForm(string id)
         {
+            DataTable T = null;
+            string userName = HttpContext.Current.User.Identity.Name;
+            if(id.Contains("CACHE_"))
+            {
+                T = DersaCache.GetAttributes(id);
+            }
             try
             {
-                string userName = HttpContext.Current.User.Identity.Name;
-                DersaSqlManager DM = new DersaSqlManager();
-                DersaUtil.SaveEntityToFile(id, userName);
-                var T = DM.ExecuteMethod("ENTITY", "GetAttributes", new object[] { id, userName, DersaUtil.GetPassword(userName) });
+                if (T == null)
+                {
+                    DersaSqlManager DM = new DersaSqlManager();
+                    try
+                    {
+                        int entityId = int.Parse(id);
+                        DersaUtil.SaveEntityToFile(entityId, userName);
+                    }
+                    catch { }
+                    T = DM.ExecuteMethod("ENTITY", "GetAttributes", new object[] { id, userName, DersaUtil.GetPassword(userName) });
+                }
                 var query =
                     from System.Data.DataRow R in T.Rows
                     select new
@@ -535,7 +564,15 @@ namespace Dersa.Models
         {
             Dersa.Common.CachedObjects.ClearCache();
             IParameterCollection Params = Util.DeserializeParams(json_params);
-            string key = "-1";
+            if (Params.Contains("cached_id"))
+            {
+                string id = Params["cached_id"].Value.ToString();
+                Params.Remove("cached_id");
+                DersaCache.SetAttributes(id, Params);
+                return "";
+            }
+
+                string key = "-1";
             //string procName = "";
             AttributeOwnerType ownerType = AttributeOwnerType.Entity;
             if (Params.Contains("entity"))
@@ -610,6 +647,8 @@ namespace Dersa.Models
 
             if (src.Contains("D_"))//диаграммы
                 return DersaUtil.EntityAddChild(HttpContext.Current.User.Identity.Name, src, dst, options);
+            if (src.Contains("CACHE_"))//временный узел
+                return DersaCache.AddNode(HttpContext.Current.User.Identity.Name, src, dst, options);
             StereotypeBaseE objFrom = null;
             int intSrc = -1;
             try
@@ -650,6 +689,11 @@ namespace Dersa.Models
 
         public static string Rename(string id, string name)
         {
+            if(id.Contains("CACHE_"))
+            {
+                string res = DersaCache.Rename(id, name);
+                return res;
+            }
             int intId = -1;
             try
             {
@@ -712,12 +756,18 @@ namespace Dersa.Models
                 return "";
             }
         }
-        public static string Remove(int id, string diagram_id, int options)
+        public static string Remove(string id, string diagram_id, int options)
         {
+            if(id.Contains("CACHE_"))
+            {
+                DersaCache.Remove(id);
+                return "cached object dropped";
+            }
             try
             {
+                int intId = int.Parse(id);
                 string userName = HttpContext.Current.User.Identity.Name;
-                StereotypeBaseE objToRemove = StereotypeBaseE.GetSimpleInstance(id);
+                StereotypeBaseE objToRemove = StereotypeBaseE.GetSimpleInstance(intId);
                 if(objToRemove != null)
                 {
                     if (!objToRemove.AllowDrop())
@@ -725,9 +775,9 @@ namespace Dersa.Models
                     objToRemove.Drop(userName, options);
                     return "object dropped";
                 }
-                if(id < 0)
+                if(intId < 0)
                 {
-                    StereotypeBaseE.DropRelation(id, userName);
+                    StereotypeBaseE.DropRelation(intId, userName);
                     return "relation dropped";
                 }
                 if (diagram_id != null)
@@ -742,34 +792,40 @@ namespace Dersa.Models
                 return "";
             }
         }
-        public static string ListNodes(string id)
-        {
-            IParameterCollection Params = new ParameterCollection();
-            if(id == "#")
-            {
-                Params.Add("parent", null);
-            }
-            else
-            {
-                Params.Add("parent", id);
-            }
-            IObjectCollection col = DersaEntity.List(Params);
-            var query = from Dersa.Common.Entity ent in col
-                        select new
-                        {
-                            id = ent.entity,
-                            text = ent.name,
-                            ent.icon,
-                            children = true
-                        };
-            string result = JsonConvert.SerializeObject(query);
-            return result;
-        }
+        //public static string ListNodes(string id)
+        //{
+        //    IParameterCollection Params = new ParameterCollection();
+        //    if(id == "#")
+        //    {
+        //        Params.Add("parent", null);
+        //    }
+        //    else
+        //    {
+        //        Params.Add("parent", id);
+        //    }
+        //    IObjectCollection col = DersaEntity.List(Params);
+        //    var query = from Dersa.Common.Entity ent in col
+        //                select new
+        //                {
+        //                    id = ent.entity,
+        //                    text = ent.name,
+        //                    ent.icon,
+        //                    children = true
+        //                };
+        //    string result = JsonConvert.SerializeObject(query);
+        //    return result;
+        //}
         public static string List(string id)
         {
             try
             {
-                DersaSqlManager DM = new DersaSqlManager();
+                SqlManager DM = new DersaSqlManager();
+                string listClass = "ENTITY";
+                if (id.Contains("ATTR_"))
+                {
+                    DM = new DersaLogSqlManager();
+                    listClass = "ATTRIBUTE_LOG";
+                }
                 string userName = HttpContext.Current.User.Identity.Name;
                 object parent = null;
                 if (!id.Contains("#"))
@@ -783,9 +839,11 @@ namespace Dersa.Models
                 }
                 else
                 {
-                    DataTable T = DM.ExecuteMethod("ENTITY", "JTreeList", new object[] { parent, userName, DersaUtil.GetPassword(userName) });
-                    var query = from DataRow R in T.Rows
-                                //orderby R["rank"], R["erank"], R["id"]
+                    DataTable T = DM.ExecuteMethod(listClass, "JTreeList", new object[] { parent, userName, DersaUtil.GetPassword(userName) });
+                    var cachedRows = DersaCache.List(userName, id); //new DataRow[] { };
+                    var query = (
+                                from DataRow R in T.Rows
+                                    //orderby R["rank"], R["erank"], R["id"]
                                 select new
                                 {
                                     id = R["id"],
@@ -795,23 +853,70 @@ namespace Dersa.Models
                                     rank = R["rank"],
                                     erank = R["erank"],
                                     children = Convert.ToBoolean(R["children"])
-                                };
+                                }).Union(
+                                from dynamic R in cachedRows
+                                    //orderby R["rank"], R["erank"], R["id"]
+                                select new
+                                {
+                                    id = R.id,
+                                    text = R.text,
+                                    icon = R.icon,
+                                    data = R.data,
+                                    rank = R.rank,
+                                    erank = R.erank,
+                                    children = true
+                                });
                     result = JsonConvert.SerializeObject(query);
                 }
                 return result;
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 return "";
+            }
+        }
+        public static string History(string id)
+        {
+            try
+            {
+                DersaSqlManager DM = new DersaSqlManager();
+                string userName = HttpContext.Current.User.Identity.Name;
+                object parent = null;
+                if (!id.Contains("#"))
+                    parent = id;
+                DataTable T = DM.ExecuteMethod("ENTITY", "HistoryList", new object[] { parent, userName, DersaUtil.GetPassword(userName) });
+                var query = from DataRow R in T.Rows
+                                //orderby R["rank"], R["erank"], R["id"]
+                            select new
+                            {
+                                id = R["id"],
+                                text = R["text"],
+                                icon = R["icon"],
+                                data = R["data"],
+                                rank = R["rank"],
+                                erank = R["erank"],
+                                children = Convert.ToBoolean(R["children"])
+                            };
+                return JsonConvert.SerializeObject(query);
+            }
+            catch (Exception exc)
+            {
+                return exc.Message;
             }
         }
         public static string Description(string id, string attr_name)
         {
             try
             {
-                DersaSqlManager DM = new DersaSqlManager();
+                SqlManager DM = new DersaSqlManager();
+                string listClass = "ENTITY";
+                if (id.Contains("HIST_"))
+                {
+                    DM = new DersaLogSqlManager();
+                    listClass = "ATTRIBUTE_LOG";
+                }
                 string userName = HttpContext.Current.User.Identity.Name;
-                System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "GetDescription", new object[] { id, attr_name, userName, DersaUtil.GetPassword(userName) });
+                System.Data.DataTable T = DM.ExecuteMethod(listClass, "GetDescription", new object[] { id, attr_name, userName, DersaUtil.GetPassword(userName) });
                 string result = "";
                 if (T.Rows.Count > 0)
                     result = T.Rows[0][0].ToString();

@@ -57,12 +57,15 @@ namespace Dersa.Controllers
 		public ActionResult Auth(string login, string password)
 		{
             string authResult = AccountControllerAdapter.AuthorizeUser(login, password);
-            if (authResult == "")
-                return RedirectToAction("Index", "Home");
-            else
-            {
-                return Login(0, login, authResult);
-            }
+			if (authResult == "")
+			{
+				DIOS.Common.Logger.LogStatic("authentication succeeded");
+				return RedirectToAction("Index", "Home");
+			}
+			else
+			{
+				return Login(0, login, authResult);
+			}
 
 		}
 

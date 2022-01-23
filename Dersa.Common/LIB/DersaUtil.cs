@@ -8,7 +8,6 @@ using System.Text;
 using Dersa.Interfaces;
 using DIOS.Common;
 using DIOS.Common.Interfaces;
-using DIOS.ObjectLib;
 using Newtonsoft.Json;
 using System.Reflection;
 using DersaStereotypes;
@@ -47,11 +46,333 @@ namespace Dersa.Common
         public string Name;
         public string Value;
     }
+    public class NodeData
+    {
+        public string id;
+        public string text;
+        public string icon;
+        public string data;
+        public int rank;
+        public int erank;
+        public bool children;
+
+    }
+    public class DersaCache
+    {
+        private static int key = 0;
+        private static Hashtable nodesTable = new Hashtable();
+        private static Hashtable keysTable = new Hashtable();
+
+        public static string GetAttributeValue(string id, string attrName)
+        {
+            Tuple<string, string> key = keysTable[id] as Tuple<string, string>;
+            if (key != null)
+            {
+                var obj = nodesTable[key] as SchemaEntity;
+                var query = from attr in obj.schemaAttributes
+                            where attr.Name == attrName
+                            select attr.Value;
+                return query.ToArray<string>()[0];
+            }
+            return "";
+        }
+        public static IList GetChildren(string id)
+        {
+            Tuple<string, string> key = keysTable[id] as Tuple<string, string>;
+            if (key != null)
+            {
+                ArrayList list = new ArrayList();
+                var query = from Tuple<string, string> k in nodesTable.Keys
+                            where k.Item2 == id
+                            select k.Item1;
+                foreach(string childId in query)
+                {
+                    list.Add(GetInstance(childId));
+                }
+                return list;
+            }
+            return null;
+        }
+        public static StereotypeBaseE GetParent(string id)
+        {
+            Tuple<string, string> key = keysTable[id] as Tuple<string, string>;
+            if (key != null)
+            {
+                return GetInstance(key.Item2);
+            }
+            return null;
+        }
+
+        public static StereotypeBaseE GetInstance(string id)
+        {
+            Tuple<string, string> key = keysTable[id] as Tuple<string, string>;
+            if (key != null)
+            {
+                var obj = nodesTable[key] as SchemaEntity;
+                Type nodeType = DersaUtil.GetDynamicType("DersaStereotypes." + obj.StereotypeName);
+                if (nodeType != null)
+                {
+                    StereotypeBaseE inst = Activator.CreateInstance(nodeType, new object[] { }) as StereotypeBaseE;
+                    inst.SetCachedId(id);
+                    inst.Name = obj.Name;
+                    for (int i = 0; i < obj.schemaAttributes.Length; i++)
+                    {
+                        var fi = nodeType.GetField(obj.schemaAttributes[i].Name);
+                        object value = obj.schemaAttributes[i].Value;
+                        if (value != null)
+                        {
+                            if (value.ToString() == "" && fi.FieldType != typeof(string))
+                                continue;
+                            object ConvertedValue = DIOS.Common.TypeUtil.Convert(value, fi.FieldType);
+                            fi.SetValue(inst, ConvertedValue);
+                        }
+                    }
+                    return inst;
+                }
+            }
+            return null;
+        }
+        public static dynamic ExecMethodResult(string id, string method_name)
+        {
+            StereotypeBaseE inst = DersaCache.GetInstance(id);
+            if (inst != null)
+            {
+                Type nodeType = inst.GetType();
+                MethodInfo mi = nodeType.GetMethod(method_name);
+                if (mi == null)
+                {
+                    string excMessage = "Method " + method_name + " not found ";
+                    Logger.LogStatic(excMessage);
+                    throw new Exception(excMessage);
+                }
+                return mi.Invoke(inst, new object[] { });
+            }
+            return null;
+        }
+
+        public static void SetAttributes(string id, IParameterCollection Params)
+        {
+            Tuple<string, string> key = keysTable[id] as Tuple<string, string>;
+            if (key != null)
+            {
+                var obj = nodesTable[key] as SchemaEntity;
+                var query = (from SchemaAttribute attr in obj.schemaAttributes
+                             select new SchemaAttribute
+                             {
+                                 Name = attr.Name,
+                                 Value = Params[attr.Name] == null ? attr.Value : Params[attr.Name].Value.ToString()
+                             });
+                obj.schemaAttributes = query.ToArray();
+            }
+
+        }
+        public static DataTable GetAttributes(string id)
+        {
+            var T = new DataTable();
+            T.Columns.Add("Name", typeof(string));
+            T.Columns.Add("Value", typeof(string));
+            T.Columns.Add("Type", typeof(int));
+            T.Columns.Add("ReadOnly", typeof(bool));
+            T.Columns.Add("WriteUnchanged", typeof(bool));
+
+            Tuple<string, string> key = keysTable[id] as Tuple<string, string>;
+            if (key != null)
+            {
+                var obj = nodesTable[key] as SchemaEntity;
+                Type nodeType = DersaUtil.GetDynamicType("DersaStereotypes." + obj.StereotypeName);
+                if (nodeType != null)
+                {
+                    DataRow R = T.NewRow();
+                    R["Name"] = "cached_id";
+                    R["Value"] = id;
+                    R["Type"] = 1;
+                    R["ReadOnly"] = true;
+                    R["WriteUnchanged"] = true;
+                    T.Rows.Add(R);
+                    R = T.NewRow();
+                    R["Name"] = "stereotype";
+                    R["Value"] = obj.StereotypeName;
+                    R["Type"] = 1;
+                    R["ReadOnly"] = true;
+                    R["WriteUnchanged"] = false;
+                    T.Rows.Add(R);
+                    R = T.NewRow();
+                    R["Name"] = "name";
+                    R["Value"] = obj.Name;
+                    R["Type"] = 1;
+                    R["ReadOnly"] = true;
+                    R["WriteUnchanged"] = false;
+                    T.Rows.Add(R);
+
+                    var fis = nodeType.GetFields();
+                    var attrs = from fi in fis
+                                from objAttr in obj.schemaAttributes
+                                where fi.Name == objAttr.Name
+                                select new Tuple<string, string, bool>(fi.Name, objAttr.Value, fi.GetCustomAttribute(typeof(LongStringAttribute), false) != null);
+                    foreach (Tuple<string, string, bool> attr in attrs)
+                    {
+                        R = T.NewRow();
+                        R["Name"] = attr.Item1;
+                        R["Value"] = attr.Item2;
+                        R["Type"] = attr.Item3 ? 2 : 1;
+                        R["ReadOnly"] = false;
+                        R["WriteUnchanged"] = false;
+                        T.Rows.Add(R);
+                    }
+
+                    //for (int i = 0; i < obj.schemaAttributes.Length; i++)
+                    //{
+                    //    SchemaAttribute A = obj.schemaAttributes[i];
+                    //    R = T.NewRow();
+                    //    R["Name"] = A.Name;
+                    //    R["Value"] = A.Value;
+                    //    R["Type"] = 1;
+                    //    R["ReadOnly"] = false;
+                    //    R["WriteUnchanged"] = false;
+                    //    T.Rows.Add(R);
+                    //}
+                }
+            }
+            return T;
+            //				ObjectPropertyAttribute property = (System.Attribute.GetCustomAttribute(_memberType.GetProperty(pd.Name), typeof(ObjectPropertyAttribute)) as ObjectPropertyAttribute); 
+
+        }
+        public static DataTable GetMethods(string id)
+        {
+            var T = new DataTable();
+            T.Columns.Add("name", typeof(string));
+            T.Columns.Add("get_result_type", typeof(int));
+            
+            Tuple<string, string> key = keysTable[id] as Tuple<string, string>;
+            if (key != null)
+            {
+                var obj = nodesTable[key] as SchemaEntity;
+                Type nodeType = DersaUtil.GetDynamicType("DersaStereotypes." + obj.StereotypeName);
+                if (nodeType != null)
+                {
+                    object inst = Activator.CreateInstance(nodeType, new object[] { });
+                    System.Reflection.MethodInfo[] mis = nodeType.GetMethods();
+
+                    var methodNames = from mi in mis
+                                      //where mi.GetParameters().Length == 0
+                                      where mi.GetCustomAttribute(typeof(CallFromUIAttribute), false) != null 
+                                      select mi.Name;
+                    foreach(string mname in methodNames)
+                    {
+                        DataRow R = T.NewRow();
+                        R["name"] = mname;
+                        R["get_result_type"] = 1;
+                        T.Rows.Add(R);
+                    }
+                }
+            }
+            return T;
+        }
+
+        public static void Remove(string id)
+        {
+            Tuple<string, string> key = keysTable[id] as Tuple<string, string>;
+            if (key != null)
+            {
+                nodesTable.Remove(key);
+                keysTable.Remove(id);
+            }
+        }
+        public static string Rename(string id, string newName)
+        {
+            Tuple<string, string> key = keysTable[id] as Tuple<string, string>;
+            if (key != null)
+            {
+                var obj = nodesTable[key] as SchemaEntity;
+                obj.Name = newName;
+                return JsonConvert.SerializeObject(
+                    new
+                    {
+                        id = id,
+                        text = obj.Name,
+                        data = obj.StereotypeName,
+                        icon = obj.StereotypeName,
+                        rank = -1,
+                        erank = -1,
+                        children = true
+                    });
+            }
+            return "";
+        }
+        public static IEnumerable List(string userName, string parentId)
+        {
+            var result = from Tuple<string, string> key in nodesTable.Keys
+                         where key.Item2 == parentId
+                         select new NodeData
+                         {
+                             id = key.Item1,
+                             text = ((SchemaEntity)nodesTable[key]).Name,
+                             icon = ((SchemaEntity)nodesTable[key]).StereotypeName,
+                             data = ((SchemaEntity)nodesTable[key]).StereotypeName,
+                             rank = -1,
+                             erank = -1,
+                             children = true
+                         };
+            return result;
+        }
+        public static string AddNode(string userName, string src, string dst, int options)
+        {
+            string StereotypeName = src.Replace("CACHE_", "");
+            var attrs = new SchemaAttribute[0];
+            Type nodeType = DersaUtil.GetDynamicType("DersaStereotypes." + StereotypeName);
+            if (nodeType != null)
+            {
+                object inst = Activator.CreateInstance(nodeType, new object[] { });
+                System.Reflection.FieldInfo[] fis = nodeType.GetFields();
+                attrs = (from fi in fis
+                        select new SchemaAttribute { 
+                            Name = fi.Name,
+                            Value = fi.GetValue(inst)?.ToString()
+                        }).ToArray<SchemaAttribute>();
+            }
+
+            string id = "CACHE_" + key++.ToString();
+            Tuple<string, string> nodeKey = new Tuple<string, string>(id, dst);
+            var theNode = new SchemaEntity
+            {
+                StereotypeName = StereotypeName,
+                Name = StereotypeName,
+                schemaAttributes = attrs,
+                childEntities = new SchemaEntity[0]
+            };
+            nodesTable.Add(nodeKey, theNode);
+            keysTable.Add(id, nodeKey);
+            var query = from N in new int[]{ 0 }
+                        select new
+                        {
+                            id = id,
+                            name = StereotypeName,
+                            text = StereotypeName,
+                            icon = StereotypeName,
+                        };
+            string result = JsonConvert.SerializeObject(query);
+            return result;
+        }
+    }
 
     public class DersaUtil
     {
         private static Hashtable hashTable = new Hashtable();
 
+        public static string[] GetCacheableClasses()
+        {
+            Assembly stAssembly = Assembly.Load("Dersa.Stereotypes");
+            if (stAssembly != null)
+            {
+                var stTypes = stAssembly.GetTypes();
+                var query = from Type T in stTypes
+                            where (System.Attribute.GetCustomAttribute(T, typeof(CacheableAttribute)) as CacheableAttribute) != null
+                            select T.Name;
+                return query.ToArray();
+            }
+
+            return new string[] { "Entity", "Attribute" };
+        }
         public static void SaveEntityToFile(int id, string userName, string attrName = "")
         {//сохраняем предыдущие значения, если это отдельный атрибут, то сохраняем и значение атрибута отдельно тоже
             DersaSqlManager DM = new DersaSqlManager();
@@ -124,9 +445,20 @@ namespace Dersa.Common
         }
         public static string GetString(string Id, bool viewSource, string userName = null)
         {
+            string result = "";
+            if (Id.Contains("HIST_"))
+            {
+                var DM = new DersaLogSqlManager();
+                System.Data.DataTable T = DM.ExecuteMethod("ATTRIBUTE_LOG", "GetDescription", new object[] { Id, "Value", userName, DersaUtil.GetPassword(userName) });
+                if (T.Rows.Count > 0)
+                    result = T.Rows[0][0].ToString();
+                return result;
+            }
             if (userName == null && HttpContext.Current != null)
                 userName = HttpContext.Current.User.Identity.Name;
-            string result = hashTable[userName + Id].ToString();
+            if (hashTable[userName + Id] == null)
+                return "no value for " + Id;
+            result = hashTable[userName + Id].ToString();
             if (!viewSource)
                 result = result.Replace("$lt$", "<").Replace("$gt$", ">");
             hashTable.Remove(userName + Id);
@@ -134,6 +466,9 @@ namespace Dersa.Common
         }
         public static int GetUserStatus(string user_name, string password)
         {
+            if (string.IsNullOrEmpty(user_name))
+                return (int)DersaUserStatus.anonimous;
+
             IParameterCollection Params = new ParameterCollection();
             Params.Add("@login", user_name);
             Params.Add("@password", password);
@@ -305,25 +640,70 @@ namespace Dersa.Common
                         };
             return JsonConvert.SerializeObject(query);
         }
+        public static string GetDiagramEntities(string id, string userName)
+        {
+            DersaSqlManager DM = new DersaSqlManager();
+            DataTable T = DM.ExecuteMethod("DIAGRAM", "GetEntities", new object[] { id, userName, DersaUtil.GetPassword(userName) });
+            int appIndex = 0;
+            var query = from DataRow R in T.Rows
+                        select new
+                        {
+                            displayed_name = R["name"],
+                            id = R["id"],
+                            app_index = appIndex++,
+                            left = R["left"],
+                            top = R["top"],
+                            width = R["width"],
+                            height = R["height"],
+                            is_selected = false,
+                            is_visible = true
+                        };
+            return JsonConvert.SerializeObject(query);
+        }
+        public static string GetDiagramRelations(string id, string userName)
+        {
+            DersaSqlManager DM = new DersaSqlManager();
+            DataTable T = DM.ExecuteMethod("DIAGRAM", "GetRelations", new object[] { id, userName, DersaUtil.GetPassword(userName) });
+            int appIndex = 0;
+            var query = from DataRow R in T.Rows
+                        select new
+                        {
+                            id = R["id"],
+                            app_index = appIndex++,
+                            diagram_entity_a = R["diagram_entity_a"],
+                            diagram_entity_b = R["diagram_entity_b"],
+                            is_selected = false,
+                            is_visible = true
+                        };
+            return JsonConvert.SerializeObject(query);
+        }
         public static string SaveDiagramXml(string id, string xml)
         {
-            string decodedXml = xml.Replace("{lt;", "<").Replace("{gt;", ">");
-            IParameterCollection Params = new ParameterCollection();
-            Params.Add("@diagram", id.Replace("D_", ""));
-            Params.Add("@xml", decodedXml);
-            string currentUser = System.Web.HttpContext.Current.User.Identity.Name;
-            Params.Add("@login", currentUser);
-            Params.Add("@password", DersaUtil.GetPassword(currentUser));
-            DersaSqlManager M = new DersaSqlManager();
-            int res = M.ExecuteIntMethod("DIAGRAM", "SaveFromXml", Params);
-            if(res != 0)
+            try
             {
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(decodedXml);
-                XmlNodeList xNodes = doc.SelectNodes(".//mxCell");
-                //дополнительные действия с объектами внутри диаграммы
+                string decodedXml = xml.Replace("{lt;", "<").Replace("{gt;", ">");
+                IParameterCollection Params = new ParameterCollection();
+                Params.Add("@diagram", id.Replace("D_", ""));
+                Params.Add("@xml", decodedXml);
+                string currentUser = System.Web.HttpContext.Current.User.Identity.Name;
+                Params.Add("@login", currentUser);
+                Params.Add("@password", DersaUtil.GetPassword(currentUser));
+                DersaSqlManager M = new DersaSqlManager();
+                int res = M.ExecuteIntMethod("DIAGRAM", "SaveFromXml", Params);
+                if (res != 0)
+                {
+                    XmlDocument doc = new XmlDocument();
+                    doc.LoadXml(decodedXml);
+                    XmlNodeList xNodes = doc.SelectNodes(".//mxCell");
+                    //дополнительные действия с объектами внутри диаграммы
+                }
+                return res.ToString();
             }
-            return res.ToString();
+            catch(Exception exc)
+            {
+                Logger.LogStatic(exc.Message);
+                return exc.Message;
+            }
         }
         public static SchemaEntity[] GetSchema(string JsonContent)
         {
@@ -462,23 +842,23 @@ namespace Dersa.Common
             WordGeneratorService.ObjectWcfServiceClient wgsClient = new WordGeneratorService.ObjectWcfServiceClient(binding, address);
             return wgsClient.GenerateWordFileFromBytes(json_table, file_name, template);
         }
-        public static string ObjectList(string class_name, string json_params, string order, int limit, int offset, out int rowcount)
-        {
-            DiosSqlManager M = new DiosSqlManager();
-            ObjectFactory F = null;
-            try
-            {
-                F = M.GetFactory(class_name);
-            }
-            catch(Exception exc)
-            {
-                throw new Exception("Object type " + class_name + " not found");
-            }
-            IParameterCollection Params = Util.DeserializeParams(json_params);
-            string result = F.ListJson(Params, order, limit, offset);
-            rowcount = F.RowCount;
-            return result;
-        }
+        //public static string ObjectList(string class_name, string json_params, string order, int limit, int offset, out int rowcount)
+        //{
+        //    DiosSqlManager M = new DiosSqlManager();
+        //    ObjectFactory F = null;
+        //    try
+        //    {
+        //        F = M.GetFactory(class_name);
+        //    }
+        //    catch(Exception exc)
+        //    {
+        //        throw new Exception("Object type " + class_name + " not found");
+        //    }
+        //    IParameterCollection Params = Util.DeserializeParams(json_params);
+        //    string result = F.ListJson(Params, order, limit, offset);
+        //    rowcount = F.RowCount;
+        //    return result;
+        //}
 
         public static string SetGuid(string userName, string entityId, string guid)
         {

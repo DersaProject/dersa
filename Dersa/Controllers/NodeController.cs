@@ -19,7 +19,7 @@ namespace Dersa.Controllers
             return objToGetCoords.GetCoords();
         }
 
-        public string GetInsertSubmenu(int id)
+        public string GetInsertSubmenu(string id)
         {
             return NodeControllerAdapter.GetInsertSubmenu(id);
         }
@@ -180,7 +180,12 @@ namespace Dersa.Controllers
             return NodeControllerAdapter.List(id);
         }
 
-        public string Remove(int id, string diagram_id = null, int options = 0)
+        public string History(string id)
+        {
+            return NodeControllerAdapter.History(id);
+        }
+
+        public string Remove(string id, string diagram_id = null, int options = 0)
         {
             return NodeControllerAdapter.Remove(id, diagram_id, options);
         }
@@ -214,22 +219,22 @@ namespace Dersa.Controllers
 
         }
 
-        public string PropertiesForm(int id)
+        public string PropertiesForm(string id)
         {
             return NodeControllerAdapter.PropertiesForm(id);
         }
 
-        public string PropertyForm(int id, string prop_name, int prop_type)
+        public string PropertyForm(string id, string prop_name, int prop_type)
         {
             return NodeControllerAdapter.PropertyForm(id, prop_name, prop_type);
         }
 
-        public string MethodsForm(int id)
+        public string MethodsForm(string id)
         {
             return NodeControllerAdapter.MethodsForm(id);
         }
 
-        public string ExecMethodForm(int id, string method_name)
+        public string ExecMethodForm(string id, string method_name)
         {
             return NodeControllerAdapter.ExecMethodForm(id, method_name);
         }

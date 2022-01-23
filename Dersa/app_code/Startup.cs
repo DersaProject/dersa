@@ -2,6 +2,8 @@
 using Owin;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security.Cookies;
+using System.Configuration;
+using System.Web.Configuration;
 
 [assembly: OwinStartupAttribute(typeof(DersaApplication.Startup))]
 namespace DersaApplication
@@ -15,12 +17,17 @@ namespace DersaApplication
 
         public void ConfigureAuth(IAppBuilder app)
         {
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            Configuration configuration = WebConfigurationManager.OpenWebConfiguration("~");
+            if (configuration.AppSettings.Settings["CookieAuth"] != null && configuration.AppSettings.Settings["CookieAuth"].Value.ToLower() == "true")
             {
-                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                LoginPath = new PathString("/Account/Login")
-            });
-            app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+                DIOS.Common.Logger.LogStatic("use cookie auth");
+                app.UseCookieAuthentication(new CookieAuthenticationOptions
+                {
+                    AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
+                    LoginPath = new PathString("/Account/Login")
+                });
+                app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+            }
         }
 
     }

@@ -21,8 +21,8 @@ namespace Dersa.Common
     }
     public class DersaUserSqlManager : DIOS.Common.SqlManager
     {
-        public DersaUserSqlManager(): this(DIOS.Common.SqlManager.SqlBrand) { }
-        public DersaUserSqlManager(DIOS.Common.SqlBrand sqlBrand): base(sqlBrand) { }
+        public DersaUserSqlManager() : this(DIOS.Common.SqlManager.SqlBrand) { }
+        public DersaUserSqlManager(DIOS.Common.SqlBrand sqlBrand) : base(sqlBrand) { }
         protected override string GetConnectionString()
         {
             return this.InitConnectionString;
@@ -30,6 +30,24 @@ namespace Dersa.Common
         protected override string GetConnectionNodeName()
         {
             return "DersaUserConnection";
+        }
+    }
+    public class DersaLogSqlManager : DIOS.Common.SqlManager
+    {
+        public DersaLogSqlManager() : this(DIOS.Common.SqlManager.SqlBrand) 
+        {
+        }
+        public DersaLogSqlManager(DIOS.Common.SqlBrand sqlBrand) : base(sqlBrand) { }
+        protected override bool Anonimous
+        {
+            get
+            {
+                return (HttpContext.Current.User == null);
+            }
+        }
+        protected override string GetConnectionNodeName()
+        {
+            return "DersaLogConnection";
         }
     }
     public class DersaSqlManager: DIOS.Common.SqlManager
