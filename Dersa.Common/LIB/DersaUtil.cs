@@ -362,9 +362,10 @@ namespace Dersa.Common
             string result = JsonConvert.SerializeObject(query);
             return result;
         }
-        public static string AddNode(string userName, string src, string dst, int entityId = 0)
+        public static string AddNode(string userName, string src, string dst, int entityId = 0, string nodeName = null)
         {
             string StereotypeName = src.Replace("CACHE_", "");
+            string NodeName = nodeName == null ? StereotypeName : nodeName;
             var attrs = new SchemaAttribute[0];
             Type nodeType = DersaUtil.GetDynamicType("DersaStereotypes." + StereotypeName);
             if (nodeType != null)
@@ -384,18 +385,18 @@ namespace Dersa.Common
                 var theNode = new SchemaEntity
                 {
                     StereotypeName = StereotypeName,
-                    Name = StereotypeName,
+                    Name = NodeName,
                     schemaAttributes = attrs,
                     childEntities = new SchemaEntity[0]
                 };
                 nodesTable.Add(nodeKey, theNode);
                 keysTable.Add(id, nodeKey);
                 var query = from N in new int[1]
-                            select new
+                            select new NodeData
                             {
                                 id = id,
-                                name = StereotypeName,
-                                text = StereotypeName,
+                                //name = StereotypeName,
+                                text = NodeName,
                                 icon = StereotypeName,
                             };
                 string result = JsonConvert.SerializeObject(query);

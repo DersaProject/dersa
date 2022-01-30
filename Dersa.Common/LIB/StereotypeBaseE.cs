@@ -32,7 +32,7 @@ namespace DersaStereotypes
                 Name = this.Name,
                 StereotypeName = T.Name,
                 schemaAttributes = (from fi in T.GetFields()
-                                    where fi.GetValue(this) != null
+                                    where fi.GetValue(this) != null && fi.GetValue(this).ToString() != ""
                                     select new SchemaAttribute { Name = fi.Name, Value = fi.GetValue(this).ToString() }).ToArray(),
                 childEntities = (from StereotypeBaseE child in this.Children
                                  select child.GetSchemaEntity()).ToArray()
