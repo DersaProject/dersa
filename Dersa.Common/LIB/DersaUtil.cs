@@ -57,6 +57,13 @@ namespace Dersa.Common
         public bool children;
 
     }
+
+    public class DersaKey
+    {
+        public string cacheId;
+        public string cacheParent;
+        public int entity;
+    }
     public class DersaCache
     {
         private static int key = 0;
@@ -65,7 +72,7 @@ namespace Dersa.Common
 
         public static string GetAttributeValue(string id, string attrName)
         {
-            Tuple<string, string> key = keysTable[id] as Tuple<string, string>;
+            object key = keysTable[id];
             if (key != null)
             {
                 var obj = nodesTable[key] as SchemaEntity;
@@ -78,63 +85,76 @@ namespace Dersa.Common
         }
         public static IList GetChildren(string id)
         {
-            Tuple<string, string> key = keysTable[id] as Tuple<string, string>;
+            ArrayList list = new ArrayList();
+            var query = from DersaKey k in nodesTable.Keys
+                        where k.cacheParent == id
+                        select k.cacheId;
+            foreach (string childId in query)
+            {
+                list.Add(GetInstance(childId));
+            }
+            return list;
+        }
+
+        public static StereotypeBaseE GetParent(string id)
+        {
+            DersaKey key = keysTable[id] as DersaKey;
             if (key != null)
             {
-                ArrayList list = new ArrayList();
-                var query = from Tuple<string, string> k in nodesTable.Keys
-                            where k.Item2 == id
-                            select k.Item1;
-                foreach(string childId in query)
-                {
-                    list.Add(GetInstance(childId));
-                }
-                return list;
+                return GetInstance(key.cacheParent);
             }
             return null;
         }
-        public static StereotypeBaseE GetParent(string id)
+
+        public static StereotypeBaseE GetInstance(int entityId)
         {
-            Tuple<string, string> key = keysTable[id] as Tuple<string, string>;
-            if (key != null)
-            {
-                return GetInstance(key.Item2);
-            }
+            var query = from DersaKey k in nodesTable.Keys
+                        where k.entity == entityId
+                        select k.cacheId;
+            if (query.Count() > 0)
+                return GetInstance(query.ToArray()[0]);
             return null;
         }
 
         public static StereotypeBaseE GetInstance(string id)
         {
-            Tuple<string, string> key = keysTable[id] as Tuple<string, string>;
+            DersaKey key = keysTable[id] as DersaKey;
             if (key != null)
             {
-                var obj = nodesTable[key] as SchemaEntity;
-                Type nodeType = DersaUtil.GetDynamicType("DersaStereotypes." + obj.StereotypeName);
-                if (nodeType != null)
-                {
-                    StereotypeBaseE inst = Activator.CreateInstance(nodeType, new object[] { }) as StereotypeBaseE;
-                    inst.SetCachedId(id);
-                    inst.Name = obj.Name;
-                    for (int i = 0; i < obj.schemaAttributes.Length; i++)
-                    {
-                        var fi = nodeType.GetField(obj.schemaAttributes[i].Name);
-                        object value = obj.schemaAttributes[i].Value;
-                        if (value != null)
-                        {
-                            if (value.ToString() == "" && fi.FieldType != typeof(string))
-                                continue;
-                            object ConvertedValue = DIOS.Common.TypeUtil.Convert(value, fi.FieldType);
-                            fi.SetValue(inst, ConvertedValue);
-                        }
-                    }
-                    return inst;
-                }
+                return GetInstance(key);
             }
             return null;
         }
-        public static dynamic ExecMethodResult(string id, string method_name)
+
+        public static StereotypeBaseE GetInstance(DersaKey key)
         {
-            StereotypeBaseE inst = DersaCache.GetInstance(id);
+            var obj = nodesTable[key] as SchemaEntity;
+            Type nodeType = DersaUtil.GetDynamicType("DersaStereotypes." + obj.StereotypeName);
+            if (nodeType != null)
+            {
+                StereotypeBaseE inst = Activator.CreateInstance(nodeType, new object[] { }) as StereotypeBaseE;
+                inst.SetCachedId(key.cacheId);
+                inst.SetId(key.entity);
+                inst.Name = obj.Name;
+                for (int i = 0; i < obj.schemaAttributes.Length; i++)
+                {
+                    var fi = nodeType.GetField(obj.schemaAttributes[i].Name);
+                    object value = obj.schemaAttributes[i].Value;
+                    if (value != null)
+                    {
+                        if (value.ToString() == "" && fi.FieldType != typeof(string))
+                            continue;
+                        object ConvertedValue = DIOS.Common.TypeUtil.Convert(value, fi.FieldType);
+                        fi.SetValue(inst, ConvertedValue);
+                    }
+                }
+                return inst;
+            }
+            return null;
+        }
+            public static dynamic ExecMethodResult(string id, string method_name)
+        {
+            StereotypeBaseE inst = GetInstance(id);
             if (inst != null)
             {
                 Type nodeType = inst.GetType();
@@ -152,7 +172,7 @@ namespace Dersa.Common
 
         public static void SetAttributes(string id, IParameterCollection Params)
         {
-            Tuple<string, string> key = keysTable[id] as Tuple<string, string>;
+            object key = keysTable[id];
             if (key != null)
             {
                 var obj = nodesTable[key] as SchemaEntity;
@@ -175,7 +195,7 @@ namespace Dersa.Common
             T.Columns.Add("ReadOnly", typeof(bool));
             T.Columns.Add("WriteUnchanged", typeof(bool));
 
-            Tuple<string, string> key = keysTable[id] as Tuple<string, string>;
+            object key = keysTable[id];
             if (key != null)
             {
                 var obj = nodesTable[key] as SchemaEntity;
@@ -219,23 +239,9 @@ namespace Dersa.Common
                         R["WriteUnchanged"] = false;
                         T.Rows.Add(R);
                     }
-
-                    //for (int i = 0; i < obj.schemaAttributes.Length; i++)
-                    //{
-                    //    SchemaAttribute A = obj.schemaAttributes[i];
-                    //    R = T.NewRow();
-                    //    R["Name"] = A.Name;
-                    //    R["Value"] = A.Value;
-                    //    R["Type"] = 1;
-                    //    R["ReadOnly"] = false;
-                    //    R["WriteUnchanged"] = false;
-                    //    T.Rows.Add(R);
-                    //}
                 }
             }
             return T;
-            //				ObjectPropertyAttribute property = (System.Attribute.GetCustomAttribute(_memberType.GetProperty(pd.Name), typeof(ObjectPropertyAttribute)) as ObjectPropertyAttribute); 
-
         }
         public static DataTable GetMethods(string id)
         {
@@ -243,7 +249,7 @@ namespace Dersa.Common
             T.Columns.Add("name", typeof(string));
             T.Columns.Add("get_result_type", typeof(int));
             
-            Tuple<string, string> key = keysTable[id] as Tuple<string, string>;
+            object key = keysTable[id];
             if (key != null)
             {
                 var obj = nodesTable[key] as SchemaEntity;
@@ -269,18 +275,20 @@ namespace Dersa.Common
             return T;
         }
 
-        public static void Remove(string id)
+        public static int Remove(string id)
         {
-            Tuple<string, string> key = keysTable[id] as Tuple<string, string>;
+            DersaKey key = keysTable[id] as DersaKey;
             if (key != null)
             {
                 nodesTable.Remove(key);
                 keysTable.Remove(id);
+                return key.entity;
             }
+            return 0;
         }
         public static string Rename(string id, string newName)
         {
-            Tuple<string, string> key = keysTable[id] as Tuple<string, string>;
+            object key = keysTable[id];
             if (key != null)
             {
                 var obj = nodesTable[key] as SchemaEntity;
@@ -301,11 +309,11 @@ namespace Dersa.Common
         }
         public static IEnumerable List(string userName, string parentId)
         {
-            var result = from Tuple<string, string> key in nodesTable.Keys
-                         where key.Item2 == parentId
+            var result = from DersaKey key in nodesTable.Keys
+                         where key.cacheParent == parentId
                          select new NodeData
                          {
-                             id = key.Item1,
+                             id = key.cacheId,
                              text = ((SchemaEntity)nodesTable[key]).Name,
                              icon = ((SchemaEntity)nodesTable[key]).StereotypeName,
                              data = ((SchemaEntity)nodesTable[key]).StereotypeName,
@@ -315,7 +323,46 @@ namespace Dersa.Common
                          };
             return result;
         }
-        public static string AddNode(string userName, string src, string dst, int options)
+
+        public static bool NodesAreChained(string majorId, string minorId)
+        {
+            DersaKey key = keysTable[minorId] as DersaKey;
+            if(key != null)
+            {
+                if (keysTable[key.cacheParent] as DersaKey == null)
+                    return false;
+                if (key.cacheParent == majorId)
+                    return true;
+                return NodesAreChained(majorId, key.cacheParent);
+            }
+            return false;
+        }
+
+        public static string DnD(string userName, string src, string dst, int entityId = 0)
+        {
+            DersaKey key = keysTable[src] as DersaKey;
+            if (key != null)
+                return SetParent(userName, key, dst, entityId);
+            else
+                return AddNode(userName, src, dst, entityId);
+        }
+
+        public static string SetParent(string userName, DersaKey objectKey, string parentId, int entityId = 0)
+        {
+            var obj = nodesTable[objectKey] as SchemaEntity;
+            objectKey.cacheParent = parentId;
+            var query = from N in new int[1]
+                        select new
+                        {
+                            id = objectKey.cacheId,
+                            name = obj.Name,
+                            text = obj.Name,
+                            icon = obj.StereotypeName,
+                        };
+            string result = JsonConvert.SerializeObject(query);
+            return result;
+        }
+        public static string AddNode(string userName, string src, string dst, int entityId = 0)
         {
             string StereotypeName = src.Replace("CACHE_", "");
             var attrs = new SchemaAttribute[0];
@@ -325,33 +372,36 @@ namespace Dersa.Common
                 object inst = Activator.CreateInstance(nodeType, new object[] { });
                 System.Reflection.FieldInfo[] fis = nodeType.GetFields();
                 attrs = (from fi in fis
-                        select new SchemaAttribute { 
-                            Name = fi.Name,
-                            Value = fi.GetValue(inst)?.ToString()
-                        }).ToArray<SchemaAttribute>();
-            }
+                         select new SchemaAttribute
+                         {
+                             Name = fi.Name,
+                             Value = entityId == 0? fi.GetValue(inst)?.ToString() : DersaUtil.GetAttributeValue(userName, entityId, fi.Name, 2)
+                         }).ToArray();
 
-            string id = "CACHE_" + key++.ToString();
-            Tuple<string, string> nodeKey = new Tuple<string, string>(id, dst);
-            var theNode = new SchemaEntity
-            {
-                StereotypeName = StereotypeName,
-                Name = StereotypeName,
-                schemaAttributes = attrs,
-                childEntities = new SchemaEntity[0]
-            };
-            nodesTable.Add(nodeKey, theNode);
-            keysTable.Add(id, nodeKey);
-            var query = from N in new int[]{ 0 }
-                        select new
-                        {
-                            id = id,
-                            name = StereotypeName,
-                            text = StereotypeName,
-                            icon = StereotypeName,
-                        };
-            string result = JsonConvert.SerializeObject(query);
-            return result;
+
+                string id = "CACHE_" + key++.ToString();
+                DersaKey nodeKey = new DersaKey { cacheId = id, cacheParent = dst, entity = entityId };
+                var theNode = new SchemaEntity
+                {
+                    StereotypeName = StereotypeName,
+                    Name = StereotypeName,
+                    schemaAttributes = attrs,
+                    childEntities = new SchemaEntity[0]
+                };
+                nodesTable.Add(nodeKey, theNode);
+                keysTable.Add(id, nodeKey);
+                var query = from N in new int[1]
+                            select new
+                            {
+                                id = id,
+                                name = StereotypeName,
+                                text = StereotypeName,
+                                icon = StereotypeName,
+                            };
+                string result = JsonConvert.SerializeObject(query);
+                return result;
+            }
+            return "no type " + StereotypeName;
         }
     }
 

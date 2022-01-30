@@ -24,7 +24,7 @@ namespace Dersa.Controllers
             return NodeControllerAdapter.GetInsertSubmenu(id);
         }
 
-        public int CanDnD(string src, int dst)
+        public int CanDnD(string src, string dst)
         {
             return NodeControllerAdapter.CanDnD(src, dst);
         }

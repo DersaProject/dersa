@@ -117,8 +117,14 @@ namespace Dersa.Models
             }
         }
 
-        public static int CanDnD(string src, int dst)
+        public static int CanDnD(string src, string dst)
         {
+            if (src.Contains("CACHE_") && dst.Contains("CACHE_"))
+            {
+                if (DersaCache.NodesAreChained(src, dst))//проверить, что не пытаемся перенести узел в одного из его потомков
+                    return 0;
+                return 1;
+            }
             if (src == dst.ToString())
                 return 0;
             try
@@ -648,7 +654,7 @@ namespace Dersa.Models
             if (src.Contains("D_"))//диаграммы
                 return DersaUtil.EntityAddChild(HttpContext.Current.User.Identity.Name, src, dst, options);
             if (src.Contains("CACHE_"))//временный узел
-                return DersaCache.AddNode(HttpContext.Current.User.Identity.Name, src, dst, options);
+                return DersaCache.DnD(HttpContext.Current.User.Identity.Name, src, dst, options);
             StereotypeBaseE objFrom = null;
             int intSrc = -1;
             try
@@ -758,14 +764,16 @@ namespace Dersa.Models
         }
         public static string Remove(string id, string diagram_id, int options)
         {
+            int intId = 0;
             if(id.Contains("CACHE_"))
             {
-                DersaCache.Remove(id);
-                return "cached object dropped";
+                intId = DersaCache.Remove(id);
+                //return "cached object dropped";
             }
             try
             {
-                int intId = int.Parse(id);
+                if(intId == 0)
+                    intId = int.Parse(id);
                 string userName = HttpContext.Current.User.Identity.Name;
                 StereotypeBaseE objToRemove = StereotypeBaseE.GetSimpleInstance(intId);
                 if(objToRemove != null)
@@ -840,9 +848,20 @@ namespace Dersa.Models
                 else
                 {
                     DataTable T = DM.ExecuteMethod(listClass, "JTreeList", new object[] { parent, userName, DersaUtil.GetPassword(userName) });
+                    var adapterQuery = from DataRow R in T.Rows
+                                       where R["data"] != null && R["data"].ToString() == "CacheAdapter"
+                                       select R["id"];
+                    foreach(string strId in adapterQuery)
+                    {
+                        int entityId = int.Parse(strId);
+                        var exCache = DersaCache.GetInstance(entityId);
+                        if (exCache == null)
+                            DersaCache.AddNode(userName, "CacheAdapter", id.ToString(), entityId);
+                    }
                     var cachedRows = DersaCache.List(userName, id); //new DataRow[] { };
                     var query = (
                                 from DataRow R in T.Rows
+                                where R["data"] != null && R["data"].ToString() != "CacheAdapter"
                                     //orderby R["rank"], R["erank"], R["id"]
                                 select new
                                 {

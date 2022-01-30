@@ -791,11 +791,10 @@ $('#dersa')
                 };
                 tmp.insertEntity.submenu = {};
                 tmp.insertCachedEntity.submenu = {};
-                if (o.id[0] == "D" || o.text == 'Entities' || o.text == 'Stereotypes' || o.id.split('_').length > 1) {
+                if (o.id[0] == "D" || o.text == 'Entities' || o.text == 'Stereotypes' || o.id.split('_').length > 1) 
                     delete tmp.insertEntity;
-                if (o.id[0] == "D" )
+                if (o.id[0] == "D" || o.id > 0)
                     delete tmp.insertCachedEntity;
-                }
 
                 var xhr = new XMLHttpRequest();
                 args = "id=" + o.id;

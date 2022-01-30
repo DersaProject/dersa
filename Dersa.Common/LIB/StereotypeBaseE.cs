@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using Dersa.Interfaces;
 using Dersa.Common;
@@ -22,6 +23,21 @@ namespace DersaStereotypes
     public class StereotypeBaseE : ICompiledEntity
     {
         public StereotypeBaseE() { }
+
+        public SchemaEntity GetSchemaEntity()
+        {
+            Type T = this.GetType();
+            return new Dersa.Common.SchemaEntity
+            {
+                Name = this.Name,
+                StereotypeName = T.Name,
+                schemaAttributes = (from fi in T.GetFields()
+                                    where fi.GetValue(this) != null
+                                    select new SchemaAttribute { Name = fi.Name, Value = fi.GetValue(this).ToString() }).ToArray(),
+                childEntities = (from StereotypeBaseE child in this.Children
+                                 select child.GetSchemaEntity()).ToArray()
+            };
+        }
 
         public static StereotypeBaseE GetSimpleInstance(int id)
         {
@@ -47,6 +63,10 @@ namespace DersaStereotypes
         protected IDersaEntity _object;
         protected string _cachedId;
 
+        public void SetId(int id)
+        {
+            this._id = id;
+        }
         public void SetCachedId(string cachedId)
         {
             this._cachedId = cachedId;
