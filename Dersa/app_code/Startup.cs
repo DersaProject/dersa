@@ -19,7 +19,7 @@ namespace DersaApplication
         {
             Configuration configuration = WebConfigurationManager.OpenWebConfiguration("~");
             if (configuration.AppSettings.Settings["CookieAuth"] != null && configuration.AppSettings.Settings["CookieAuth"].Value.ToLower() == "true")
-            {
+            {//если сюда не попадаем, значит должна использоваться виндусовая аутентификация
                 DIOS.Common.Logger.LogStatic("use cookie auth");
                 app.UseCookieAuthentication(new CookieAuthenticationOptions
                 {
