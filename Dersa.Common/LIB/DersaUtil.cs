@@ -925,8 +925,10 @@ namespace Dersa.Common
             }
         }
 
-        public static string SetAttributeValue(DersaSqlManager DM, string userName, AttributeOwnerType ownerType, string entityId, string attrName, int attrType, string attrValue)
+        public static string SetAttributeValue(DersaSqlManager DM, string userName, AttributeOwnerType ownerType, string entityId, string attrName, int attrType, string attrValue, string editKey = "")
         {
+            if(!AttributeEditManager.CanPost(int.Parse(entityId), attrName, userName, editKey))
+                return "fail";
             SaveEntityToFile(int.Parse(entityId), userName, attrName);
             IParameterCollection Params = new ParameterCollection();
             string className = "";
@@ -954,6 +956,7 @@ namespace Dersa.Common
                 Params["@attr_value"].Value = Cryptor.Encrypt(attrValue, userName);
                 res = DM.ExecuteIntMethod(className, "SetAttribute", Params);
             }
+            AttributeEditManager.MarkForFree(int.Parse(entityId), attrName);
             return "";
         }
         
@@ -977,7 +980,7 @@ namespace Dersa.Common
             //return fileExtension;
         }
 
-        public static string GetAttributeValue(string userName, int entityId, string attrName, int attrType)
+        public static string GetAttributeValue(string userName, int entityId, string attrName, int attrType, bool forEdit = false)
         {
             if (attrName.Contains("()"))
             {
@@ -993,6 +996,8 @@ namespace Dersa.Common
             if (attrType <= 0)
                 attrType = (int)T.Rows[0]["Type"];
             string result = T.Rows[0]["Value"].ToString();
+            if (forEdit)
+                AttributeEditManager.MarkForEdit(entityId, attrName, userName, result);
             if (attrType == 5)
             {
                 try

@@ -205,6 +205,8 @@ namespace Dersa.Models
         }
         public static string AuthorizeUser(string user_name = "", string password = "")
         {
+            HttpContext.Current.Response.Cookies.Add(new HttpCookie("editKey", ""));
+
             string result = "Unknown user name or password.";
             try
             {

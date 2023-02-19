@@ -473,7 +473,7 @@ namespace Dersa.Models
             else
             {
                 int intId = int.Parse(id);
-                attrValue = DersaUtil.GetAttributeValue(userName, intId, prop_name, prop_type);
+                attrValue = DersaUtil.GetAttributeValue(userName, intId, prop_name, prop_type, true);
             }
             var resObj = new object[] {
                 new
@@ -517,7 +517,7 @@ namespace Dersa.Models
                     {
                         Name = R["Name"],
                         Value = R["Value"],
-                        ReadOnly = R["ReadOnly"],
+                        ReadOnly = CanEdit(R["Name"].ToString())? R["ReadOnly"] : true,
                         WriteUnchanged = R["WriteUnchanged"],
                         Type = R["Type"],
                         ControlType = (int)R["Type"] == 1 ? "text" : "button",
@@ -525,8 +525,10 @@ namespace Dersa.Models
                         {
                             Height = 900,
                             Width = 600,
-                            DisplayValue = (int)R["Type"] == 1 ? R["Value"] : "...",
-                            InfoLink = (int)R["Type"] == 1 ? "" : "Node/PropertyForm?id=" + id.ToString() + "&prop_name=" + R["Name"].ToString() + "&prop_type=" + R["Type"].ToString()
+                            DisplayValue = (int)R["Type"] == 1 ? R["Value"] : (CanEdit(R["Name"].ToString()) ? "..." : "!"),
+                            InfoLink = !CanEdit(R["Name"].ToString()) || ((int)R["Type"] == 1) ? "" : "Node/PropertyForm?id=" + id.ToString() + "&prop_name=" + R["Name"].ToString() + "&prop_type=" + R["Type"].ToString(),
+                            OnClick = CanEdit(R["Name"].ToString())? null : "alert ('" + EditWarning(R["Name"].ToString()) + "')"
+                            //Hint = EditWarning(R["Name"].ToString())
                         }
                     };
                 string result = JsonConvert.SerializeObject(query);
@@ -536,6 +538,14 @@ namespace Dersa.Models
             {
                 return "";
             }
+            bool CanEdit(string attrName)
+            {
+                return string.IsNullOrEmpty(EditWarning(attrName));
+            }
+            string EditWarning(string attrName)
+            {
+                return AttributeEditManager.CanEdit(int.Parse(id), attrName, userName);
+            }
         }
 
         public static string SetTextProperty(int entity, string prop_name, string prop_value, string userName = null)
@@ -543,26 +553,17 @@ namespace Dersa.Models
             DersaSqlManager DM = userName == null ? new DersaSqlManager() : new DersaAnonimousSqlManager();
             if (userName == null)
                 userName = HttpContext.Current.User.Identity.Name;
-            //try
-            //{
-            //    System.Data.DataTable T = DM.ExecuteMethod("ENTITY", "SetAttribute", new object[] { entity, prop_name, prop_value, userName, DersaUtil.GetPassword(userName) });
-            //    if (T != null && T.Rows.Count > 0)
-            //    {
-            //        return T.Rows[0][0].ToString();
-            //    }
-            //}
-            //catch
-            //{
-            //    throw;
-            //}
-            //return "";
             return DersaUtil.SetAttributeValue(DM, userName, AttributeOwnerType.Entity, entity.ToString(), prop_name, 2, prop_value);
         }
 
         public static void SetAttribute(DersaSqlManager DM, AttributeOwnerType ownerType, string entityId, string paramName, string paramValue, int attrType)
         {
+            string editKey = "";
+            HttpCookie editKeyCookie = HttpContext.Current.Request.Cookies["editKey"];
+            if (editKeyCookie != null)
+                editKey = editKeyCookie.Value;
             string userName = HttpContext.Current.User.Identity.Name;
-            DersaUtil.SetAttributeValue(DM, userName, ownerType, entityId, paramName, attrType, paramValue);
+            DersaUtil.SetAttributeValue(DM, userName, ownerType, entityId, paramName, attrType, paramValue, editKey);
             //DM.ExecuteMethod(procName, new object[] { entityId, paramName, paramValue, userName, DersaUtil.GetPassword(userName) });
         }
 

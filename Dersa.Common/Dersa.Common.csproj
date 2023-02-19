@@ -96,6 +96,7 @@
     <Compile Include="Interfaces\ICacheProvider.cs" />
     <Compile Include="Interfaces\IEditControl.cs" />
     <Compile Include="Interfaces\IFilterControl.cs" />
+    <Compile Include="LIB\AttributeEditManager.cs" />
     <Compile Include="LIB\CachedObjects.cs" />
     <Compile Include="LIB\ChildrenCollection.cs" />
     <Compile Include="LIB\DersaSqlManager.cs" />
