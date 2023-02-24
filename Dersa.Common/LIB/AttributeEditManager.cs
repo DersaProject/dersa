@@ -53,27 +53,49 @@ namespace Dersa.Common
             }
         }
         private static Hashtable attrStateTable = new Hashtable();
-        private static Hashtable keysTable = new Hashtable();
 
+        public static void Reset(string login)
+        {
+            MarkForFree(login);
+            CurrentEditKey = "";
+        }
+
+        private static string CurrentEditKey
+        {
+            get
+            {
+                HttpCookie editKeyCookie = HttpContext.Current.Request.Cookies["editKey"];
+                if (editKeyCookie == null)
+                    return null;
+                return editKeyCookie.Value;
+            }
+            set
+            {
+                HttpContext.Current.Response.Cookies.Add(new HttpCookie("editKey", value));
+            }
+        }
         public static string MarkForEdit(int entity, string attrName, string login, string sourceText)
         {
             string canEditDiagnostic = CanEdit(entity, attrName, login);
             if (string.IsNullOrEmpty(canEditDiagnostic))
             {
-                string loginKey = GetKeyForLogin(login);
+                string loginKey = "";
+                string currentKey = CurrentEditKey;
+                if (string.IsNullOrEmpty(currentKey))
+                {
+                    loginKey = GetNewKeyForLogin();
+                    CurrentEditKey =  loginKey;
+                }
+                else
+                    loginKey = currentKey;
                 AttributeEditState[] exState = attrStateTable[GetHashKey(entity, attrName)] as AttributeEditState[];
                 if(exState == null)
                     attrStateTable[GetHashKey(entity, attrName)] = new AttributeEditState[] { new AttributeEditState(login, loginKey, DateTime.Now, sourceText) };
-                HttpCookie editKeyCookie = HttpContext.Current.Request.Cookies["editKey"];
-                if (editKeyCookie == null || editKeyCookie.Value == "")
-                {
-                    HttpContext.Current.Response.Cookies.Add(new HttpCookie("editKey", loginKey));
-                }
 
                 return loginKey;
             }
-//            throw new Exception(canEditDiagnostic);
-            return canEditDiagnostic;
+            throw new Exception(canEditDiagnostic);
+//            return canEditDiagnostic;
         }
         public static string CanEdit(int entity, string attrName, string login)
         {
@@ -84,38 +106,64 @@ namespace Dersa.Common
             {
                 if (attributeEditStates.Length < 1)
                     return "";
-                if (attributeEditStates[0].Login == login)
+                if (attributeEditStates[0].Login == login && attributeEditStates[0].Key == CurrentEditKey)
                     return "";
                 return string.Format("Атрибут {0} сущности {1} редактируется пользователем {2}", attrName, entity, attributeEditStates[0].Login);
             }
         }
-        public static bool CanPost(int entity, string attrName, string login, string key)
+        public static bool CanPost(int entity, string attrName, string login)
         {
             AttributeEditState[] attrEditArray = attrStateTable[GetHashKey(entity, attrName)] as AttributeEditState[];
             if (attrEditArray == null)
                 return false;
             if (attrEditArray.Length < 1)
                 return false;
-            return (key == attrEditArray[0].Key);
+            return (CurrentEditKey == attrEditArray[0].Key);
         }
-        public static void MarkForFree(int entity, string attrName)
+        public static void MarkForFree(string login)
         {
-            attrStateTable[GetHashKey(entity, attrName)] = null;
+            string currentKey = CurrentEditKey;
+            if (string.IsNullOrEmpty(currentKey))
+                return;
+            string[] editEntries = new string[attrStateTable.Keys.Count];
+            attrStateTable.Keys.CopyTo(editEntries, 0);
+            foreach (string key in editEntries)
+            {
+                AttributeEditState[] attrEditArray = attrStateTable[key] as AttributeEditState[];
+                if (attrEditArray == null || attrEditArray.Length == 0)
+                    continue;
+                if (attrEditArray[0].Login == login && attrEditArray[0].Key == currentKey)
+                    attrStateTable[key] = null;
+            }
+        }
+        public static void MarkForFree(string login, int entityId)
+        {
+            string[] attributeNames = DersaUtil.GetAttributeNames(entityId);
+            foreach(string attrName in attributeNames)
+            {
+                MarkForFree(login, entityId, attrName);
+            }
+        }
+        public static void MarkForFree(string login, int entity, string attrName)
+        {
+            string hashKey = GetHashKey(entity, attrName);
+            AttributeEditState[] attrEditArray = attrStateTable[hashKey] as AttributeEditState[];
+            if (attrEditArray == null)
+                return;
+            if (attrEditArray.Length < 1)
+                return;
+            if (attrEditArray[0].Login != login)
+                return;
+            attrStateTable[hashKey] = null;
         }
         private static string GetHashKey(int id, string name)
         {
             return id.ToString(0 + "_" + name);
         }
 
-        private static string GetKeyForLogin(string login)
+        private static string GetNewKeyForLogin()
         {
-            string loginKey = keysTable[login] as string;
-            if (loginKey == null)
-            {
-                loginKey = Guid.NewGuid().ToString();
-                keysTable[login] = loginKey;
-            }
-            return loginKey;
+            return Guid.NewGuid().ToString();
         }
     }
 

@@ -16,10 +16,11 @@ namespace Dersa.Controllers
 	{
 		public ActionResult Index(int node = 0)
 		{
-            DIOS.Common.Logger.LogStatic("Identity.IsAuthenticated = " + System.Web.HttpContext.Current.User.Identity.IsAuthenticated.ToString());
+            //DIOS.Common.Logger.LogStatic("Identity.IsAuthenticated = " + System.Web.HttpContext.Current.User.Identity.IsAuthenticated.ToString());
             if (System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
             {
                 string userName = System.Web.HttpContext.Current.User.Identity.Name;
+                AttributeEditManager.Reset(userName);
                 if (!Dersa.Models.User.Exists(userName))
                 {
                     return RedirectToAction("Unauthorized");

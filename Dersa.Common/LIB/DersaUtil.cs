@@ -925,10 +925,16 @@ namespace Dersa.Common
             }
         }
 
-        public static string SetAttributeValue(DersaSqlManager DM, string userName, AttributeOwnerType ownerType, string entityId, string attrName, int attrType, string attrValue, string editKey = "")
+        public static string SetAttributeValue(DersaSqlManager DM, string userName, AttributeOwnerType ownerType, string entityId, string attrName, int attrType, string attrValue)
         {
-            if(!AttributeEditManager.CanPost(int.Parse(entityId), attrName, userName, editKey))
-                return "fail";
+            if (!AttributeEditManager.CanPost(int.Parse(entityId), attrName, userName))
+            {
+                string editWarning = AttributeEditManager.CanEdit(int.Parse(entityId), attrName, userName);
+                if(string.IsNullOrEmpty(editWarning))
+                    AttributeEditManager.MarkForEdit(int.Parse(entityId), attrName, userName, "");
+                else
+                    return editWarning;
+            }
             SaveEntityToFile(int.Parse(entityId), userName, attrName);
             IParameterCollection Params = new ParameterCollection();
             string className = "";
@@ -956,7 +962,7 @@ namespace Dersa.Common
                 Params["@attr_value"].Value = Cryptor.Encrypt(attrValue, userName);
                 res = DM.ExecuteIntMethod(className, "SetAttribute", Params);
             }
-            AttributeEditManager.MarkForFree(int.Parse(entityId), attrName);
+            AttributeEditManager.MarkForFree(userName, int.Parse(entityId), attrName);
             return "";
         }
         
@@ -980,6 +986,17 @@ namespace Dersa.Common
             //return fileExtension;
         }
 
+        public static string[] GetAttributeNames(int entityId)
+        {
+            string userName = HttpContext.Current.User.Identity.Name;
+            DersaSqlManager DM = new DersaSqlManager();
+            DataTable T = DM.ExecuteMethod("ENTITY", "GetAttributes", new object[] { entityId, userName, DersaUtil.GetPassword(userName) });
+            var query =
+                from System.Data.DataRow R in T.Rows
+                select R["Name"].ToString();
+            return query.ToArray();
+        }
+
         public static string GetAttributeValue(string userName, int entityId, string attrName, int attrType, bool forEdit = false)
         {
             if (attrName.Contains("()"))
@@ -997,7 +1014,9 @@ namespace Dersa.Common
                 attrType = (int)T.Rows[0]["Type"];
             string result = T.Rows[0]["Value"].ToString();
             if (forEdit)
+            {
                 AttributeEditManager.MarkForEdit(entityId, attrName, userName, result);
+            }
             if (attrType == 5)
             {
                 try

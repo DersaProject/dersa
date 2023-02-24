@@ -130,7 +130,7 @@ mxForm.prototype.addText = function(name, value, type, childFormAttrs, ParentFor
                 input.setAttribute('onclick', childFormAttrs.OnClick);
             else
                 mxEvent.addListener(input, 'click', function () {
-                    ChildForm(name, inputForValue, childFormAttrs.InfoLink, childFormAttrs.SaveLink, childFormAttrs.Height, childFormAttrs.Width, childFormAttrs.ActionAfterExec, ParentForm);
+                    ChildForm(name, inputForValue, childFormAttrs.InfoLink, childFormAttrs.SaveLink, childFormAttrs.Height, childFormAttrs.Width, childFormAttrs.ActionAfterExec, ParentForm, childFormAttrs.CancelLink);
                 });
         }
         this.addField(name, input);
@@ -142,7 +142,7 @@ mxForm.prototype.addText = function(name, value, type, childFormAttrs, ParentFor
 	return this.addField(name, input);
 };
 
-function CreateProperties(form, attrs, url, ActionAfterExec, ClassName, callBackFunction, parentForm) {
+function CreateProperties(form, attrs, urlOK, ActionAfterExec, ClassName, callBackFunction, parentForm, urlCancel) {
     var texts = [];
     for (var i = 0; i < attrs.length; i++) {
         var fControl = null;
@@ -186,7 +186,7 @@ function CreateProperties(form, attrs, url, ActionAfterExec, ClassName, callBack
             var iValue = attrs[i].Value;
             if (iValue == null)
                 iValue = "";
-            if (iValue != texts[i].value || attrs[i].WriteUnchanged)
+            if ((iValue != texts[i].value && !attrs[i].ReadOnly) || attrs[i].WriteUnchanged)
             {
                 saveText = texts[i].value.replace(new RegExp("<", 'g'), "$lt$").replace(new RegExp(">", 'g'), "$gt$");
                 results[j++] = { Name: attrs[i].Name, Value: saveText};
@@ -197,16 +197,16 @@ function CreateProperties(form, attrs, url, ActionAfterExec, ClassName, callBack
             }
         }
         if (sendResult) {
-            if (url != "") {
+            if (urlOK) {
                 if (ActionAfterExec == "goto")
                 {
-                    window.open(url + "?json_params=" + encodeURIComponent(JSON.stringify(results)));
+                    window.open(urlOK + "?json_params=" + encodeURIComponent(JSON.stringify(results)));
                     return;
                 }
                 if (ActionAfterExec == "goto_byId") {
                     var xhr = new XMLHttpRequest();
                     var body = "json_params=" + encodeURIComponent(JSON.stringify(results));
-                    xhr.open('POST', url, false);
+                    xhr.open('POST', urlOK, false);
                     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                     xhr.send(body);
                     window.open(xhr.responseText);
@@ -216,7 +216,7 @@ function CreateProperties(form, attrs, url, ActionAfterExec, ClassName, callBack
                 var body = "json_params=" + encodeURIComponent(JSON.stringify(results));
                 if (ClassName)
                     body += "&class_name=" + ClassName;
-                xhr.open('POST', url, false);
+                xhr.open('POST', urlOK, false);
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 xhr.send(body);
                 var actionObject = null;
@@ -270,6 +270,11 @@ function CreateProperties(form, attrs, url, ActionAfterExec, ClassName, callBack
     var cancelFunction = mxUtils.bind(this, function () {
         // Hides the dialog
         form.window.setVisible(false);
+        if(urlCancel){
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', urlCancel, false);
+            xhr.send();
+        }
     });
 
     form.addButtons(okFunction, cancelFunction);
@@ -283,7 +288,7 @@ function CloseForm(form) {
         form.okClick();
 }
 
-function ChildForm(Name, Input, UrlIn, UrlOut, Height, Width, ActionAfterExec, ParentForm) {
+function ChildForm(Name, Input, UrlIn, UrlOut, Height, Width, ActionAfterExec, ParentForm, UrlCancel) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', UrlIn, false);
     xhr.send();
@@ -291,7 +296,7 @@ function ChildForm(Name, Input, UrlIn, UrlOut, Height, Width, ActionAfterExec, P
     
     var form = new mxForm(Name);
     form.Result = Input;
-    var Props = CreateProperties(form, formAttrs, UrlOut, ActionAfterExec, "", this.CloseForm, ParentForm);
+    var Props = CreateProperties(form, formAttrs, UrlOut, ActionAfterExec, "", this.CloseForm, ParentForm, UrlCancel);
     var wnd = new mxWindow(Name,
         Props, 100, +$(window).scrollTop() + 200, Width || 250, Height || 400, false, true);
     form.window = wnd;

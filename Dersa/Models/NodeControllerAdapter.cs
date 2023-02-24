@@ -467,28 +467,59 @@ namespace Dersa.Models
         public static string PropertyForm(string id, string prop_name, int prop_type)
         {
             string userName = HttpContext.Current.User.Identity.Name;
-            string attrValue = "";
-            if (id.Contains("CACHE_"))
-                attrValue = DersaCache.GetAttributeValue(id, prop_name);
-            else
+            try
             {
-                int intId = int.Parse(id);
-                attrValue = DersaUtil.GetAttributeValue(userName, intId, prop_name, prop_type, true);
-            }
-            var resObj = new object[] {
-                new
+                string attrValue = "";
+                if (id.Contains("CACHE_"))
+                    attrValue = DersaCache.GetAttributeValue(id, prop_name);
+                else
                 {
-                    Name = prop_name,
-                    Value = attrValue,
-                    DisplayValue = attrValue,
-                    ControlType = "textarea",
-                    Height = 300,
-                    Width = 300,
-                    InfoLink = ""
+                    int intId = int.Parse(id);
+                    attrValue = DersaUtil.GetAttributeValue(userName, intId, prop_name, prop_type, true);
                 }
-            };
-            string result = JsonConvert.SerializeObject(resObj);
-            return result;
+                var resObj = new object[] {
+                new
+                    {
+                        Name = "entity",
+                        Value = id,
+                        DisplayValue = id,
+                        ReadOnly = true,
+                        WriteUnchanged = true,
+                        ControlType = "text",
+                        Width = 80,
+                    },
+                new
+                    {
+                        Name = prop_name,
+                        Value = attrValue,
+                        DisplayValue = attrValue,
+                        ControlType = "textarea",
+                        Height = 300,
+                        Width = 300,
+                        InfoLink = ""
+                    }
+                };
+                string result = JsonConvert.SerializeObject(resObj);
+                return result;
+            }
+            catch (Exception exc)
+            {
+                var resObj = new object[] {
+                new
+                    {
+                        Name = prop_name,
+                        Value = exc.Message,
+                        DisplayValue = exc.Message,
+                        ReadOnly = true,
+                        ControlType = "text",
+                        Height = 30,
+                        Width = 500,
+                        InfoLink = ""
+                    }
+                };
+                string result = JsonConvert.SerializeObject(resObj);
+                return result;
+            }
         }
         public static string PropertiesForm(string id)
         {
@@ -517,7 +548,7 @@ namespace Dersa.Models
                     {
                         Name = R["Name"],
                         Value = R["Value"],
-                        ReadOnly = CanEdit(R["Name"].ToString())? R["ReadOnly"] : true,
+                        ReadOnly = CanEdit(R["Name"].ToString())? (bool)R["ReadOnly"] || (int)R["Type"] != 1 : true,//Long атрибуты помечаем как ReadOnly потому что они редактируются и сохраняются отдельно
                         WriteUnchanged = R["WriteUnchanged"],
                         Type = R["Type"],
                         ControlType = (int)R["Type"] == 1 ? "text" : "button",
@@ -527,7 +558,9 @@ namespace Dersa.Models
                             Width = 600,
                             DisplayValue = (int)R["Type"] == 1 ? R["Value"] : (CanEdit(R["Name"].ToString()) ? "..." : "!"),
                             InfoLink = !CanEdit(R["Name"].ToString()) || ((int)R["Type"] == 1) ? "" : "Node/PropertyForm?id=" + id.ToString() + "&prop_name=" + R["Name"].ToString() + "&prop_type=" + R["Type"].ToString(),
-                            OnClick = CanEdit(R["Name"].ToString())? null : "alert ('" + EditWarning(R["Name"].ToString()) + "')"
+                            SaveLink = "Node/SetProperties",
+                            OnClick = CanEdit(R["Name"].ToString())? null : "alert ('" + EditWarning(R["Name"].ToString()) + "')",
+                            CancelLink = "Entity/CancelEditAttribute?entityId=" + id + "&attrName=" + R["Name"].ToString()
                             //Hint = EditWarning(R["Name"].ToString())
                         }
                     };
@@ -558,17 +591,27 @@ namespace Dersa.Models
 
         public static void SetAttribute(DersaSqlManager DM, AttributeOwnerType ownerType, string entityId, string paramName, string paramValue, int attrType)
         {
-            string editKey = "";
-            HttpCookie editKeyCookie = HttpContext.Current.Request.Cookies["editKey"];
-            if (editKeyCookie != null)
-                editKey = editKeyCookie.Value;
             string userName = HttpContext.Current.User.Identity.Name;
-            DersaUtil.SetAttributeValue(DM, userName, ownerType, entityId, paramName, attrType, paramValue, editKey);
+            DersaUtil.SetAttributeValue(DM, userName, ownerType, entityId, paramName, attrType, paramValue);
             //DM.ExecuteMethod(procName, new object[] { entityId, paramName, paramValue, userName, DersaUtil.GetPassword(userName) });
         }
 
+        public static string CancelProperties(string json_params)
+        {
+            string userName = HttpContext.Current.User.Identity.Name;
+            IParameterCollection Params = Util.DeserializeParams(json_params);
+            if (Params.Contains("entity"))
+            {
+                int entityId = -1;
+                int.TryParse(Params["entity"].Value.ToString(), out entityId);
+                AttributeEditManager.MarkForFree(userName, entityId);
+            }
+            return "";
+        }
         public static string SetProperties(string json_params)
         {
+            string userName = HttpContext.Current.User.Identity.Name;
+            bool needPost = true;
             Dersa.Common.CachedObjects.ClearCache();
             IParameterCollection Params = Util.DeserializeParams(json_params);
             if (Params.Contains("cached_id"))
@@ -589,7 +632,7 @@ namespace Dersa.Models
                 ownerType = AttributeOwnerType.Entity;
                 Params.Remove("entity");
                 if (Params.Count < 1)
-                    return "no data";
+                    needPost = false;
             }
             if (Params.Contains("relation"))
             {
@@ -598,28 +641,32 @@ namespace Dersa.Models
                 ownerType = AttributeOwnerType.Relation;
                 Params.Remove("relation");
                 if (Params.Count < 1)
-                    return "no data";
+                    needPost = false;
             }
-            DersaSqlManager DM = new DersaSqlManager();
-            foreach (IParameter Param in Params)
+            if (needPost)
             {
-                try
+                DersaSqlManager DM = new DersaSqlManager();
+                foreach (IParameter Param in Params)
                 {
-                    if(Param.Value != null)
+                    try
                     {
-                        string strVal = Param.Value.ToString().Replace("$lt$", "<").Replace("$gt$", ">");
-                        Param.Value = strVal;
+                        if (Param.Value != null)
+                        {
+                            string strVal = Param.Value.ToString().Replace("$lt$", "<").Replace("$gt$", ">");
+                            Param.Value = strVal;
+                        }
+                        SetAttribute(DM, ownerType, key, Param.Name, Param.Value == null ? null : Param.Value.ToString(), 0);
                     }
-                    SetAttribute(DM, ownerType, key, Param.Name, Param.Value == null? null : Param.Value.ToString(), 0);
+                    catch (Exception exc)
+                    {
+                        return exc.Message;
+                    }
                 }
-                catch(Exception exc)
-                {
-                    throw;
-                }
+                DersaUtil.CommitToGit(int.Parse(key), userName);
             }
-            DersaUtil.CommitToGit(int.Parse(key), HttpContext.Current.User.Identity.Name);
+            AttributeEditManager.MarkForFree(userName, int.Parse(key));
 
-            return "";
+            return "OK";
         }
         //public string Properties(int id)
         //{

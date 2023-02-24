@@ -11,14 +11,25 @@ namespace Dersa.Models
 {
     public class EntityControllerAdapter
     {
-        //public string List(string class_name, string filter = null, string order = "", int limit = -1, int offset = 0)
-        //{
-        //    int rowCount = 0;
-        //    string result = DersaUtil.ObjectList(class_name, filter, order, limit, offset, out rowCount);
-        //    return result;
-        //}
-
-        public string Find(string srchval, int root_entity, int entity)
+        public static string CancelEditAttribute(string entityId, string attrName)
+        {
+            string userName = HttpContext.Current.User.Identity.Name;
+            try
+            {
+                int _entityId = -1;
+                int.TryParse(entityId, out _entityId);
+                if (string.IsNullOrEmpty(attrName))
+                    AttributeEditManager.MarkForFree(userName, _entityId);
+                else
+                    AttributeEditManager.MarkForFree(userName, _entityId, attrName);
+                return "OK";
+            }
+            catch(Exception exc)
+            {
+                return exc.Message;
+            }
+        }
+        public static string Find(string srchval, int root_entity, int entity)
         {
             DersaSqlManager DM = new DersaSqlManager();
             string userName = HttpContext.Current.User.Identity.Name;

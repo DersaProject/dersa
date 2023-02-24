@@ -205,7 +205,7 @@ namespace Dersa.Models
         }
         public static string AuthorizeUser(string user_name = "", string password = "")
         {
-            HttpContext.Current.Response.Cookies.Add(new HttpCookie("editKey", ""));
+            //HttpContext.Current.Response.Cookies.Add(new HttpCookie("editKey", "")); здесь обнулять куку недостаточно, а если обнулять в Index, то здесь не надо
 
             string result = "Unknown user name or password.";
             try

@@ -10,14 +10,10 @@ namespace Dersa.Controllers
 {
     public class EntityController : Controller
     {
-
-        //public string List(string class_name, string filter = null, string order = "", int limit = -1, int offset = 0)
-        //{
-
-        //    string result = (new EntityControllerAdapter()).List(class_name, filter, order, limit, offset);
-        //    return result;
-
-        //}
+        public string CancelEditAttribute(string entityId, string attrName = null)
+        {
+            return EntityControllerAdapter.CancelEditAttribute(entityId, attrName);
+        }
 
         public string DownloadIcon(int id, bool from_stereotype)
         {
@@ -54,7 +50,7 @@ namespace Dersa.Controllers
 
         public string Find(string srchval, int root_entity = 0, int entity = 0)
         {
-            return (new EntityControllerAdapter()).Find(srchval, root_entity, entity);
+            return EntityControllerAdapter.Find(srchval, root_entity, entity);
         }
 
         public void ClearCache()
