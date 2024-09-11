@@ -577,7 +577,11 @@ namespace Dersa.Models
             }
             string EditWarning(string attrName)
             {
-                return AttributeEditManager.CanEdit(int.Parse(id), attrName, userName);
+                int intId = -1;
+                int.TryParse(id, out intId);
+                if (intId == -1)
+                    return "";
+                return AttributeEditManager.CanEdit(intId, attrName, userName);
             }
         }
 

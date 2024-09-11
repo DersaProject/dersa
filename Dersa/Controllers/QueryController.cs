@@ -8,64 +8,112 @@ using Dersa.Common;
 using Newtonsoft.Json;
 using System.IO;
 using System;
-using System.Web;
+using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.WebSockets;
 using System.Net.WebSockets;
 
 
+
 namespace Dersa.Controllers
 {
     public class QueryController : Controller
     {
-        private AspNetWebSocketContext lastContext;
-        public static string SocketMessage = "";
+        //private AspNetWebSocketContext lastContext;
+        private static Hashtable contextTable = new Hashtable();
+        private static Hashtable messageTable = new Hashtable();
 
-        public void TestSocket(string message)
+        public string TestSocket(string user, string message)
         {
-            SocketMessage = message;
+            try
+            {
+                messageTable[user] = message;
+                return $"Accepted: {message} for user {user}";
+            }
+            catch(Exception exc)
+            {
+                return exc.Message;
+            }
         }
         public void Socket()
         {
-            var context = HttpContext;
-            if (context.IsWebSocketRequest)
+            if (System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
             {
-                DIOS.Common.Logger.LogStatic("request is of WS type");
-                try
+                var context = HttpContext;
+                if (context.IsWebSocketRequest)
                 {
-                    context.AcceptWebSocketRequest(WebSocketRequest);
+                    DIOS.Common.Logger.LogStatic($"request from {context.User.Identity.Name} is of WS type");
+                    try
+                    {
+                        context.AcceptWebSocketRequest(WebSocketRequest);
+                    }
+                    catch (Exception exc)
+                    {
+                        DIOS.Common.Logger.LogStatic($"error {exc.Message}");
+                    }
                 }
-                catch (Exception exc)
+            }
+            else
+                DIOS.Common.Logger.LogStatic("WS request from non-authenticated user");
+        }
+
+        private async Task WebSocketRequest(AspNetWebSocketContext wsContext)
+        {
+            try
+            {
+                DIOS.Common.Logger.LogStatic("start processing the request");
+                //lastContext = context;
+                string userName = wsContext.User.Identity.Name;
+                var exContext = contextTable[userName] as AspNetWebSocketContext;
+                if (exContext != null)
                 {
-                    DIOS.Common.Logger.LogStatic($"error {exc.Message}");
+                    DIOS.Common.Logger.LogStatic($"Ex Agent {exContext.UserAgent} Ex Key {exContext.Cookies["messageKey"]?.Value}");
+                    DIOS.Common.Logger.LogStatic($"New Agent {wsContext.UserAgent} New Key {wsContext.Cookies["messageKey"]?.Value}");
+                    //DIOS.Common.Logger.LogStatic($"Ex User Name {exContext.User.Identity.Name}");
+                    //DIOS.Common.Logger.LogStatic($"New User Name {wsContext.User.Identity.Name}");
                 }
+                bool differentSessions = (exContext != null) && (exContext.Cookies["messageKey"]?.Value != wsContext.Cookies["messageKey"]?.Value);
+                if (differentSessions)
+                {
+                    await SendTextToClient(userName, "¬ы зашли в систему в другом браузере. –екомендуетс€ закрыть эту сессию. —ообщени€ дл€ пользовател€ получает только браузер, который соединилс€ последним.");
+                }
+                contextTable[userName] = wsContext;
+                if (differentSessions)
+                {
+                    await SendTextToClient(userName, "” вас есть открытые ранее сессии. –екомендуетс€ закрыть эти сессии. —ообщени€ дл€ пользовател€ получает только браузер, который соединилс€ последним.");
+                }
+                while (true)
+                {
+                    if (messageTable[userName] != null)
+                    {
+                        await SendTextToClient(userName, messageTable[userName].ToString());
+                        messageTable[userName] = null;
+                    }
+                    Thread.Sleep(100);
+                }
+            }
+            catch(Exception exc)
+            {
+                DIOS.Common.Logger.LogStatic($"Error WS request processing {exc.Message}");
             }
         }
 
-        private async Task WebSocketRequest(AspNetWebSocketContext context)
+        private async Task SendTextToClient(string userName, string text)
         {
-            DIOS.Common.Logger.LogStatic("start processing the request");
-            lastContext = context;
-            string userName = context.User.Identity.Name;
-            //ѕолучаем сокет клиента из контекста запроса
-            var socket = context.WebSocket;
-            while (true)
+            //var socket = lastContext.WebSocket;
+            var context = contextTable[userName] as AspNetWebSocketContext;
+            if (context == null)
             {
-                if (SocketMessage != "")
-                {
-                    await SendTextToClient(SocketMessage);
-                    SocketMessage = "";
-                }
-                Thread.Sleep(100);
+                DIOS.Common.Logger.LogStatic($"user {userName} has no saved WS contexts");
             }
-        }
-
-        private async Task SendTextToClient(string text)
-        {
-            var socket = lastContext.WebSocket;
-            var sendBuff = new ArraySegment<byte>(Encoding.UTF8.GetBytes(text));
-            socket.SendAsync(sendBuff, WebSocketMessageType.Text, true, CancellationToken.None);
+            else
+            {
+                //ѕолучаем сокет клиента из контекста запроса  
+                var socket = context.WebSocket;
+                var sendBuff = new ArraySegment<byte>(Encoding.UTF8.GetBytes(text));
+                socket.SendAsync(sendBuff, WebSocketMessageType.Text, true, CancellationToken.None);
+            }
         }
 
         public void DownloadSavedHtml(string Id, bool doCompress = false, string fileName = "result.html", string password = "")

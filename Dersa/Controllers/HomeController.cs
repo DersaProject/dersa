@@ -19,6 +19,7 @@ namespace Dersa.Controllers
             //DIOS.Common.Logger.LogStatic("Identity.IsAuthenticated = " + System.Web.HttpContext.Current.User.Identity.IsAuthenticated.ToString());
             if (System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
             {
+                MessageManager.SetNewKeyForLoginIfEmpty();
                 string userName = System.Web.HttpContext.Current.User.Identity.Name;
                 AttributeEditManager.Reset(userName);
                 if (!Dersa.Models.User.Exists(userName))

@@ -17,6 +17,7 @@
             bottom: 25px;
             width: 100%;
         }
+        }
     </style>
     <script>
         var initialNodeId = undefined;
@@ -47,11 +48,15 @@
             width: 32px;
         }
 
-            /* Darker background on mouse-over */
-            .btn:hover {
-                background-color: RoyalBlue;
-                color: black;
-            }
+        /* Darker background on mouse-over */
+        .btn:hover {
+            background-color: RoyalBlue;
+            color: black;
+        }
+
+        .blue-backgr {
+            background-color: RoyalBlue;
+        }
     </style>
 </head>
 <body onload="createEditor('config/diagrameditor.xml');">
@@ -60,18 +65,58 @@
     <div style="position:absolute;width: 260px;top: 96px; left: 300px;"><input id="tbSearch" style="width:100%" type="text"></div>
     <div id="tabControl" style="position:absolute; left:1200px; top: 120px;"></div>
     <div style="position:absolute;width:80px;top:92px;left:556px">
-        <button class="btn" id="bnSearch" onclick="S=document.getElementById('tbSearch');V=S.value;if(isNaN(+V)||+V<10000){var form=new mxForm('find');var xhr=new XMLHttpRequest();args='srchval='+V;xhr.open('GET', 'Entity/Find?' + args, false);xhr.send();var attrs = JSON.parse(xhr.responseText);var Props=CreateProperties(form, attrs, '');var wnd=new mxWindow('find',Props,100,100,800,400,false,true);form.window = wnd;wnd.setVisible(true);return;}GoToNode(V)"><i class="fa fa-search"></i></button>
+        <button class="btn"
+                id="bnSearch"
+                onclick="S = document.getElementById('tbSearch');
+                V=S.value;
+                if (isNaN(+V) || +V < 10000) {
+                            var form = new mxForm('find');
+                            var xhr = new XMLHttpRequest();
+                            args = 'srchval=' + V;
+                            xhr.open('GET', 'Entity/Find?' + args, false);
+                            xhr.send();
+                            var attrs = JSON.parse(xhr.responseText);
+                            var Props = CreateProperties(form, attrs, '');
+                            var wnd = new mxWindow('find', Props, 100, 100, 800, 400, false, true);
+                            form.window = wnd;
+                            wnd.setVisible(true);
+                            return;
+                        }
+                        GoToNode(V)"><i class="fa fa-search"></i></button>
     </div>
-    <div id ="sysmessage" style="position:absolute;width:200px;top:92px;left:700px">
-        system message
-    </div>
+    <script>
+        var messagesFlash = 0;
+        setInterval(function () {
+            if (messagesFlash)
+                $('#bnMessages').toggleClass('blue-backgr');
+            else
+                $('#bnMessages').removeClass('blue-backgr');
+        }, 300);
+        function bnMessagesClick() {
+            messagesFlash = 0;
+            var M = $('#sysmessage').text();
+            if (M) {
+                var form = new mxForm('сообщения');
+                var attrs = [{ 'Name': '-->', 'Value': M, 'ReadOnly': true, 'WriteUnchanged': true, 'Type': -1, 'ControlType': 'textarea', 'Width': 500, 'Height': 150 }];
+                var Props = CreateProperties(form, attrs, 'Node/Close', 'close', '', function (x) { $('#sysmessage').text(''); });
+                var wnd = new mxWindow('сообщения', Props, 800, 100, 550, 300, false, true);
+                form.window = wnd;
+                wnd.setVisible(true);
+            }
+        }
+    </script>
+    <div id="sysmessage" style="display:none"></div>
+
     <div style="float:right;width:200px;margin-top:10px">
         <p align="right">
-            <a href="#Settings" id="bnSettings" onclick="bnSettingsClick()"><strong><span style="color: green;">@ViewBag.Login</span></strong></a>
+            <a href="#Settings" id="bnSettings" onclick="bnSettingsClick()"><strong><span style="color: green;">@ViewBag.Login &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></strong></a>
         </p>
         &ensp;<input type="text" id="tbOptions" hidden><input type="checkbox" id="bnEdit" hidden><label id="laEdit"></label>
         <input id="displaytext" type="hidden" />
         <input id="DiagramId" type="hidden" />
+        <div style="position:relative;left:180px;top:-60px">
+            <button class="btn blue-backgr" id="bnMessages" onclick="bnMessagesClick()"><i class="fa fa-envelope"></i></button>
+        </div>
     </div>
     <script>
         function bnSettingsClick() {
@@ -92,13 +137,17 @@
 
     <script>
         var wsUrl = window.location + "Query/Socket";
-        wsUrl = wsUrl.replace("http://", "ws://");
+        wsUrl = wsUrl.replace("https://", "wss://").replace("http://", "ws://");
         ws = new WebSocket(wsUrl);
-        ws.onopen = function () {
-            $("#sysmessage").text("Connected.");
-        };
+        //ws.onopen = function () {
+        //    $("#sysmessage").text("Web Socket connected.");
+        //};
         ws.onmessage = function (evt) {
+//            let msg = $("#sysmessage").text();
+//            $("#sysmessage").text(msg + "\n" + evt.data);
+//            $("#sysmessage").text(evt.data);
             $("#sysmessage").html(evt.data);
+            messagesFlash = 1;
         };
     </script>
 

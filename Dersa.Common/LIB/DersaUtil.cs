@@ -410,6 +410,49 @@ namespace Dersa.Common
     {
         private static Hashtable hashTable = new Hashtable();
 
+	public static string SmartReplace(string templ, string regexpText, IEnumerable objects, string lineTerminator)
+	{
+            var sb = new System.Text.StringBuilder();
+            var regExTempl = new System.Text.RegularExpressions.Regex(regexpText, System.Text.RegularExpressions.RegexOptions.Multiline);
+            var matches = regExTempl.Matches(templ);
+            bool firstEntry = true;
+            foreach(object o in objects)
+            {
+                string current = templ;
+                if (matches.Count > 0)
+                {
+                    foreach (System.Text.RegularExpressions.Match match in matches)
+                    {
+                        object targetObject = o;
+                        string ValueSourceName = match.Groups[1].ToString();
+                        object V = "undefined";
+                        if (ValueSourceName.Contains("()"))
+                        {
+                            string MethodName = ValueSourceName.Replace("()", "");
+                            var M = targetObject.GetType().GetMethod(MethodName);
+                            V = M.Invoke(targetObject, null);                        
+                        }
+                        else
+                        {
+                            string PropertyOrFieldName = ValueSourceName;
+                            var P = targetObject.GetType().GetProperty(PropertyOrFieldName);
+                            var F = targetObject.GetType().GetField(PropertyOrFieldName);
+                            if (P == null && F == null)
+                                return string.Format("object of type {0} does not contain field or property {1}", targetObject.GetType().FullName, PropertyOrFieldName);
+                            V = P != null ? P.GetValue(targetObject) : F.GetValue(targetObject);
+                        }
+                        current = regExTempl.Replace(current, V.ToString(), 1);
+                    }
+                }
+                if (lineTerminator != null && !firstEntry)
+                    sb.Append(lineTerminator);
+                sb.Append(current);
+                firstEntry = false;
+            }
+
+            return sb.ToString();
+        }
+
         public static string[] GetCacheableClasses()
         {
             Assembly stAssembly = Assembly.Load("Dersa.Stereotypes");
@@ -916,7 +959,7 @@ namespace Dersa.Common
             try
             {
                 DersaSqlManager DM = new DersaSqlManager();
-                DM.ExecuteMethod("ENTITY", "SetGuid", new object[] { entityId, guid, DersaUtil.GetPassword(userName) });
+                DM.ExecuteMethod("ENTITY", "SetGuid", new object[] { entityId, guid, userName, DersaUtil.GetPassword(userName) });
                 return "";
             }
             catch(Exception exc)

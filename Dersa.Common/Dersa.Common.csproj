@@ -103,6 +103,7 @@
     <Compile Include="LIB\DersaUserStatus.cs" />
     <Compile Include="LIB\DersaEntity.cs" />
     <Compile Include="LIB\EntityChildrenCollection.cs" />
+    <Compile Include="LIB\MessageManager.cs" />
     <Compile Include="LIB\Relation.cs" />
     <Compile Include="LIB\SqlProperty.cs" />
     <Compile Include="LIB\StereotypeBaseE.cs" />
