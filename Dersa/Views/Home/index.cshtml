@@ -17,7 +17,6 @@
             bottom: 25px;
             width: 100%;
         }
-        }
     </style>
     <script>
         var initialNodeId = undefined;
@@ -218,10 +217,11 @@
     <script src="dist/jquery-ui.js"></script>
     <script src="dist/jstree.js"></script>
     <script src="dist/dersatree.js"></script>
-    <script src="js/mxClient.js"></script>
-    <script src="js/mxApplication.js"></script>
     <script src="dist/vue.js"></script>
     <script src="dist/vue_components.js"></script>
+    <script src="js/mxClient.js"></script>
+    <script src="js/mxApplication.js"></script>
+    <script src="js/diagram_vue.js"></script>
 
     <script>
         var Editor = null;
@@ -235,15 +235,16 @@
             }
         });
 
-        var initArray =
-            [
-                { displayed_name: 'вид 1', id: 'p1', index: 0, is_selected: true, is_visible: true },
-                { displayed_name: 'вид 2', id: 'p2', index: 1, is_selected: false, is_visible: true },
-            ];
+        var initArray = 
+        [
+            { displayed_name: 'вид 1', id: 'p1', index: 0, is_selected: true, is_visible: true },
+            { displayed_name: 'вид 2', id: 'p2', index: 1, is_selected: false, is_visible: true },
+            { displayed_name: 'вид 3', id: 'p3', index: 2, is_selected: false, is_visible: true },
+        ];
 
-        var TC = $('#diagramPresentation').dersaTabControl({ X: 20, y: 150 }, { width: 850, height: 800 }, initArray);
+        var TC = $('#diagramPresentation').dersaTabControl({X: 20, y: 150}, {width: 850, height: 800}, initArray);
 
-        TC.GetPage(1).text('пока нет отображения');
+		var VueDiagr = TC.GetPage(2).dersaDiagram([], []);
 
         $(document).ready(function () {
 
