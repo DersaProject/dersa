@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web.Mvc;
 using DIOS.Common.Interfaces;
 using Dersa.Models;
+using Dersa.Common;
+using System.Web;
 
 
 namespace Dersa.Controllers
@@ -53,13 +55,30 @@ namespace Dersa.Controllers
 			}
 		}
 
-		[HttpPost]
+        private string CurrentMessageKey
+        {
+            get
+            {
+                HttpCookie editKeyCookie = ControllerContext.HttpContext.Request.Cookies["messageKey"];
+                if (editKeyCookie == null)
+                    return null;
+                return editKeyCookie.Value;
+            }
+            set
+            {
+                ControllerContext.HttpContext.Response.Cookies.Add(new HttpCookie("messageKey", value));
+            }
+        }
+
+
+        [HttpPost]
 		public ActionResult Auth(string login, string password)
 		{
             string authResult = AccountControllerAdapter.AuthorizeUser(login, password);
 			if (authResult == "")
 			{
-				DIOS.Common.Logger.LogStatic("authentication succeeded");
+                CurrentMessageKey = MessageManager.SetNewKeyForLoginIfEmpty(CurrentMessageKey);
+                DIOS.Common.Logger.LogStatic("authentication succeeded, new message key generated");
 				return RedirectToAction("Index", "Home");
 			}
 			else

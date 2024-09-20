@@ -9,29 +9,16 @@ namespace Dersa.Common
 {
     public class MessageManager
     {
-        public static string CurrentMessageKey
+        public static void ProcessMessages()
         {
-            get
-            {
-                HttpCookie editKeyCookie = HttpContext.Current.Request.Cookies["messageKey"];
-                if (editKeyCookie == null)
-                    return null;
-                return editKeyCookie.Value;
-            }
-            set
-            {
-                HttpContext.Current.Response.Cookies.Add(new HttpCookie("messageKey", value));
-            }
+
         }
 
-        public static string SetNewKeyForLoginIfEmpty()
+        public static string SetNewKeyForLoginIfEmpty(string currentMessageKey)
         {
-            string loginKey = CurrentMessageKey;
-            if (!string.IsNullOrEmpty(loginKey))
-                return loginKey;
-            loginKey = Guid.NewGuid().ToString();
-            CurrentMessageKey = loginKey;
-            return loginKey;
+            if (!string.IsNullOrEmpty(currentMessageKey))
+                return currentMessageKey;
+            return Guid.NewGuid().ToString();
         }
     }
 
