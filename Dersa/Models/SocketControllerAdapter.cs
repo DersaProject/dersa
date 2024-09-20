@@ -1,37 +1,26 @@
 ﻿using System;
+using System.IO;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using Dersa.Common;
+using DIOS.Common;
+using DIOS.Common.Interfaces;
 using Newtonsoft.Json;
+using System.Reflection;
+using Dersa.Interfaces;
+using DersaStereotypes;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Web.WebSockets;
-using System.Net.PeerToPeer;
 
 namespace Dersa.Models
 {
     public class SocketControllerAdapter
     {
-        private SocketControllerAdapter()
-        {
-        }
-
-        private static async void ProcessMessages(WebSocket socket)
-        {
-            while (true)
-            {
-                if (messageTable.Count > 0)
-                {
-                    foreach (string userName in messageTable.Keys)
-                    {
-                        await SendTextToClient(socket, messageTable[userName].ToString());
-                        messageTable.Remove(userName);
-                    }
-                }
-                Thread.Sleep(100);
-            }
-        }
-        private static SocketControllerAdapter staticAdapter = new SocketControllerAdapter();
         //private AspNetWebSocketContext lastContext;
         private static Hashtable contextTable = new Hashtable();
         private static Hashtable messageTable = new Hashtable();
@@ -61,41 +50,47 @@ namespace Dersa.Models
                     DIOS.Common.Logger.LogStatic($"Ex User {exUserInfo} Ex Key {exContext.Cookies["messageKey"]?.Value}");
                     DIOS.Common.Logger.LogStatic($"New User {wsContext.UserAgent} New Key {wsContext.Cookies["messageKey"]?.Value}");
                 }
-                bool differentSessions = true;//(exContext != null) && (exContext.Cookies["messageKey"]?.Value != wsContext.Cookies["messageKey"]?.Value);
+                bool differentSessions = (exContext != null) && (exContext.Cookies["messageKey"]?.Value != wsContext.Cookies["messageKey"]?.Value);
                 if (differentSessions)
                 {
-                    await SendTextToClient(wsContext.WebSocket, "Вы зашли в систему в другом браузере. Рекомендуется закрыть эту сессию. Сообщения для пользователя получает только браузер, который соединился последним.");
+                    await SendTextToClient(userName, "Вы зашли в систему в другом браузере. Рекомендуется закрыть эту сессию. Сообщения для пользователя получает только браузер, который соединился последним.");
                 }
                 contextTable[userName] = wsContext;
                 if (differentSessions)
                 {
-                    await SendTextToClient(wsContext.WebSocket, "У вас есть открытые ранее сессии. Рекомендуется закрыть эти сессии. Сообщения для пользователя получает только браузер, который соединился последним.");
+                    await SendTextToClient(userName, "У вас есть открытые ранее сессии. Рекомендуется закрыть эти сессии. Сообщения для пользователя получает только браузер, который соединился последним.");
+                }
+                while (true)
+                {
+                    if (messageTable[userName] != null)
+                    {
+                        await SendTextToClient(userName, messageTable[userName].ToString());
+                        messageTable[userName] = null;
+                    }
+                    Thread.Sleep(100);
                 }
             }
             catch (Exception exc)
             {
                 DIOS.Common.Logger.LogStatic($"Error WS request processing {exc.Message}");
             }
-
-            ProcessMessages(wsContext.WebSocket);
-
         }
 
-        private static async Task SendTextToClient(WebSocket socket, string text)
+        private static async Task SendTextToClient(string userName, string text)
         {
             //var socket = lastContext.WebSocket;
-            //var context = contextTable[userName] as AspNetWebSocketContext;
-            //if (context == null)
-            //{
-            //    DIOS.Common.Logger.LogStatic($"user {userName} has no saved WS contexts");
-            //}
-            //else
-            //{
-            //    //Получаем сокет клиента из контекста запроса  
-            //    var socket = context.WebSocket;
+            var context = contextTable[userName] as AspNetWebSocketContext;
+            if (context == null)
+            {
+                DIOS.Common.Logger.LogStatic($"user {userName} has no saved WS contexts");
+            }
+            else
+            {
+                //Получаем сокет клиента из контекста запроса  
+                var socket = context.WebSocket;
                 var sendBuff = new ArraySegment<byte>(Encoding.UTF8.GetBytes(text));
                 socket.SendAsync(sendBuff, WebSocketMessageType.Text, true, CancellationToken.None);
-            //}
+            }
         }
     }
 }
