@@ -16,11 +16,10 @@ namespace Dersa.Controllers
 	{
 		public ActionResult Index(int node = 0)
 		{
-            //DIOS.Common.Logger.LogStatic("Identity.IsAuthenticated = " + System.Web.HttpContext.Current.User.Identity.IsAuthenticated.ToString());
-            if (System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+            //DIOS.Common.Logger.LogStatic("Identity.IsAuthenticated = " + HttpContext.User.Identity.IsAuthenticated.ToString());
+            if (HttpContext.User.Identity.IsAuthenticated)
             {
-                MessageManager.SetNewKeyForLoginIfEmpty();
-                string userName = System.Web.HttpContext.Current.User.Identity.Name;
+                string userName = HttpContext.User.Identity.Name;
                 AttributeEditManager.Reset(userName);
                 if (!Dersa.Models.User.Exists(userName))
                 {
@@ -54,7 +53,7 @@ namespace Dersa.Controllers
         }
         public ActionResult Unauthorized()
         {
-            string userName = System.Web.HttpContext.Current.User.Identity.Name;
+            string userName = HttpContext.User.Identity.Name;
             ViewBag.Title = "сообщение системы авторизации";
             ViewBag.Message = "”важаемый пользователь " + userName + ", дл€ работы в системе DERSA нужно получить разрешение. ќбратитесь к администраторам системы.";
             return View();

@@ -135,7 +135,7 @@
     </script>
 
     <script>
-        var wsUrl = window.location + "Query/Socket";
+        var wsUrl = window.location + "Socket/Connect";
         wsUrl = wsUrl.replace("https://", "wss://").replace("http://", "ws://");
         ws = new WebSocket(wsUrl);
         //ws.onopen = function () {
