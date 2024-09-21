@@ -7,7 +7,7 @@ namespace Dersa.Controllers
 {
     public class SocketController : Controller
     {
-        public string Test(string user, string message)
+        public string Test(string message, string user = "")
         {
             try
             {
@@ -38,7 +38,21 @@ namespace Dersa.Controllers
                 }
             }
             else
+            {
                 DIOS.Common.Logger.LogStatic("WS request from non-authenticated user");
+                var context = HttpContext;
+                if (context.IsWebSocketRequest)
+                {
+                    try
+                    {
+                        context.AcceptWebSocketRequest(SocketControllerAdapter.WebSocketAnonimousRequest);
+                    }
+                    catch (Exception exc)
+                    {
+                        DIOS.Common.Logger.LogStatic($"error {exc.Message}");
+                    }
+                }
+            }
         }
 
     }
