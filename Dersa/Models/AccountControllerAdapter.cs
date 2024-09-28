@@ -10,6 +10,7 @@ using Dersa.Common;
 using Newtonsoft.Json;
 using System.Net.Mail;
 using System.Net;
+using DIOS.WCF.Core;
 
 namespace Dersa.Models
 {
@@ -85,6 +86,12 @@ namespace Dersa.Models
                 if (settingName == null)
                 {
                     System.Data.DataTable T = DM.ExecuteMethod("USER_SETTING", "List", new object[] { userName, DersaUtil.GetPassword(userName) });
+                    var tR = T.NewRow();
+                    tR["name"] = "token";
+                    tR["value"] = WcfCoreUtil.GetToken(userName, "", false);
+                    tR["ReadOnly"] = true;
+                    tR["value_type"] = 1;
+                    T.Rows.Add(tR);
                     var query =
                         from System.Data.DataRow R in T.Rows
                         select new

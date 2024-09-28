@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using System.Reflection;
 using Dersa.Interfaces;
 using DersaStereotypes;
+using DIOS.WCF.Core;
 
 namespace Dersa.Models
 {
@@ -241,7 +242,7 @@ namespace Dersa.Models
             string UserName = HttpContext.Current.User.Identity.Name;
             if (string.IsNullOrEmpty(UserName))
                 return null;
-            string token = QueryExecuteService.GetToken(UserName);
+            string token = WcfCoreUtil.GetToken(UserName, "", false);
             string encodedQueryStruct = Cryptor.Encrypt(JsonConvert.SerializeObject(queryStruct), token);
             //_query = encodedQuery;
             //return Guid.NewGuid().ToString();

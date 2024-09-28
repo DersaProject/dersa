@@ -26,18 +26,12 @@ namespace Dersa
         public string GetText(string TextId, string token)
         {
             string userName = WcfCoreUtil.VerifyUser(token);
-            //string userName = Cryptor.Decrypt(token, "DERSA");
 
             return DersaUtil.GetString(TextId, false, userName);//._query;
         }
-        public string GetUserToken(string name, string password)
+        public string GetUserName(string token)
         {
-            return GetToken(name);
-        }
-        public static string GetToken(string name)
-        {
-            return WcfCoreUtil.GetToken(name, "", false);
-            //return Cryptor.Encrypt(name, "DERSA");
+            return WcfCoreUtil.VerifyUser(token);
         }
         public string GetAttrValue(string attrName, string entityId, string userToken = null)
         {

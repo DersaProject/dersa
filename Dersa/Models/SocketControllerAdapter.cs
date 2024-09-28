@@ -81,7 +81,7 @@ namespace Dersa.Models
         public static async Task WebSocketAnonimousRequest(AspNetWebSocketContext wsContext)
         {
             DIOS.Common.Logger.LogStatic("start processing the request");
-            await SendTextToSomebody(wsContext, JsonConvert.SerializeObject(new { MethodName = "SetUserName", MethodArgs = new { name = "GCG"} }));
+            await SendTextToSomebody(wsContext, "DERSA connected via WebSocket");
             while(true)
             {
                 if (messageTable[""] != null)

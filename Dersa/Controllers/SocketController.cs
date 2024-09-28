@@ -7,7 +7,7 @@ namespace Dersa.Controllers
 {
     public class SocketController : Controller
     {
-        public string Test(string message, string user = "")
+        public string Message(string message, string user = "")
         {
             try
             {

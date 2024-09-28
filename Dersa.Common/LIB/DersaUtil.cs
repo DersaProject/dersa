@@ -467,7 +467,7 @@ namespace Dersa.Common
 
             return new string[] { "Entity", "Attribute" };
         }
-        public static void SaveEntityToFile(int id, string userName, string attrName = "")
+        public static void SaveEntityToFile_WTF(int id, string userName, string attrName = "")
         {//сохраняем предыдущие значения, если это отдельный атрибут, то сохраняем и значение атрибута отдельно тоже
             DersaSqlManager DM = new DersaSqlManager();
             string path = HttpContext.Current.Server.MapPath("~/GitDir");
@@ -978,7 +978,7 @@ namespace Dersa.Common
                 else
                     return editWarning;
             }
-            SaveEntityToFile(int.Parse(entityId), userName, attrName);
+            //SaveEntityToFile(int.Parse(entityId), userName, attrName);
             IParameterCollection Params = new ParameterCollection();
             string className = "";
             switch (ownerType)

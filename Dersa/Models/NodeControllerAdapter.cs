@@ -538,7 +538,7 @@ namespace Dersa.Models
                     try
                     {
                         int entityId = int.Parse(id);
-                        DersaUtil.SaveEntityToFile(entityId, userName);
+                        //DersaUtil.SaveEntityToFile(entityId, userName);
                     }
                     catch { }
                     T = DM.ExecuteMethod("ENTITY", "GetAttributes", new object[] { id, userName, DersaUtil.GetPassword(userName) });

@@ -14,7 +14,7 @@ namespace Dersa
         [OperationContract]
         string GetText(string textId, string userToken);
         [OperationContract]
-        string GetUserToken(string userLogin, string userPassword);
+        string GetUserName(string userToken);
         [OperationContract]
         string GetAttrValue(string attrName, string entityId, string userToken = null);
         [OperationContract]
