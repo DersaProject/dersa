@@ -16,12 +16,6 @@ namespace Dersa.Models
         {
             _contextUserName = contextUserName;
         }
-        public string List(string class_name, string filter = null, string order = "", int limit = -1, int offset = 0)
-        {
-            int rowCount = 0;
-            string result = DersaUtil.ObjectList(class_name, filter, order, limit, offset, out rowCount);
-            return result;
-        }
 
         public string Find(string srchval, int root_entity, int entity)
         {

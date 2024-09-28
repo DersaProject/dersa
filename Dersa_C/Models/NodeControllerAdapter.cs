@@ -670,7 +670,7 @@ namespace Dersa.Models
         {
             try
             {
-                DersaSqlManager DM = new DersaSqlManager(SqlBrand.ORACLE);
+                DersaSqlManager DM = new DersaSqlManager(SqlBrand.MSSqlServer);
                 string userName = _contextUserName;
                 object parent = null;
                 if (!id.Contains("#"))
