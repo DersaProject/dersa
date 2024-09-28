@@ -54,8 +54,12 @@
             color: black;
         }
 
-        .blue-backgr {
+        .message-received-backgr {
             background-color: RoyalBlue;
+        }
+
+        .error-received-backgr {
+            background-color: #990033;
         }
     </style>
 </head>
@@ -86,25 +90,42 @@
     </div>
     <script>
         var messagesFlash = 0;
+        var errorMessage = false;
         setInterval(function () {
-            if (messagesFlash)
-                $('#bnMessages').toggleClass('blue-backgr');
-            else
-                $('#bnMessages').removeClass('blue-backgr');
+            if (messagesFlash) {
+                if (errorMessage) {
+                    $('#bnMessages').removeClass('message-received-backgr');
+                    $('#bnMessages').toggleClass('error-received-backgr');
+                }
+                else {
+                    $('#bnMessages').removeClass('error-received-backgr');
+                    $('#bnMessages').toggleClass('message-received-backgr');
+                }
+            }
+            else {
+                $('#bnMessages').removeClass('message-received-backgr');
+                $('#bnMessages').removeClass('error-received-backgr');
+            }
         }, 300);
         function bnMessagesClick() {
-            //var M = $('#sysmessage').text();
             var M = wsMessages.shift();
-            if (wsMessages.length < 1)
+            if (wsMessages.length < 1) {
                 messagesFlash = 0;
+                errorMessage = false;
+            }
             if (M) {
                 var form = new mxForm('сообщения');
                 var attrs = [{ 'Name': '-->', 'Value': M, 'ReadOnly': true, 'WriteUnchanged': true, 'Type': -1, 'ControlType': 'textarea', 'Width': 500, 'Height': 150 }];
-                var Props = CreateProperties(form, attrs, 'Node/Close', 'close', '', function (x) { $('#sysmessage').text(''); });
+                var Props = CreateProperties(form, attrs, 'Node/Close', 'close', '');
                 var wnd = new mxWindow('сообщения', Props, 800, 100, 550, 300, false, true);
                 form.window = wnd;
                 wnd.setVisible(true);
             }
+            errorMessage = false;
+            let nextMessage = wsMessages[0];
+            if (nextMessage && nextMessage.indexOf('error') >= 0)
+                errorMessage = true;
+            console.log("errorMessage = " + errorMessage);
         }
     </script>
     <div id="sysmessage" style="display:none"></div>
@@ -117,7 +138,7 @@
         <input id="displaytext" type="hidden" />
         <input id="DiagramId" type="hidden" />
         <div style="position:relative;left:180px;top:-60px">
-            <button class="btn blue-backgr" id="bnMessages" onclick="bnMessagesClick()"><i class="fa fa-envelope"></i></button>
+            <button class="btn" id="bnMessages" onclick="bnMessagesClick()"><i class="fa fa-envelope"></i></button>
         </div>
     </div>
     <script>
@@ -146,11 +167,12 @@
         //    $("#sysmessage").text("Web Socket connected.");
         //};
         ws.onmessage = function (evt) {
-//            let msg = $("#sysmessage").text();
-//            $("#sysmessage").text(msg + "\n" + evt.data);
-            //            $("#sysmessage").text(evt.data);
-            wsMessages.push(evt.data);
-            //$("#sysmessage").html(evt.data);
+            let receivedMessage = evt.data;
+            if (wsMessages.length < 1) {
+                if (receivedMessage.indexOf('error') >= 0)
+                    errorMessage = true;
+            }
+            wsMessages.push(receivedMessage);
             messagesFlash = 1;
         };
     </script>
