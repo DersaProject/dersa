@@ -349,7 +349,8 @@ namespace Dersa.Models
             });
             try
             {
-                if (QueryControllerAdapter.GetLocalSqlExecution())
+                string sqlExecutionType = QueryControllerAdapter.GetSqlExecutionType();
+                if (sqlExecutionType == "http")
                 {
                     resultArray.Add(new
                     {

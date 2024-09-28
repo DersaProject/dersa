@@ -12,12 +12,14 @@ namespace Dersa
     public interface IQueryExecuteService
     {
         [OperationContract]
-        string GetText(string TextId, string token);
+        string GetText(string textId, string userToken);
         [OperationContract]
-        string GetUserToken(string name, string password);
+        string GetUserToken(string userLogin, string userPassword);
         [OperationContract]
         string GetAttrValue(string attrName, string entityId, string userToken = null);
         [OperationContract]
-        string SetAttrValue(string attr_name, string entity_id, string attr_value, string token);
+        string SetAttrValue(string attrName, string entityId, string attrValue, string userToken);
+        [OperationContract]
+        void SendResponse(string userLogin, string responseText);
     }
 }

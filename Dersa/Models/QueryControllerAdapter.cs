@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Collections;
+using System.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -17,7 +17,7 @@ namespace Dersa.Models
     public class QueryControllerAdapter
     {
 
-        internal static bool GetLocalSqlExecution()
+        internal static string GetSqlExecutionType()
         {
             string userName = HttpContext.Current.User.Identity.Name;
             DersaSqlManager M = new DersaSqlManager();
@@ -28,16 +28,21 @@ namespace Dersa.Models
             int canExecSql = userPermissions & 1;
             if (canExecSql == 0)
                 throw new Exception("You have no permissions to exec SQL in database.");
+
             UserParams.Add("@user_setting_name", "Выполнять SQL локально");
-            int execSqlLocal = M.ExecuteIntMethod("DERSA_USER", "GetBoolUserSetting", UserParams);
-            int canExecLocalSql = userPermissions & 2;
-            if (execSqlLocal > 0)
+            DataTable VT = M.ExecuteMethod("DERSA_USER", "GetUserSetting", UserParams);
+            if (VT == null || VT.Rows.Count < 1)
+                return "server";
+            string sqlExecType = VT.Rows[0][0].ToString();
+            if (sqlExecType == "http" || sqlExecType == "ws")
             {
+                int canExecLocalSql = userPermissions & 2;
                 if (canExecLocalSql == 0)
                     throw new Exception("You have no permissions to exec SQL locally.");
-                return true;
+                return sqlExecType;
             }
-            return false;
+
+            return "server";
         }
 
         public IParameterCollection GetViewParams(string cshtmlId)
@@ -253,10 +258,10 @@ namespace Dersa.Models
                 DersaSqlManager M = new DersaSqlManager();
                 string sql = Params["SQL"].Value.ToString().Replace("$gt$", ">").Replace("$lt$", "<");
                 string userName = HttpContext.Current.User.Identity.Name;
-                bool execSqlLocal = false;
+                string execSqlType = "server";
                 try
                 {
-                    execSqlLocal = GetLocalSqlExecution();
+                    execSqlType = GetSqlExecutionType();
                 }
                 catch(Exception exc)
                 {
@@ -266,26 +271,35 @@ namespace Dersa.Models
                 object objectName = Params["object_name"]?.Value;
                 object objectType = Params["object_type"]?.Value;
                 object changerComment = Params["comment"]?.Value;
-                if (execSqlLocal)
+                if (execSqlType != "server")
                 {
                     string queryId = GetQueryId(sql, dersaEntity, objectName, objectType, changerComment);
-                    IParameterCollection UserParams = new ParameterCollection();
-                    UserParams.Add("@login", userName);
-                    UserParams.Add("@password", DersaUtil.GetPassword(userName));
-                    UserParams.Add("@user_setting_name", "Функция вызова локального клиента SQL");
-                    //                        (UserParams["@user_setting_name"] as IParameter).Value = "Функция вызова локального клиента SQL";
-                    try
+                    if (execSqlType == "http")
                     {
-                        System.Data.DataTable VT = M.ExecuteMethod("DERSA_USER", "GetTextUserSetting", UserParams);
-                        if (VT == null || VT.Rows.Count < 1)
-                            throw new Exception("Функция вызова локального клиента SQL не определена");
-                        string functionBody = VT.Rows[0][0].ToString();
-                        var result = new { action = functionBody, arg_name = "queryId", arg = queryId };
-                        return JsonConvert.SerializeObject(result);
+                        IParameterCollection UserParams = new ParameterCollection();
+                        UserParams.Add("@login", userName);
+                        UserParams.Add("@password", DersaUtil.GetPassword(userName));
+                        UserParams.Add("@user_setting_name", "Функция вызова локального клиента SQL");
+                        //                        (UserParams["@user_setting_name"] as IParameter).Value = "Функция вызова локального клиента SQL";
+                        try
+                        {
+                            System.Data.DataTable VT = M.ExecuteMethod("DERSA_USER", "GetTextUserSetting", UserParams);
+                            if (VT == null || VT.Rows.Count < 1)
+                                throw new Exception("Функция вызова локального клиента SQL не определена");
+                            string functionBody = VT.Rows[0][0].ToString();
+                            var result = new { action = functionBody, arg_name = "queryId", arg = queryId };
+                            return JsonConvert.SerializeObject(result);
+                        }
+                        catch (Exception exc)
+                        {
+                            throw;
+                        }
                     }
-                    catch (Exception exc)
+                    else if (execSqlType == "ws")
                     {
-                        throw;
+                        SocketControllerAdapter.AcceptMessageForUser("", JsonConvert.SerializeObject(new { MethodName="ExecuteQuery", MethodArgs=new { queryId = queryId } }));
+                        //return "Query will be executed via WebSocket" ;
+                        return JsonConvert.SerializeObject(new { action = "{}"});
                     }
                 }
 

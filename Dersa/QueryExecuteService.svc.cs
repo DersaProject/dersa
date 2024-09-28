@@ -18,6 +18,11 @@ namespace Dersa
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
     public class QueryExecuteService : IQueryExecuteService
     {
+
+        public void SendResponse(string userLogin, string responseText)
+        {
+            SocketControllerAdapter.AcceptMessageForUser(userLogin, responseText);
+        }
         public string GetText(string TextId, string token)
         {
             string userName = WcfCoreUtil.VerifyUser(token);

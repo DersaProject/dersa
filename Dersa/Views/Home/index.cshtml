@@ -93,8 +93,10 @@
                 $('#bnMessages').removeClass('blue-backgr');
         }, 300);
         function bnMessagesClick() {
-            messagesFlash = 0;
-            var M = $('#sysmessage').text();
+            //var M = $('#sysmessage').text();
+            var M = wsMessages.shift();
+            if (wsMessages.length < 1)
+                messagesFlash = 0;
             if (M) {
                 var form = new mxForm('сообщения');
                 var attrs = [{ 'Name': '-->', 'Value': M, 'ReadOnly': true, 'WriteUnchanged': true, 'Type': -1, 'ControlType': 'textarea', 'Width': 500, 'Height': 150 }];
@@ -136,6 +138,7 @@
     </script>
 
     <script>
+        var wsMessages = [];
         var wsUrl = window.location + "Socket/Connect";
         wsUrl = wsUrl.replace("https://", "wss://").replace("http://", "ws://");
         ws = new WebSocket(wsUrl);
@@ -145,8 +148,9 @@
         ws.onmessage = function (evt) {
 //            let msg = $("#sysmessage").text();
 //            $("#sysmessage").text(msg + "\n" + evt.data);
-//            $("#sysmessage").text(evt.data);
-            $("#sysmessage").html(evt.data);
+            //            $("#sysmessage").text(evt.data);
+            wsMessages.push(evt.data);
+            //$("#sysmessage").html(evt.data);
             messagesFlash = 1;
         };
     </script>

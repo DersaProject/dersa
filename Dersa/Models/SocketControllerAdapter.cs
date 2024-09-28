@@ -81,7 +81,7 @@ namespace Dersa.Models
         public static async Task WebSocketAnonimousRequest(AspNetWebSocketContext wsContext)
         {
             DIOS.Common.Logger.LogStatic("start processing the request");
-            await SendTextToSomebody(wsContext, "Hello from DERSA");
+            await SendTextToSomebody(wsContext, JsonConvert.SerializeObject(new { MethodName = "SetUserName", MethodArgs = new { name = "GCG"} }));
             while(true)
             {
                 if (messageTable[""] != null)
@@ -130,7 +130,12 @@ namespace Dersa.Models
                 {
                     //Получаем сокет клиента из контекста запроса  
                     var socket = context.WebSocket;
-                    var sendBuff = new ArraySegment<byte>(Encoding.UTF8.GetBytes(text));
+                    byte[] bytesToSend = Encoding.UTF8.GetBytes(text);
+
+                    //отправляем заголовок с длиной текста
+                    var sendHeaderBuff = new ArraySegment<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { length = bytesToSend.Length })));
+                    socket.SendAsync(sendHeaderBuff, WebSocketMessageType.Text, true, CancellationToken.None);
+                    var sendBuff = new ArraySegment<byte>(bytesToSend);
                     socket.SendAsync(sendBuff, WebSocketMessageType.Text, true, CancellationToken.None);
                 }
             }
