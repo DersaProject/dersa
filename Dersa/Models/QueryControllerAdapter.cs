@@ -298,7 +298,7 @@ namespace Dersa.Models
                     }
                     else if (execSqlType == "ws")
                     {
-                        SocketControllerAdapter.AcceptMessageForUser("", JsonConvert.SerializeObject(new { MethodName="ExecuteQuery", MethodArgs=new { queryId = queryId } }));
+                        SocketControllerAdapter.AcceptMessageForUser(userName + "_client", JsonConvert.SerializeObject(new { MethodName="ExecuteQuery", MethodArgs=new { queryId = queryId } }));
                         //return "Query will be executed via WebSocket" ;
                         return JsonConvert.SerializeObject(new { action = "{}"});
                     }

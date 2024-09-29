@@ -36,6 +36,16 @@ namespace Dersa.Models
                 UserSessionId.Add(messageKey, 1);
         }
 
+        public static string DisconnectClient()
+        {
+            string clientName = HttpContext.Current.User.Identity.Name + "_client";
+            var context = contextTable[clientName] as AspNetWebSocketContext;
+            if(context != null)
+            {
+                context.WebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "user disconnect", CancellationToken.None);
+            }
+            return $"client {clientName} disconnected";
+        }
         public static void AcceptMessageForUser(string user, string message)
         {
             messageTable[user] = message;
@@ -46,103 +56,80 @@ namespace Dersa.Models
             {
                 DIOS.Common.Logger.LogStatic("start processing the request");
                 //lastContext = context;
-                string userName = wsContext.User.Identity.Name;
+                string userName = wsContext.User?.Identity?.Name;
+                if(string.IsNullOrEmpty(userName))
+                    userName = wsContext.Cookies["login"]?.Value;
                 string currentMessageKey = wsContext.Cookies["messageKey"]?.Value;
-                IncrementSessionId(currentMessageKey);
-                var T = new Tuple<string, int>(currentMessageKey, UserSessionId[currentMessageKey]);
-                var exContext = contextTable[userName] as AspNetWebSocketContext;
-                string exMessageKey = exContext?.Cookies["messageKey"]?.Value;
-                bool differentSessions = (exContext != null && exMessageKey != currentMessageKey);
-                if (differentSessions)
+                if (currentMessageKey != null)
                 {
-                    await SendTextToClient(userName, "Вы зашли в систему в другом браузере. Рекомендуется закрыть эту сессию. Сообщения для пользователя получает только браузер, который соединился последним.");
-                }
-                contextTable[userName] = wsContext;
-                if (differentSessions)
-                {
-                    await SendTextToClient(userName, "У вас есть открытые ранее сессии. Рекомендуется закрыть эти сессии. Сообщения для пользователя получает только браузер, который соединился последним.");
-                }
-                while (T.Item1 != currentMessageKey || T.Item2 == UserSessionId[currentMessageKey])//this becomes false when the mthod is called next time for the same user
-                {
-                    if (messageTable[userName] != null)
+                    IncrementSessionId(currentMessageKey);
+                    var T = new Tuple<string, int>(currentMessageKey, UserSessionId[currentMessageKey]);
+                    var exContext = contextTable[userName] as AspNetWebSocketContext;
+                    string exMessageKey = exContext?.Cookies["messageKey"]?.Value;
+                    bool differentSessions = (exContext != null && exMessageKey != currentMessageKey);
+                    if (differentSessions)
                     {
-                        await SendTextToClient(userName, messageTable[userName].ToString());
-                        messageTable[userName] = null;
+                        await SendTextToClient(wsContext, false, "Вы зашли в систему в другом браузере. Рекомендуется закрыть эту сессию. Сообщения для пользователя получает только браузер, который соединился последним.");
                     }
-                    Thread.Sleep(100);
+
+                    contextTable[userName] = wsContext;
+                    if (differentSessions)
+                    {
+                        await SendTextToClient(wsContext, false, "У вас есть открытые ранее сессии. Рекомендуется закрыть эти сессии. Сообщения для пользователя получает только браузер, который соединился последним.");
+                    }
+                    while (T.Item1 != currentMessageKey || T.Item2 == UserSessionId[currentMessageKey])//this becomes false when the mthod is called next time for the same user
+                    {
+                        if (messageTable[userName] != null)
+                        {
+                            await SendTextToClient(wsContext, false, messageTable[userName].ToString());
+                            messageTable[userName] = null;
+                        }
+                        Thread.Sleep(100);
+                    }
+                    DIOS.Common.Logger.LogStatic($"WS changed context User = {userName}({currentMessageKey}); N = {UserSessionId[currentMessageKey]}");
                 }
-                DIOS.Common.Logger.LogStatic($"WS changed context User = {userName}({currentMessageKey}); N = {UserSessionId[currentMessageKey]}");
+                else
+                {
+                    contextTable[userName] = wsContext;
+                    while (wsContext.IsClientConnected)
+                    {
+                        if (messageTable[userName] != null)
+                        {
+                            await SendTextToClient(wsContext, true, messageTable[userName].ToString());
+                            messageTable[userName] = null;
+                        }
+                        Thread.Sleep(100);
+                    }
+                }
             }
             catch (Exception exc)
             {
                 DIOS.Common.Logger.LogStatic($"Error WS request processing {exc.Message}");
             }
         }
-        public static async Task WebSocketAnonimousRequest(AspNetWebSocketContext wsContext)
-        {
-            DIOS.Common.Logger.LogStatic("start processing the request");
-            await SendTextToSomebody(wsContext, "DERSA connected via WebSocket");
-            while(true)
-            {
-                if (messageTable[""] != null)
-                {
-                    await SendTextToSomebody(wsContext, messageTable[""].ToString());
-                    messageTable[""] = null;
-                }
-                Thread.Sleep(100);
-            }
-        }
 
-        private static async Task SendTextToClient(string userName, string text)
+        private static async Task SendTextToClient(AspNetWebSocketContext context, bool needHeader, string text)
         {
             try
             {
-                //var socket = lastContext.WebSocket;
-                var context = contextTable[userName] as AspNetWebSocketContext;
-                if (context == null)
-                {
-                    DIOS.Common.Logger.LogStatic($"user {userName} has no saved WS contexts");
-                }
-                else
-                {
-                    //Получаем сокет клиента из контекста запроса  
-                    var socket = context.WebSocket;
-                    var sendBuff = new ArraySegment<byte>(Encoding.UTF8.GetBytes(text));
-                    socket.SendAsync(sendBuff, WebSocketMessageType.Text, true, CancellationToken.None);
-                }
-            }
-            catch (Exception exc)
-            {
-                DIOS.Common.Logger.LogStatic($"Error Send Text {exc.Message}");
-            }
-        }
+                //Получаем сокет клиента из контекста запроса  
+                var socket = context.WebSocket;
+                byte[] bytesToSend = Encoding.UTF8.GetBytes(text);
 
-        private static async Task SendTextToSomebody(AspNetWebSocketContext context, string text)
-        {
-            try
-            {
-                //var socket = lastContext.WebSocket;
-                if (context == null)
+                if (needHeader)
                 {
-                    DIOS.Common.Logger.LogStatic($"WS context should not be null");
-                }
-                else
-                {
-                    //Получаем сокет клиента из контекста запроса  
-                    var socket = context.WebSocket;
-                    byte[] bytesToSend = Encoding.UTF8.GetBytes(text);
-
                     //отправляем заголовок с длиной текста
                     var sendHeaderBuff = new ArraySegment<byte>(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { length = bytesToSend.Length })));
                     socket.SendAsync(sendHeaderBuff, WebSocketMessageType.Text, true, CancellationToken.None);
-                    var sendBuff = new ArraySegment<byte>(bytesToSend);
-                    socket.SendAsync(sendBuff, WebSocketMessageType.Text, true, CancellationToken.None);
                 }
+                var sendBuff = new ArraySegment<byte>(bytesToSend);
+                socket.SendAsync(sendBuff, WebSocketMessageType.Text, true, CancellationToken.None);
             }
             catch (Exception exc)
             {
                 DIOS.Common.Logger.LogStatic($"Error Send Text {exc.Message}");
             }
         }
+
     }
 }

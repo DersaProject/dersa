@@ -7,7 +7,17 @@ namespace Dersa.Controllers
 {
     public class SocketController : Controller
     {
-        public string Message(string message, string user = "")
+        public string DisconnectClient()
+        {
+            return SocketControllerAdapter.DisconnectClient();
+        }
+        public string ClientMessage(string message)
+        {
+            var context = HttpContext;
+            string clientName = context.User.Identity.Name + "_client";
+            return Message(message, clientName);
+        }
+        public string Message(string message, string user)
         {
             try
             {
@@ -19,41 +29,24 @@ namespace Dersa.Controllers
                 return exc.Message;
             }
         }
-        public void Connect()
+        public void Connect(string clientLogin = "")
         {
-            if (HttpContext.User.Identity.IsAuthenticated)
-            {
-                var context = HttpContext;
-                if (context.IsWebSocketRequest)
+            var context = HttpContext;
+            if (context.IsWebSocketRequest)
+                if (!HttpContext.User.Identity.IsAuthenticated)
                 {
-                    DIOS.Common.Logger.LogStatic($"request from {context.User.Identity.Name} is of WS type");
-                    try
-                    {
-                        context.AcceptWebSocketRequest(SocketControllerAdapter.WebSocketRequest);
-                    }
-                    catch (Exception exc)
-                    {
-                        DIOS.Common.Logger.LogStatic($"error {exc.Message}");
-                    }
+                    DIOS.Common.Logger.LogStatic("WS request from non-authenticated user + clientLogin");
+                    context.Response.Cookies.Add(new System.Web.HttpCookie("login", clientLogin + "_client"));
                 }
-            }
-            else
-            {
-                DIOS.Common.Logger.LogStatic("WS request from non-authenticated user");
-                var context = HttpContext;
-                if (context.IsWebSocketRequest)
+                DIOS.Common.Logger.LogStatic($"request from {context.User.Identity.Name} is of WS type");
+                try
                 {
-                    try
-                    {
-                        context.AcceptWebSocketRequest(SocketControllerAdapter.WebSocketAnonimousRequest);
-                    }
-                    catch (Exception exc)
-                    {
-                        DIOS.Common.Logger.LogStatic($"error {exc.Message}");
-                    }
+                    context.AcceptWebSocketRequest(SocketControllerAdapter.WebSocketRequest);
                 }
-            }
+                catch (Exception exc)
+                {
+                    DIOS.Common.Logger.LogStatic($"error {exc.Message}");
+                }
         }
-
     }
 }
