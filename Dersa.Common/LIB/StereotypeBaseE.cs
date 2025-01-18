@@ -52,6 +52,8 @@ namespace DersaStereotypes
             object inst = Activator.CreateInstance(dType, new object[] { });
             StereotypeBaseE res = inst as StereotypeBaseE;
             res._id = id;
+            if (ET.Rows[0]["name"] != DBNull.Value)
+                res._name = ET.Rows[0]["name"].ToString();
             if (ET.Rows[0]["parent"] != DBNull.Value)
             {
                 dynamic parentId = ET.Rows[0]["parent"];

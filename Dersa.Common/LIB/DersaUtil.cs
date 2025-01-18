@@ -501,34 +501,6 @@ namespace Dersa.Common
 
         }
 
-        public static void CommitToGit(int id, string userName, string attrName = "")
-        {
-            string path = HttpContext.Current.Server.MapPath("~/GitDir");
-            try
-            {
-                var startInfo = new System.Diagnostics.ProcessStartInfo();
-                startInfo.FileName = path + "\\save_to_git.bat";
-                startInfo.Arguments = string.Format("{0} {1} {2}", id, userName, attrName);
-                startInfo.UseShellExecute = false;
-                startInfo.RedirectStandardOutput = true;
-                startInfo.RedirectStandardError = true;
-                using (System.Diagnostics.Process process = System.Diagnostics.Process.Start(startInfo))
-                using (System.IO.StreamReader reader = process.StandardOutput)
-                using (System.IO.StreamReader errReader = process.StandardError)
-                {
-                    process.WaitForExit();
-                    //Logger.LogStatic(reader.ReadToEnd());
-                    string execError = errReader.ReadToEnd();
-                    if (!string.IsNullOrEmpty(execError))
-                        Logger.LogStatic(execError);
-                }
-            }
-            catch (Exception exc)
-            {
-                Logger.LogStatic(string.Format("Method DersaUtil.SaveEntityToFile, entity {0}, user {1}, error: {2}", id, userName, exc.Message));
-            }
-        }
-
         public static string PutString(string src, string userName = null)
         {
             if (userName == null && HttpContext.Current != null)

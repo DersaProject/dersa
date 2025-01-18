@@ -667,7 +667,6 @@ namespace Dersa.Models
                         return exc.Message;
                     }
                 }
-                DersaUtil.CommitToGit(int.Parse(key), userName);
             }
             AttributeEditManager.MarkForFree(userName, int.Parse(key));
 

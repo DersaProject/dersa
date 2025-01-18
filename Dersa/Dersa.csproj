@@ -678,6 +678,7 @@
     <Content Include="js\model\mxCellPath.js" />
     <Content Include="js\model\mxGeometry.js" />
     <Content Include="js\model\mxGraphModel.js" />
+    <Content Include="js\mxApplication.js" />
     <Content Include="js\mxClient.js" />
     <Content Include="js\shape\mxActor.js" />
     <Content Include="js\shape\mxArrow.js" />
