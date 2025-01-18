@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Dersa.Common</RootNamespace>
     <AssemblyName>Dersa.Common</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -39,35 +39,31 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DbManager">
-      <HintPath>..\..\gitd\DIOS\DIOS\DIOS.Server\common\DbManager.dll</HintPath>
+      <HintPath>bin\DbManager.dll</HintPath>
     </Reference>
     <Reference Include="Dersa.Interfaces">
-      <HintPath>..\..\gitd\DIOS\DIOS\DIOS.Server\common\Dersa.Interfaces.dll</HintPath>
+      <HintPath>bin\Dersa.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="Dios.Common">
-      <HintPath>..\..\gitd\DIOS\DIOS\DIOS.Server\common\Dios.Common.dll</HintPath>
+      <HintPath>bin\Dios.Common.dll</HintPath>
     </Reference>
     <Reference Include="Dios.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dersa\bin\Dios.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="Dios.SqlManager">
-      <HintPath>..\..\gitd\DIOS\DIOS\DIOS.Server\common\Dios.SqlManager.dll</HintPath>
+      <HintPath>bin\Dios.SqlManager.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>..\..\gitd\DIOS\DIOS\DIOS.Server\common\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>bin\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.Configuration.Abstractions">
       <HintPath>..\..\gitd\DIOS\DIOS\DIOS.Server\common\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+    <Reference Include="netstandard" />
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\gitd\dersa\DIOS\DIOS.Server\common\netstandard.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dersa\bin\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>bin\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -75,7 +71,7 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Mvc">
-      <HintPath>..\..\gitd\DIOS\DIOS\DIOS.Server\common\System.Web.Mvc.dll</HintPath>
+      <HintPath>bin\System.Web.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />

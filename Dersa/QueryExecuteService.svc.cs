@@ -18,21 +18,20 @@ namespace Dersa
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
     public class QueryExecuteService : IQueryExecuteService
     {
+
+        public void SendResponse(string userLogin, string responseText)
+        {
+            MessageManager.AcceptMessageForUser(userLogin, responseText);
+        }
         public string GetText(string TextId, string token)
         {
             string userName = WcfCoreUtil.VerifyUser(token);
-            //string userName = Cryptor.Decrypt(token, "DERSA");
 
             return DersaUtil.GetString(TextId, false, userName);//._query;
         }
-        public string GetUserToken(string name, string password)
+        public string GetUserName(string token)
         {
-            return GetToken(name);
-        }
-        public static string GetToken(string name)
-        {
-            return WcfCoreUtil.GetToken(name, "", false);
-            //return Cryptor.Encrypt(name, "DERSA");
+            return WcfCoreUtil.VerifyUser(token);
         }
         public string GetAttrValue(string attrName, string entityId, string userToken = null)
         {
@@ -64,11 +63,10 @@ namespace Dersa
             try 
             {
                 string userName = WcfCoreUtil.VerifyUser(token);
-                //Cryptor.Decrypt(token, "DERSA");
-                DersaUtil.SetAttributeValue(new DersaAnonimousSqlManager(), userName, AttributeOwnerType.Entity, entity_id, attr_name, -1, attr_value);
-                DersaUtil.CommitToGit(int.Parse(entity_id), userName, attr_name);
-                //NodeControllerAdapter.SetTextProperty(int.Parse(entity_id), attr_name, attr_value, userName);
-                return "";
+                string result = DersaUtil.SetAttributeValue(new DersaAnonimousSqlManager(), userName, AttributeOwnerType.Entity, entity_id, attr_name, -1, attr_value);
+                if (!string.IsNullOrEmpty(result) && !result.ToLower().Contains("error"))
+                    result = "error: " + result;
+                return result;
             }
             catch(Exception exc)
             {

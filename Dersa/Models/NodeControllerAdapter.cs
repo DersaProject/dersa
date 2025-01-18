@@ -349,7 +349,8 @@ namespace Dersa.Models
             });
             try
             {
-                if (QueryControllerAdapter.GetLocalSqlExecution())
+                string sqlExecutionType = QueryControllerAdapter.GetSqlExecutionType();
+                if (sqlExecutionType == "http")
                 {
                     resultArray.Add(new
                     {
@@ -537,7 +538,7 @@ namespace Dersa.Models
                     try
                     {
                         int entityId = int.Parse(id);
-                        DersaUtil.SaveEntityToFile(entityId, userName);
+                        //DersaUtil.SaveEntityToFile(entityId, userName);
                     }
                     catch { }
                     T = DM.ExecuteMethod("ENTITY", "GetAttributes", new object[] { id, userName, DersaUtil.GetPassword(userName) });
@@ -666,7 +667,6 @@ namespace Dersa.Models
                         return exc.Message;
                     }
                 }
-                DersaUtil.CommitToGit(int.Parse(key), userName);
             }
             AttributeEditManager.MarkForFree(userName, int.Parse(key));
 

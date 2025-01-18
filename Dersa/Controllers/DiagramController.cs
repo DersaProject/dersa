@@ -9,13 +9,22 @@ using DIOS.Common;
 using DIOS.Common.Interfaces;
 using Newtonsoft.Json;
 using DersaStereotypes;
+using System.Net.PeerToPeer;
 
 namespace Dersa.Controllers
 {
 	public class DiagramController : Controller
 	{
 
-		public string Create(int parent)
+		public string RelationInfo(int diagram, int relation)
+		{
+            string userName = HttpContext.User.Identity.Name;
+            var DM = new DersaSqlManager();
+            var T = DM.ExecuteMethod("DIAGRAM", "RelationInfo", new object[] { diagram, relation, userName, DersaUtil.GetPassword(userName) });
+            return JsonConvert.SerializeObject(T);
+        }
+
+        public string Create(int parent)
 		{
 
 			string result = DersaUtil.CreateDiagram(parent, HttpContext.User.Identity.Name);

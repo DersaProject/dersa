@@ -25,7 +25,7 @@ namespace Dersa.Controllers
                 ViewBag.ToolBoxData = "[]";
                 try
                 {
-                    DersaSqlManager DM = new DersaSqlManager(DIOS.Common.SqlBrand.ORACLE);
+                    DersaSqlManager DM = new DersaSqlManager(DIOS.Common.SqlBrand.MSSqlServer);
                     System.Data.DataTable T = DM.ExecuteMethod("DERSA_USER", "GetTextUserSetting", new object[] { userName, DersaUtil.GetPassword(userName), "toolbox JSON" });
                     string jsonData = (string)T.Rows[0][0];
                     JsonConvert.DeserializeObject(jsonData);

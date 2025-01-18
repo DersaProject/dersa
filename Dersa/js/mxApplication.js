@@ -149,7 +149,7 @@ function onInit(editor) {
 
             var xhr = new XMLHttpRequest();
             args = "id=" + value.entity;//cell.getId();
-            xhr.open('GET', "node/properties?" + args, false);
+            xhr.open('GET', "node/PropertiesForm?" + args, false);
             xhr.send();
             var attrs = JSON.parse(xhr.responseText);
             var texts = [];
@@ -324,10 +324,25 @@ function onInit(editor) {
     var insNode = function (editor, id, text, x, y) {
         editor.graph.getModel().beginUpdate();
         try {
-            var vObj = new Object();
-            vObj.entity = id;
-            vObj.label = text;
-            var v1 = editor.graph.insertVertex(null, null/*id*/, vObj, x, y, 120, 25);
+            if (id > 0) {
+                var v1 = editor.graph.insertVertex(null, null/*id*/, { entity:id, label: text }, x, y, 120, 25);
+            }
+            else {
+                var rel = -id;
+                var xhr = new XMLHttpRequest();
+                let dID = document.getElementById("DiagramId");
+                console.log(dID);
+                args = "diagram=" + dID.value.replace('D_', '') + "&relation=" + rel;
+                xhr.open('GET', "Diagram/RelationInfo?" + args, false);
+                xhr.send();
+                var attrs = JSON.parse(xhr.responseText);
+                if (attrs.length)
+                    attrs.forEach(function (item) {
+                        var e1 = editor.graph.insertEdge(null, null, { relation: rel, label: item.label }, item.src, item.dst, item.style);
+                    });
+                    
+                //insertEdge = function(parent, id, value, source, target, style)
+            }
         }
         finally {
             editor.graph.getModel().endUpdate();

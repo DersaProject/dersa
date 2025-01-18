@@ -193,7 +193,7 @@ public class Xsd: ICompiledEntity
 		sr.Write(sb.ToString());
 		sr.Close();
 		//Static.SaveToFile(fileName, sb.ToString(), System.Text.Encoding.Unicode);
-		Static.Information("Сохранено:\n" + fileName);
+		//Static.Information("Сохранено:\n" + fileName);
 	}
 	public System.String GenerateEntity(Entity entity, System.Collections.IList stack)
 	{

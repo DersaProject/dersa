@@ -329,7 +329,6 @@
     <Compile Include="Models\NodeControllerAdapter.cs" />
     <Compile Include="Models\ProjectControllerAdapter.cs" />
     <Compile Include="Models\QueryControllerAdapter.cs" />
-    <Compile Include="Models\SocketControllerAdapter.cs" />
     <Compile Include="QueryExecuteService.svc.cs">
       <DependentUpon>QueryExecuteService.svc</DependentUpon>
     </Compile>
@@ -679,6 +678,7 @@
     <Content Include="js\model\mxCellPath.js" />
     <Content Include="js\model\mxGeometry.js" />
     <Content Include="js\model\mxGraphModel.js" />
+    <Content Include="js\mxApplication.js" />
     <Content Include="js\mxClient.js" />
     <Content Include="js\shape\mxActor.js" />
     <Content Include="js\shape\mxArrow.js" />

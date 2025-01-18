@@ -373,11 +373,10 @@ mxForm.prototype.addTextarea = function(elem)
     //    caption += " *";
     this.addField(caption, input);
 
-    if (!elem.NoButtons) {
+    if (!elem.NoFileButton) {
         var file_input = document.createElement('input');
         file_input.type = 'file';
         file_input.setAttribute('style', 'width:' + elem.Width + "px");
-        //input.setAttribute('style', 'width:200px');
         file_input.onchange = e => {
             var file = e.target.files[0];
             var reader = new FileReader();
@@ -387,6 +386,17 @@ mxForm.prototype.addTextarea = function(elem)
             }
         }
         this.addField('', file_input);
+    }
+    if (elem.CopyButton) {
+        var copy_input = document.createElement('input');
+        copy_input.type = 'button';
+        copy_input.value = 'Copy';
+        copy_input.setAttribute('style', 'width:40px');
+        copy_input.onclick = e => {
+            input.select();
+            document.execCommand("copy");
+        };
+        this.addField('', copy_input);
     }
 
     return input;
