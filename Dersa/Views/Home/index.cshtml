@@ -115,7 +115,7 @@
             }
             if (M) {
                 var form = new mxForm('сообщения');
-                var attrs = [{ 'Name': '-->', 'Value': M, 'ReadOnly': true, 'WriteUnchanged': true, 'Type': -1, 'ControlType': 'textarea', 'Width': 500, 'Height': 150 }];
+                var attrs = [{ 'Name': '-->', 'Value': M, 'ReadOnly': true, 'WriteUnchanged': true, 'Type': -1, 'ControlType': 'textarea', 'Width': 500, 'Height': 150, 'NoFileButton': true, 'CopyButton': true }];
                 var Props = CreateProperties(form, attrs, 'Node/Close', 'close', '');
                 var wnd = new mxWindow('сообщения', Props, 800, 100, 550, 300, false, true);
                 form.window = wnd;
