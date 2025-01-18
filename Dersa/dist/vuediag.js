@@ -120,11 +120,12 @@ xhr.send();
 var initArray = JSON.parse(xhr.responseText);
 
 appDiagram = new Vue({ el: '#diag', 
-data: {
-  selected_index: -1,
-  status_message: 'hello',
-  ctrls: initArray
-},
+	data: {
+		selected_index: -1,
+		status_message: 'hello',
+		keydown_assigned: false,
+		ctrls: initArray
+	},
 methods:{
 	ProcessKey: function(key, altKey, ctrlKey, shiftKey){
 		if(key == "Control")

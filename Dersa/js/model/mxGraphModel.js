@@ -1217,6 +1217,10 @@ mxGraphModel.prototype.setTerminals = function(edge, source, target)
  */
 mxGraphModel.prototype.terminalForCellChanged = function(edge, terminal, isSource)
 {
+	if (+terminal) {
+		console.log(this.cells[terminal]);
+		terminal = this.cells[terminal];
+	}
 	var previous = this.getTerminal(edge, isSource);
 	
 	if (terminal != null)
