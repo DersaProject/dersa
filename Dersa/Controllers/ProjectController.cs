@@ -40,7 +40,7 @@ namespace Dersa.Controllers
         }
 
         [HttpPost]
-        public void UploadFile(IEnumerable<HttpPostedFileBase> fileUpload, int entityId)
+        public void UploadFile(IEnumerable<HttpPostedFileBase> fileUpload, int entityId = 0)
         {
             foreach (var file in fileUpload)
             {
@@ -51,6 +51,8 @@ namespace Dersa.Controllers
                 file.InputStream.Read(fileContent, 0, fileContent.Length);
                 System.Tuple<string, string> fileNameInfo = ProjectControllerAdapter.GetPath(file.FileName); 
                 System.IO.File.WriteAllBytes(fileNameInfo.Item1, fileContent);
+                if (entityId == 0)
+                    return;
                 try
                 {
                     ProjectControllerAdapter.SetImagePath(entityId, fileNameInfo.Item2);
