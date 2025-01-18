@@ -329,7 +329,6 @@
     <Compile Include="Models\NodeControllerAdapter.cs" />
     <Compile Include="Models\ProjectControllerAdapter.cs" />
     <Compile Include="Models\QueryControllerAdapter.cs" />
-    <Compile Include="Models\SocketControllerAdapter.cs" />
     <Compile Include="QueryExecuteService.svc.cs">
       <DependentUpon>QueryExecuteService.svc</DependentUpon>
     </Compile>

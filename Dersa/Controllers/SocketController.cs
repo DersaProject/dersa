@@ -2,6 +2,7 @@
 using System;
 using System.Web.Mvc;
 using Dersa.Models;
+using Dersa.Common;
 
 namespace Dersa.Controllers
 {
@@ -9,7 +10,7 @@ namespace Dersa.Controllers
     {
         public string DisconnectClient()
         {
-            return SocketControllerAdapter.DisconnectClient();
+            return MessageManager.DisconnectClient();
         }
         public string ClientMessage(string message)
         {
@@ -21,7 +22,7 @@ namespace Dersa.Controllers
         {
             try
             {
-                SocketControllerAdapter.AcceptMessageForUser(user, message);
+                MessageManager.AcceptMessageForUser(user, message);
                 return $"Accepted: {message} for user {user}";
             }
             catch (Exception exc)
@@ -33,20 +34,22 @@ namespace Dersa.Controllers
         {
             var context = HttpContext;
             if (context.IsWebSocketRequest)
+            {
                 if (!HttpContext.User.Identity.IsAuthenticated)
                 {
-                    DIOS.Common.Logger.LogStatic("WS request from non-authenticated user + clientLogin");
+                    DIOS.Common.Logger.LogStatic("WS request from non-authenticated user " + clientLogin);
                     context.Response.Cookies.Add(new System.Web.HttpCookie("login", clientLogin + "_client"));
                 }
                 DIOS.Common.Logger.LogStatic($"request from {context.User.Identity.Name} is of WS type");
                 try
                 {
-                    context.AcceptWebSocketRequest(SocketControllerAdapter.WebSocketRequest);
+                    context.AcceptWebSocketRequest(MessageManager.WebSocketRequest);
                 }
                 catch (Exception exc)
                 {
-                    DIOS.Common.Logger.LogStatic($"error {exc.Message}");
+                    DIOS.Common.Logger.LogStatic($"Error: {exc.Message}");
                 }
+            }
         }
     }
 }

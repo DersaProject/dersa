@@ -21,7 +21,7 @@ namespace Dersa
 
         public void SendResponse(string userLogin, string responseText)
         {
-            SocketControllerAdapter.AcceptMessageForUser(userLogin, responseText);
+            MessageManager.AcceptMessageForUser(userLogin, responseText);
         }
         public string GetText(string TextId, string token)
         {
@@ -63,11 +63,10 @@ namespace Dersa
             try 
             {
                 string userName = WcfCoreUtil.VerifyUser(token);
-                //Cryptor.Decrypt(token, "DERSA");
-                DersaUtil.SetAttributeValue(new DersaAnonimousSqlManager(), userName, AttributeOwnerType.Entity, entity_id, attr_name, -1, attr_value);
-                DersaUtil.CommitToGit(int.Parse(entity_id), userName, attr_name);
-                //NodeControllerAdapter.SetTextProperty(int.Parse(entity_id), attr_name, attr_value, userName);
-                return "";
+                string result = DersaUtil.SetAttributeValue(new DersaAnonimousSqlManager(), userName, AttributeOwnerType.Entity, entity_id, attr_name, -1, attr_value);
+                if (!string.IsNullOrEmpty(result) && !result.ToLower().Contains("error"))
+                    result = "error: " + result;
+                return result;
             }
             catch(Exception exc)
             {
