@@ -914,7 +914,7 @@ namespace Dersa.Models
                     var query = (
                                 from DataRow R in T.Rows
                                 where R["data"] != null && R["data"].ToString() != "CacheAdapter"
-                                    orderby R["rank"], R["erank"], R["id"]
+                                    orderby R["rank"], R["erank"], R["text"]
                                 select new
                                 {
                                     id = R["id"],
@@ -926,7 +926,7 @@ namespace Dersa.Models
                                     children = Convert.ToBoolean(R["children"])
                                 }).Union(
                                 from dynamic R in cachedRows
-                                    orderby R["rank"], R["erank"], R["id"]
+                                    orderby R["rank"], R["erank"], R["text"]
                                 select new
                                 {
                                     id = R.id,
