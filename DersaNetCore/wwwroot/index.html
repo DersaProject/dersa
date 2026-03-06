@@ -138,88 +138,72 @@
             border: none;
             overflow-y: auto;
         }
-
-        textarea {
-            width: 100%;
-            height: 400px;
-            resize: both;
-            padding: 10px;
-            border: 1px solid #ccc;
-            background-color: white;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Верхний фрейм (фиксированный размер) -->
+        <!-- Верхний фрейм -->
         <div id="top-frame">
-            <h3>Верхний фрейм</h3>
-            <p>Этот фрейм не меняет размер.</p>
-	    <input id="tbOptions"></input>
         </div>
 
-        <!-- Основной контент с левым и основным фреймами -->
+        <!-- Основной контент -->
         <div class="main-content">
-            <!-- Левый фрейм (можно менять ширину) -->
+            <!-- Левый фрейм -->
             <div id="left-frame">
-                <h4>Левый фрейм</h4>
-                <ul>
-                    <li><a href="#" onclick="loadNodeProperties(1)">Узел 1</a></li>
-                    <li><a href="#" onclick="loadNodeProperties(2)">Узел 2</a></li>
-            <li><a href="#" onclick="loadNodeProperties(3)">Узел 3</a></li>
-                </ul>
-		<div id="dersa"></div>
+                <div id="dersa">
+                    <!-- Здесь будет дерево узлов -->
+                </div>
             </div>
 
             <!-- Основной фрейм с вкладками -->
             <div id="main-frame">
                 <div class="tabs">
                     <div class="tab active" onclick="switchTab('tab1')">Вкладка 1</div>
-            <div class="tab" onclick="switchTab('tab2')">Вкладка 2</div>
-            <div class="tab" onclick="switchTab('tab3')">Вкладка 3</div>
+                    <div class="tab" onclick="switchTab('tab2')">Вкладка 2</div>
+                    <div class="tab" onclick="switchTab('tab3')">Вкладка 3</div>
                 </div>
 
                 <!-- Вкладка 1 -->
                 <div class="tab-content active" id="tab1">
-            <div class="split-panel">
-                <!-- Левый блок: таблица свойств -->
-                <div class="left-panel">
-                    <table id="properties-table">
-                <thead>
-                    <tr>
-                <th>Name</th>
-                <th>Value</th>
-            </tr>
-                </thead>
-                <tbody>
-            <!-- Данные будут заполняться через JavaScript -->
-                </tbody>
-            </table>
-                </div>
+                    <div class="split-panel">
+                        <!-- Левый блок: таблица свойств -->
+                        <div class="left-panel">
+                            <table id="properties-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Данные будут заполняться через JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
 
-                <!-- Правый блок: значение свойства -->
-                <div class="right-panel">
-            <div id="property-value" class="property-value">
-                Выберите свойство из таблицы слева
-            </div>
-                </div>
-            </div>
+                        <!-- Правый блок: значение свойства -->
+                        <div class="right-panel">
+                            <div id="property-value" class="property-value">
+                                Выберите свойство из таблицы слева
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Вкладка 2 -->
                 <div class="tab-content" id="tab2">
-            <div style="padding: 20px;">
-                <h2>Содержимое вкладки 2</h2>
-                <p>Здесь может быть любой резервный контент.</p>
-            </div>
+                    <div style="padding: 20px;">
+                        <h2>Содержимое вкладки 2</h2>
+                        <p>Здесь может быть любой резервный контент.</p>
+                    </div>
                 </div>
 
                 <!-- Вкладка 3 -->
                 <div class="tab-content" id="tab3">
-            <div style="padding: 20px;">
-                <h2>Содержимое вкладки 3</h2>
-                <p>Ещё один блок резервного контента.</p>
-            </div>
+                    <div style="padding: 20px;">
+                        <h2>Содержимое вкладки 3</h2>
+                        <p>Ещё один блок резервного контента.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -257,9 +241,8 @@
         async function GetPropertyValue(node_id, property_name) {
             try {
                 // Здесь может быть отдельный API-вызов
-                // Для примера возвращаем тестовые данные
                 return `Детальная информация для свойства "${property_name}" узла ${node_id}:
-                // Здесь может быть сложная логика или дополнительный API-запрос
+
 - Тип данных: строка
 - Изменяемость: да
 - Последнее обновление: ${new Date().toLocaleString()}
@@ -279,21 +262,21 @@
             properties.forEach(property => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${property.Name}</td>
-            <td>${property.Value}</td>
-                `;
+                        <td>${property.Name}</td>
+                <td>${property.Value}</td>
+                    `;
 
                 // Обработчик клика на строку таблицы
                 row.addEventListener('click', async () => {
                     // Сбрасываем подсветку всех строк
-            document.querySelectorAll('#properties-table tbody tr').forEach(r => {
-                r.style.backgroundColor = '';
-            });
-            // Подсвечиваем выбранную строку
-            row.style.backgroundColor = '#e3f2fd';
+                    document.querySelectorAll('#properties-table tbody tr').forEach(r => {
+                        r.style.backgroundColor = '';
+                    });
+                    // Подсвечиваем выбранную строку
+                    row.style.backgroundColor = '#e3f2fd';
 
-            const propertyName = property.Name;
-            await displayPropertyValue(node_id, propertyName);
+                    const propertyName = property.Name;
+                    await displayPropertyValue(node_id, propertyName);
                 });
 
                 tableBody.appendChild(row);
@@ -307,9 +290,10 @@
         }
 
         // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Загружаем свойства первого узла по умолчанию
-            await loadNodeProperties(1);
+        document.addEventListener('DOMContentLoaded', () => {
+            // Очищаем таблицу свойств (оставляем только заголовки)
+            const tableBody = document.querySelector('#properties-table tbody');
+            tableBody.innerHTML = '';
 
             // Добавляем обработчики для навигации
             document.querySelectorAll('#left-frame a').forEach(link => {
@@ -319,7 +303,7 @@
             });
         });
 
-        // Демо-данные для тестирования (если API недоступно)
+        // Демо‑данные для тестирования (если API недоступно)
         window.demoData = {
             1: [
                 { Name: 'ID', Value: '1' },
@@ -344,7 +328,7 @@
             ]
         };
 
-        // Модифицированная версия GetNodeProperties для работы с демо-данными
+        // Модифицированная версия GetNodeProperties для работы с демо‑данными
         async function GetNodeProperties(node_id) {
             try {
                 // Попытка получить данные с сервера
@@ -364,5 +348,6 @@
     <script src="dist/jquery-ui.js"></script>
     <script src="dist/jstree.js"></script>
     <script src="dist/dersatree.js"></script>
+
 </body>
 </html>
