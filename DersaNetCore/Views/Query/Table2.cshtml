@@ -1,0 +1,23 @@
+﻿@using System.Data;
+
+<h2>Title</h2>
+
+
+
+    <table border="1">
+        <tr><strong>
+    @{DataTable T = new DataTable();
+	T.Columns.Add("C1");
+     }
+    
+        @foreach (DataColumn item in T.Columns)
+        {
+            <th>
+                @item.ColumnName 
+            </th>
+        }
+        </strong></tr>
+    
+    </table>
+
+

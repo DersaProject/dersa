@@ -1,0 +1,64 @@
+﻿@using DIOS.Common.Interfaces
+@model Dictionary<string, string>
+
+@{
+    ViewBag.Title = "System Parameters";
+}
+
+<h2>System Parameters</h2>
+
+<!--p>
+    @Html.ActionLink("Create New", "Create")
+</p-->
+<table>
+    <tr>
+        <th>
+            <strong>name</strong>
+        </th>
+        <th>
+            <strong>value</strong>
+        </th>
+        @*<th>
+                <strong>type</strong>
+            </th>
+            <th>
+                <strong>description</strong>
+            </th>*@
+        <th></th>
+    </tr>
+
+    @foreach (string item in Model.Keys)
+    {
+        <tr>
+            <td style="padding:2px 5px">
+                @Html.DisplayFor(modelItem => item)
+            </td>
+            <td style="padding:2px 5px">
+                @Html.DisplayFor(modelItem => Model[item])
+            </td>
+            @*<td style="padding:2px 5px">
+                    @Html.DisplayFor(modelItem => item.type)
+                </td>
+                <td style="padding:2px 5px">
+                    @Html.DisplayFor(modelItem => item.description)
+                </td>
+                <td style="padding:2px 5px">
+                    @if (item.type.ToString() != "ParameterCollection")
+                    {@Html.ActionLink("Edit", "Edit", new { id = item.sys_param })}
+                    else
+                    {@Html.ActionLink("Details", "Details", new { id = item.sys_param })}
+                </td>*@
+        </tr>
+    }
+
+</table>
+<br>
+<br>
+@Html.ActionLink("Create", "Create")
+<br>
+<br>
+<div>
+    @Html.ActionLink("Cached Objects", "CachedObjects")<br>
+    @Html.ActionLink("Regular Expressions", "RegEx")<br>
+    @Html.ActionLink("Timer State", "TimerState")
+</div>

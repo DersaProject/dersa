@@ -1,0 +1,101 @@
+@{
+    Layout = null;
+}
+@using Newtonsoft.Json;
+
+<p align="center">
+    Заявка № @ViewData["request_number"]
+</p>
+<table width="0" border="0" cellspacing="0" cellpadding="0">
+    <tbody>
+        <tr>
+            <td width="172" valign="top">
+                <p>
+                    <strong>Дата создания:</strong>
+                    <strong>@ViewData["creation_date"]</strong>
+                </p>
+            </td>
+            <td width="170" valign="top" colspan="2">
+                <p>
+                    <strong> </strong>
+                </p>
+            </td>
+            <td width="282" valign="top">
+                <p>
+                    <strong>
+                        Департамент статистики и управления данными
+                    </strong>
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="624" valign="top" colspan="4">
+                <p>
+                    <br>
+                    <strong>Наименование ПП: </strong>
+                    Подсистема «Анализ сведений о расчетах по операциям с
+                    ценными бумагами, совершенных между резидентами и
+                    нерезидентами, на основе отчетности по форме 0409405)»
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="180" valign="top" colspan="2">
+                <p>
+                    <strong>Предполагаемый срок выполнения:</strong>
+                </p>
+            </td>
+            <td width="444" valign="top" colspan="2">
+                <p>
+                    @ViewData["expected_date"]
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="624" valign="top" colspan="4">
+                <p>
+                    <strong>Текст запроса пользователя:</strong>
+                </p>
+                <p>
+                    @ViewData["user_text"]
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="624" valign="top" colspan="4">
+                <p>
+                    <strong>Уточнение запроса пользователя:</strong>
+                </p>
+                <p>
+                    @{
+                        string reqJson = ViewData["requirement"].ToString();
+                        dynamic reqObject = JsonConvert.DeserializeObject<dynamic>(reqJson);
+                        @Html.Raw(@reqObject.main_text.ToString().Replace("\n", "<br>"))
+                        <ul>
+                            @foreach (dynamic child in reqObject.child_nodes)
+                            {
+                                <li>
+                                    <b>@child.header</b><br>
+                                    @Html.Raw(@child.main_text.ToString().Replace("\n", "<br>"))
+                                    @if (child.child_nodes != null && child.child_nodes.Count > 0)
+                                    {
+                                        <ul>
+                                            @foreach (dynamic ch in child.child_nodes)
+                                            {
+                                                <li>
+                                                    <b>@ch.header</b><br>
+                                                    @Html.Raw(@ch.main_text.ToString().Replace("\n", "<br>"))
+                                                </li>
+                                            }
+                                        </ul>
+                                    }
+                                </li>
+                            }
+                        </ul>
+                    }
+                </p>
+
+            </td>
+        </tr>
+    </tbody>
+</table>

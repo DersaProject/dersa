@@ -1,0 +1,42 @@
+﻿@using Dersa_C
+@using Microsoft.Extensions.Options
+@inject IOptions<MyAppOptions> options
+
+@{
+    ViewBag.Title = "О программе";
+}
+
+    <hgroup class="title">
+        <h2>@options.Value.CS</h2>
+        <h1>@ViewBag.Title.</h1>
+        <h2>@ViewBag.Message</h2>
+    </hgroup>
+
+<article>
+    <strong>DERSA (Developing</strong> with <strong>Entities </strong>&<strong> Relations </strong>&<strong> Stereotypes </strong>&<strong> Attributes)</strong>
+    - многопользовательская среда разработки объектно-ориентрованных систем, иерархическое хранилище [описаний] объектов любой природы.
+    <br>
+    Функционал:<ul>
+        <li>Хранение информации об объектах и самих объектов (объектом может быть что угодно, в т.ч. файл) в структурированном виде, с поддержкой иерархии.</li>
+        <li>Визуальное проектирование архитектуры систем.</li>
+        <li>Генерация скриптов (Scaffolding) - перевод объектов в текст любого формата (SQL, C#, (CS)HTML, JS etc.)</li>
+        <li>Некоторые элементы IDE (например, возможность написать скрипт на JS или C# и сразу же его выполнить, не отходя от браузера; написать фрагмент кода на cshtml и сразу же увидеть результат etc.).</li>
+    </ul><br>
+    В разработке системы DERSA использовано следующее свободно распространяемое ПО:
+    <p>
+        <li><a href="https://www.jstree.com/">Представление данных в виде дерева__</a>(@(Html.ActionLink("Лицензия MIT", "LicenceMIT", "Home")))</li>
+    </p>
+
+    <p>
+        <li><a href="https://jgraph.github.io/mxgraph/">Работа с диаграммами</a>______(@(Html.ActionLink("Лицензия Apache 2.0", "LicenceAPACHE", "Home")))</li>
+    </p>
+    <br>Проект находится в стадии разработки.
+</article>
+
+<a href="~/HelpPage.html">Краткое описание</a>
+<!--aside>
+    <ul>
+        <li>@Html.ActionLink("Home", "Index", "Home")</li>
+        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+    </ul>
+</aside-->

@@ -1,0 +1,27 @@
+﻿@model IEnumerable<string>
+@{
+    ViewBag.Title = "Cached Objects";
+}
+
+<h2>Cached Objects</h2>
+
+<table>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item)
+            </td>
+            <td>
+                @Html.ActionLink("Clear", "ClearCache", new { key = item })
+            </td>
+</tr>
+    }
+
+</table>
+<br>
+<br>
+<div>
+    @Html.ActionLink("System Parameters", "Index")
+</div>

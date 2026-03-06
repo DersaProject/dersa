@@ -1,0 +1,9 @@
+public ActionResult Index()
+{
+    string filePath = Server.MapPath("~/index.html");
+    if (System.IO.File.Exists(filePath))
+    {
+        return File(filePath, "text/html");
+    }
+    return HttpNotFound(); // Если файл не найден
+}

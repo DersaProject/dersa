@@ -1,0 +1,76 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>aspnet-Dersa_C-E14BE20D-7DE9-4E97-AE2F-6B7438B1F54A</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>.</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Views\Config\**" />
+    <Content Remove="Views\Config\**" />
+    <EmbeddedResource Remove="Views\Config\**" />
+    <None Remove="Views\Config\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\ConfigController.cs" />
+    <Compile Remove="Controllers\ProjectController1.cs" />
+    <Compile Remove="Controllers\Startup.Auth.cs" />
+    <Compile Remove="IQueryExecuteService.cs" />
+    <Compile Remove="Models\AccountViewModels.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\Account\Register.cshtml" />
+    <Content Remove="Views\Project\Table.cshtml" />
+    <Content Remove="Views\Query\Table - Копировать.cshtml" />
+    <Content Remove="Views\Query\Table.cshtml" />
+    <Content Remove="Views\Query\Table2 - Копировать.cshtml" />
+    <Content Remove="Views\Query\Table2.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="DbManager">
+      <HintPath>bin\Debug\netcoreapp3.0\DbManager.dll</HintPath>
+    </Reference>
+    <Reference Include="DbServerAdapter">
+      <HintPath>..\DersaProject.git\Dersa.Common\bin\DbServerAdapter.dll</HintPath>
+    </Reference>
+    <Reference Include="Dersa.Common">
+      <HintPath>..\DersaProject.git\Dersa\bin\Dersa.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Dersa.Interfaces">
+      <HintPath>..\DersaProject.git\Dersa.Common\bin\Dersa.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Dios.Common">
+      <HintPath>..\DersaProject.git\Dersa.Common\bin\Dios.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Dios.Interfaces">
+      <HintPath>..\DersaProject.git\Dersa.Common\bin\Dios.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Dios.SqlManager">
+      <HintPath>bin\Debug\netcoreapp3.0\Dios.SqlManager.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core">
+      <HintPath>..\DersaProject.git\Dersa.Common\bin\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security">
+      <HintPath>..\DersaProject.git\Dersa.Common\bin\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\DersaProject.git\Dersa.Common\bin\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\DersaProject.git\Dersa.Common\bin\System.Web.Optimization.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

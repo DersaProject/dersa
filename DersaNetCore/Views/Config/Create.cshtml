@@ -1,0 +1,54 @@
+﻿@model DIOS.BusinessBase.SysParam
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+@using (Html.BeginForm("SaveCreate", "Config"))
+{
+
+    <fieldset>
+        <legend>SysParam</legend>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.name)
+        </div>
+        <div class="editor-field">
+            @{Html.EnableClientValidation(false);}
+            @Html.EditorFor(model => model.name)
+            @Html.ValidationMessageFor(model => model.name)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.value)
+        </div>
+        <div class="editor-field">
+            @{Html.EnableClientValidation(false);}
+            @Html.EditorFor(model => model.value)
+            @Html.ValidationMessageFor(model => model.value)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.type)
+        </div>
+        <div class="editor-field">
+            @{Html.EnableClientValidation(false);}
+            @Html.EditorFor(model => model.type)
+            @Html.ValidationMessageFor(model => model.type)
+        </div>
+
+        <p><hr/>
+            @Html.HiddenFor(model => model.sys_param)
+            <input type="submit" value="Save" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

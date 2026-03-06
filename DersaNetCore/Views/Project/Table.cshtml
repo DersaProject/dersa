@@ -1,0 +1,111 @@
+﻿@using System.Web.Optimization;
+@using System.Data;
+@model DataTable
+
+<h2>@ViewBag.Title</h2>
+
+    <table border="1">
+        <tr><strong>
+    @foreach (DataColumn item in Model.Columns)
+        {
+            <th>
+                @item.ColumnName 
+            </th>
+        }
+        </strong></tr>
+
+    @for (int r = 0; r < Model.Rows.Count; r++  )//(DataRow row in Model.Rows)
+    {
+        <tr>
+            @foreach (DataColumn col in Model.Columns)
+            {
+                <td style="padding:2px 5px">
+                    @Html.DisplayFor(T => T.Rows[r][col], "string")
+                    @*@row[col].ToString()*@
+                </td>
+            }
+            <td style="padding:2px 5px">
+                <button id="bnUpdate @r">...</button>
+                <script>
+                    bnSettings = document.getElementById("bnUpdate @r");
+                    bnSettings.addEventListener("click", function () {
+                        var className = '@ViewBag.ClassName';
+                        EditOrAddObject(className, @Model.Rows[r][ViewBag.KeyName]);
+                    });
+                    </script>
+                <button id="bnDelete @r">[-]</button>
+                <script>
+                        bnSettings = document.getElementById("bnDelete @r");
+                        bnSettings.addEventListener("click", function () {
+                        var className = '@ViewBag.ClassName';
+                            if (confirm('Удалить объект @Model.Rows[r][ViewBag.KeyName] класса ' + className + '?')) {
+                                DeleteObject(className, @Model.Rows[r][ViewBag.KeyName]);
+                            }
+                        });
+                </script>
+                    </td>
+                </tr>
+    }
+        <tr>
+            <td style="padding:2px 5px">
+                <button id="bnInsert">[+]</button>
+                <script>
+                    bnInsert = document.getElementById("bnInsert");
+                    bnInsert.addEventListener("click", function () {
+                        var className = '@ViewBag.ClassName';
+                        EditOrAddObject(className, -1);
+                    });
+                </script>
+            </td>
+        </tr>
+    </table>
+
+<br>
+<script>
+    function EditOrAddObject(className, objectId)
+    {
+        var form = new mxForm('settings');
+
+        var xhr = new XMLHttpRequest();
+        var args = '@ViewBag.ClassName' + '&id=' + objectId;
+        xhr.open('GET', "ObjectInfo?class_name=" + args, false);
+        xhr.send();
+        var attrs = JSON.parse(xhr.responseText);
+
+        var Props = CreateProperties(form, attrs, "ObjectUpdateOrInsert", true, className);
+        var wnd = new mxWindow('settings',
+            Props, 100, 100, 400, 400, false, true);
+        form.window = wnd;
+        wnd.setVisible(true);
+    }
+    function DeleteObject(className, objectId)
+    {
+        var form = new mxForm('settings');
+
+        var xhr = new XMLHttpRequest();
+        @*var args = '@ViewBag.ClassName' + '&id=' + objectId;
+        xhr.open('GET', "ObjectDrop?class_name=" + args, false);
+        xhr.send();*@
+
+        var body = "class_name=" + "@ViewBag.ClassName" + "&id=" + objectId;
+        xhr.open('POST', "ObjectDrop", false);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send(body);
+
+        if(xhr.responseText != "")
+            alert(xhr.responseText);
+
+    }
+                </script>
+
+<script type="text/javascript">
+    var mxBasePath = '../../dist/mxgraphsrc';
+</script>
+
+@section Scripts {
+    @Scripts.Render("~/dist/mxgraphsrc/js/mxClient.js")
+    @Scripts.Render("~/dist/mxgraphsrc/js/util/mxEventSource.js")
+    @Scripts.Render("~/dist/mxgraphsrc/js/util/mxWindow.js")
+    @Scripts.Render("~/dist/mxgraphsrc/js/util/mxForm.js")
+    @Scripts.Render("~/dist/mxgraphsrc/js/util/mxUtils.js")
+}

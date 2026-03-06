@@ -1,0 +1,38 @@
+﻿<input type="hidden" id="api_currentuser" value="@ViewBag.UserObject" />
+
+<input type="hidden" id="api_user_role_list" value="@ViewBag.RoleList" />
+<input type="hidden" id="api_user_priority_list" value="@ViewBag.PriorityList" />
+<input type="hidden" id="api_user_status_list" value="@ViewBag.StatusList" />
+<input type="hidden" id="api_all_aws_list" value="@ViewBag.AWSList" />
+    
+
+<!-- NAVIGATION -->
+<div class="container-fluid container-flex-column admin-page" id="app">
+
+    <app-header></app-header>
+
+    <div class="row content-row " style="height: calc(100% - 64px); overflow-y: hidden">
+        <div class="col-lg-12">
+            <div class="container-fluid container-flex-column">
+                <div class="row">
+                    <div class="col-lg-12 nav-secondary">
+                        <router-link to="/users" class="tab">Users</router-link>
+                        <router-link to="/spacecrafts" class="tab">Spacecrafts</router-link>
+                        <router-link to="/info" class="tab">Contact Info</router-link>
+                    </div>
+                </div>
+
+                <div class="row content-single" v-bind:class="{ 'gray': (this.$route.name == 'UserList'), 'content-filtered': (this.$route.name == 'UserList')}">
+                    <div class="col-lg-12" v-if="(this.$route.name == 'UserList')">
+                        <app-filter v-on:filter-changed="filterChanged" ref="filter" :filters="filters" :sorts="sorts" :title="'User Filter'"></app-filter>
+                    </div>
+                    <div class="col-lg-12 content">
+                        <router-view :query="query"></router-view>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="./dist/admin.entry.js"></script>

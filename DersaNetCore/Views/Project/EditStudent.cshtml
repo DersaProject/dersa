@@ -1,0 +1,32 @@
+﻿@model System.Data.DataRow
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm("SaveEdit", "Project", new { class_name = "STUDENT" }))
+{
+
+    <fieldset>
+        <legend>Студент</legend>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model["name"])
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model["name"])
+        </div>
+
+        <p><hr/>
+            @Html.HiddenFor(model => model["student"])
+            <input type="submit" value="Save" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+

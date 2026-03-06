@@ -1,0 +1,126 @@
+﻿@using DIOS.Common.Interfaces
+@using DIOS.Common
+@model IObjectCollection
+
+@{
+    ViewBag.Title = "Timers State";
+}
+
+<h2>Timer State</h2>
+
+@using (Html.BeginForm("Timer", "Config"))
+{
+
+
+    <table>
+        <tr>
+            <th>
+                <strong>|name |</strong>
+            </th>
+            <th>
+                <strong>description |</strong>
+            </th>
+            <th>
+                <strong>interval (ms) |</strong>
+            </th>
+            <th>
+                <strong>started at |</strong>
+            </th>
+            <th>
+                <strong>stopped at |</strong>
+            </th>
+            <th>
+                <strong>last event at |</strong>
+            </th>
+            <th>
+                <strong>is working |</strong>
+            </th>
+            <th>
+                <strong>last error |</strong>
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (DIOS.BusinessBase.TaskTimer item in Model)
+        {
+            <tr>
+                <td style="padding:2px 5px">
+                    @Html.DisplayFor(modelItem => item.name)
+                </td>
+                <td style="padding:2px 5px">
+                    @Html.DisplayFor(modelItem => item.description)
+                </td>
+                <td style="padding:2px 5px">
+                    @Html.DisplayFor(modelItem => item.interval_ms)
+                </td>
+                <td style="padding:2px 5px">
+                    @Html.DisplayFor(modelItem => item.started_at)
+                </td>
+                <td style="padding:2px 5px">
+                    @Html.DisplayFor(modelItem => item.stopped_at)
+                </td>
+                <td style="padding:2px 5px">
+                    @Html.DisplayFor(modelItem => item.last_event_at)
+                </td>
+                <td style="padding:2px 5px">
+                    @Html.DisplayFor(modelItem => item.is_working)
+                </td>
+                <td style="padding:2px 5px">
+                    @Html.DisplayFor(modelItem => item.last_error)
+                </td>
+                <td style="padding:2px 5px">
+                    @*{@Html.ActionLink("Details", "Details", new { id = item.task_timer })}*@
+                    @*@if (item.is_working)
+                    {
+                        <input type="hidden" name="timerAction" value="stop" />
+                        <input type="hidden" name="id" value="@item.task_timer" />
+                        <input type="submit" value="Stop" />
+                    }
+                    else
+                    {
+                        <input type="hidden" name="timerAction" value="start" />
+                        <input type="hidden" name="id" value="@item.task_timer" />
+                        <input type="submit" value="Start" />
+                    }*@
+                    @{string tAction = item.is_working ? "Stop" : "Start"; }
+                    @Html.ActionLink(tAction, "Timer", new { id = item.task_timer, timerAction = tAction.ToLower() })
+                </td>
+            </tr>
+        }
+
+    </table>
+
+    @*<fieldset>
+        <br>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.LastTimerEvent)
+        </div>
+        <div class="editor-field">
+            @Html.ValueFor(model => model.LastTimerEvent)
+        </div>
+        <br>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.TimerRunning)
+        </div>
+        <div class="editor-field">
+            @Html.ValueFor(model => model.TimerRunning)
+        </div>
+
+        <p>
+            @if (Model.TimerRunning)
+            {
+                <input type="hidden" name="timerAction" value="stop" />
+                <input type="submit" value="Stop" />
+            }
+            else
+            {
+                <input type="hidden" name="timerAction" value="start" />
+                <input type="submit" value="Start" />
+            }
+        </p>
+    </fieldset>*@
+}
+
+<div>
+    @Html.ActionLink("System Parameters", "Index")
+</div>

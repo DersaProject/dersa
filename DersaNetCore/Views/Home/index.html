@@ -1,0 +1,314 @@
+@using System.Web.Optimization;
+@using System.Data
+@using Newtonsoft.Json
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Веб?страница с фреймами и вкладками</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        #top-frame {
+            height: 80px;
+            border-bottom: 2px solid #ccc;
+            flex-shrink: 0;
+            background-color: #f5f5f5;
+            padding: 10px;
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        #left-frame {
+            width: 200px;
+            min-width: 150px;
+            max-width: 400px;
+            border-right: 2px solid #ccc;
+            overflow: auto; /* вертикальная и горизонтальная прокрутка */
+            resize: horizontal;
+            background-color: #e9ecef;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #main-frame {
+            flex: 1;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Стили для вкладок */
+        .tabs {
+            display: flex;
+            background: #f1f1f1;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+        }
+
+        .tab.active {
+            background: white;
+            border: 1px solid #ddd;
+            border-bottom: 1px solid white;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 0;
+            flex: 1;
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
+
+        /* Блоки внутри первой вкладки */
+        .split-panel {
+            display: flex;
+            height: calc(100vh - 130px);
+            width: 100%;
+        }
+
+        .left-panel {
+            flex: 1;
+            width: 30%;
+            min-width: 250px;
+            border-right: 1px solid #ddd;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .right-panel {
+            flex: 3;
+            background-color: #fff;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #f5f9ff;
+            cursor: pointer;
+        }
+
+        .property-value {
+            width: 100%;
+            height: 100%;
+            padding: 15px;
+            box-sizing: border-box;
+            background-color: #fafafa;
+            border: none;
+            overflow-y: auto;
+        }
+
+        textarea {
+            width: 100%;
+            height: 400px;
+            resize: both;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Верхний фрейм (фиксированный размер) -->
+        <div id="top-frame">
+            <h3>Верхний фрейм</h3>
+            <p>Этот фрейм не меняет размер.</p>
+	    <input id="tbOptions"></input>
+        </div>
+
+        <!-- Основной контент с левым и основным фреймами -->
+        <div class="main-content">
+            <!-- Левый фрейм (можно менять ширину) -->
+            <div id="left-frame">
+                <h4>Левый фрейм</h4>
+                <ul>
+                    <li><a href="#" onclick="loadNodeProperties(1)">Узел 1</a></li>
+                    <li><a href="#" onclick="loadNodeProperties(2)">Узел 2</a></li>
+            <li><a href="#" onclick="loadNodeProperties(3)">Узел 3</a></li>
+                </ul>
+		<div id="dersa"></div>
+            </div>
+
+            <!-- Основной фрейм с вкладками -->
+            <div id="main-frame">
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('tab1')">Вкладка 1</div>
+            <div class="tab" onclick="switchTab('tab2')">Вкладка 2</div>
+            <div class="tab" onclick="switchTab('tab3')">Вкладка 3</div>
+                </div>
+                <div class="tab-content active" id="tab1">
+                    <div class="split-panel">
+                <!-- Левый блок: таблица свойств -->
+                <div class="left-panel">
+                    <table id="properties-table">
+                <thead>
+                    <tr>
+                <th>Name</th>
+                <th>Value</th>
+            </tr>
+                </thead>
+                <tbody>
+            <!-- Данные будут заполняться через JavaScript -->
+                </tbody>
+            </table>
+                </div>
+                <!-- Правый блок: значение свойства (без заголовка, занимает всю доступную площадь) -->
+                <div class="right-panel">
+            <div id="property-value" class="property-value">
+                Выберите свойство из таблицы слева
+            </div>
+                </div>
+            </div>
+                </div>
+                <div class="tab-content" id="tab2">
+            <h2>Содержимое вкладки 2</h2>
+            <p>Здесь может быть любой контент.</p>
+                </div>
+                <div class="tab-content" id="tab3">
+            <h2>Содержимое вкладки 3</h2>
+            <p>Ещё один блок контента.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+       var initialNodeId = false;
+        // Функция переключения вкладок
+        function switchTab(tabId) {
+            // Убираем активный класс у всех вкладок и контента
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Добавляем активный класс нужной вкладке и контенту
+            const tabIndex = ['tab1', 'tab2', 'tab3'].indexOf(tabId);
+            document.querySelector(`.tab:nth-child(${tabIndex + 1})`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Имитация функции получения свойств узла
+        function GetNodeProperties(node_id) {
+            const mockData = {
+                1: [
+                    { name: 'ID', value: node_id },
+            { name: 'Тип', value: 'Сервер' },
+            { name: 'Статус', value: 'Активен' },
+            { name: 'Версия', value: '1.2.3' }
+                ],
+                2: [
+            { name: 'ID', value: node_id },
+            { name: 'Тип', value: 'База данных' },
+            { name: 'Статус', value: 'Резервный' },
+            { name: 'Размер', value: '5 ГБ' }
+                ],
+                3: [
+            { name: 'ID', value: node_id },
+            { name: 'Тип', value: 'Веб?приложение' },
+            { name: 'Статус', value: 'В разработке' },
+            { name: 'Язык', value: 'JavaScript' }
+                ]
+            };
+            return mockData[node_id] || [];
+        }
+
+        // Имитация функции получения значения свойства
+        function GetPropertyValue(node_id, property_name) {
+            const properties = GetNodeProperties(node_id);
+            const property = properties.find(p => p.name === property_name);
+            if (property) {
+                return `Значение свойства "${property_name}": ${property.value} (узел ${node_id})`;
+            }
+            return `Значение для свойства "${property_name}" не найдено (узел ${node_id})`;
+        }
+
+        // Функция загрузки свойств узла в таблицу
+        function loadNodeProperties(node_id) {
+            const properties = GetNodeProperties(node_id);
+            const tableBody = document.querySelector('#properties-table tbody');
+            tableBody.innerHTML = '';
+
+            properties.forEach(property => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${property.name}</td>
+            <td>${property.value}</td>
+                `;
+                // Добавляем обработчик клика на строку
+                row.addEventListener('click', () => {
+                    // Сбрасываем подсветку всех строк
+            document.querySelectorAll('#properties-table tbody tr').forEach(r => {
+                r.style.backgroundColor = '';
+            });
+            // Подсвечиваем выбранную строку
+            row.style.backgroundColor = '#e3f2fd';
+
+            const propertyName = property.name;
+            displayPropertyValue(node_id, propertyName);
+                });
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Функция отображения значения свойства в правом блоке
+        function displayPropertyValue(node_id, property_name) {
+            const value = GetPropertyValue(node_id, property_name);
+            document.getElementById('property-value').innerHTML = value;
+        }
+
+        // Инициализация: загружаем свойства для первого узла по умолчанию
+        document.addEventListener('DOMContentLoaded', () => {
+            loadNodeProperties(1);
+        });
+    </script>
+    <script src="dist/jquery.js"></script>
+    <script src="dist/jquery-ui.js"></script>
+    <script src="dist/jstree.js"></script>
+    <script src="dist/dersatree.js"></script>
+
+</body>
+</html>
