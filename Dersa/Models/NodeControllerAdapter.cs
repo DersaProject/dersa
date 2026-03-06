@@ -926,7 +926,7 @@ namespace Dersa.Models
                                     children = Convert.ToBoolean(R["children"])
                                 }).Union(
                                 from dynamic R in cachedRows
-                                    orderby R["rank"], R["erank"], R["text"]
+                                    orderby R.rank, R.erank, R.text
                                 select new
                                 {
                                     id = R.id,
@@ -943,7 +943,7 @@ namespace Dersa.Models
             }
             catch (Exception exc)
             {
-                return "";
+                return exc.Message;
             }
         }
         public static string History(string id)

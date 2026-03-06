@@ -49,7 +49,7 @@ public class DataFlow: ICompiledRelation
 		{
 			if (_a == null)
 			{
-				Dersa.Interfaces.IEntity a = _object.A;
+				Dersa.Interfaces.IDersaEntity a = _object.A;
 				if (a != null) _a = a.GetInstance();
 				return _a;
 			}
@@ -68,7 +68,7 @@ public class DataFlow: ICompiledRelation
 		{
 			if (_b == null)
 			{
-				Dersa.Interfaces.IEntity b = _object.B;
+				Dersa.Interfaces.IDersaEntity b = _object.B;
 				if (b != null) _b = b.GetInstance();
 				return _b;
 			}

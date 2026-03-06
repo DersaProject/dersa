@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29806.167
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dersa", "Dersa.csproj", "{1456418E-8282-4E3D-B5B4-77C173ADC917}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dersa.Common", "..\Dersa.Common\Dersa.Common.csproj", "{A0ABB2BD-0709-4937-AED0-DFE6D3834675}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dersa.Interfaces", "..\Dersa.Interfaces\Dersa.Interfaces.csproj", "{9E5EAE04-0A90-4ADB-B0FF-1F6856B43382}"
@@ -13,21 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dersa.Stereotypes", "..\Der
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dersa_C", "..\Dersa_C\Dersa_C.csproj", "{E3856845-2075-4B42-8B82-B6E2B36BF375}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DersaGrpcService", "..\DersaGrpcService\DersaGrpcService.csproj", "{39438169-FEA7-4F87-837B-9BE014F7A132}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dersa_A", "..\Dersa_A\Dersa_A.csproj", "{D38552C8-AEC6-483B-9731-D2BA6018B5A4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dersa_N", "..\Dersa_N\Dersa_N.csproj", "{F0D06C17-25EC-49D7-B13A-AA4EA474CCD1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dersa_SC", "..\Dersa_SC\Dersa_SC.csproj", "{A9E62DED-D5E4-4501-A716-507B7CCEB7CE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DersaModules", "..\DersaModules\DersaModules.csproj", "{78E7979A-9E01-4798-8DA0-67F71F6F6754}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitTestProject1", "..\NUnitTestProject1\NUnitTestProject1.csproj", "{1A051816-F92C-4D0A-934B-CFB2FD63EEA0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XUnitTestProject1", "..\XUnitTestProject1\XUnitTestProject1.csproj", "{911AC5A1-8859-4EEF-A677-F3A313F7FD31}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DersaExtensions", "..\DersaExtensions\DersaExtensions.csproj", "{51CFDC82-FD67-4FAF-966C-46B03F46889A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +23,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1456418E-8282-4E3D-B5B4-77C173ADC917}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1456418E-8282-4E3D-B5B4-77C173ADC917}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1456418E-8282-4E3D-B5B4-77C173ADC917}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1456418E-8282-4E3D-B5B4-77C173ADC917}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A0ABB2BD-0709-4937-AED0-DFE6D3834675}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A0ABB2BD-0709-4937-AED0-DFE6D3834675}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0ABB2BD-0709-4937-AED0-DFE6D3834675}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -55,10 +39,6 @@ Global
 		{E3856845-2075-4B42-8B82-B6E2B36BF375}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E3856845-2075-4B42-8B82-B6E2B36BF375}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E3856845-2075-4B42-8B82-B6E2B36BF375}.Release|Any CPU.Build.0 = Release|Any CPU
-		{39438169-FEA7-4F87-837B-9BE014F7A132}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{39438169-FEA7-4F87-837B-9BE014F7A132}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{39438169-FEA7-4F87-837B-9BE014F7A132}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{39438169-FEA7-4F87-837B-9BE014F7A132}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D38552C8-AEC6-483B-9731-D2BA6018B5A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D38552C8-AEC6-483B-9731-D2BA6018B5A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D38552C8-AEC6-483B-9731-D2BA6018B5A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -71,22 +51,6 @@ Global
 		{A9E62DED-D5E4-4501-A716-507B7CCEB7CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9E62DED-D5E4-4501-A716-507B7CCEB7CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9E62DED-D5E4-4501-A716-507B7CCEB7CE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{78E7979A-9E01-4798-8DA0-67F71F6F6754}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{78E7979A-9E01-4798-8DA0-67F71F6F6754}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{78E7979A-9E01-4798-8DA0-67F71F6F6754}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{78E7979A-9E01-4798-8DA0-67F71F6F6754}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1A051816-F92C-4D0A-934B-CFB2FD63EEA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A051816-F92C-4D0A-934B-CFB2FD63EEA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1A051816-F92C-4D0A-934B-CFB2FD63EEA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1A051816-F92C-4D0A-934B-CFB2FD63EEA0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{911AC5A1-8859-4EEF-A677-F3A313F7FD31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{911AC5A1-8859-4EEF-A677-F3A313F7FD31}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{911AC5A1-8859-4EEF-A677-F3A313F7FD31}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{911AC5A1-8859-4EEF-A677-F3A313F7FD31}.Release|Any CPU.Build.0 = Release|Any CPU
-		{51CFDC82-FD67-4FAF-966C-46B03F46889A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{51CFDC82-FD67-4FAF-966C-46B03F46889A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{51CFDC82-FD67-4FAF-966C-46B03F46889A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{51CFDC82-FD67-4FAF-966C-46B03F46889A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

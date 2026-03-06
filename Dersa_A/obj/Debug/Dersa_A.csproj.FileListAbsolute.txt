@@ -62,3 +62,8 @@ D:\DersaProject.git\Dersa_A\bin\Owin.dll
 D:\DersaProject.git\Dersa_A\bin\Microsoft.Owin.Diagnostics.xml
 D:\DersaProject.git\Dersa_A\bin\Microsoft.Owin.Host.HttpListener.xml
 D:\DersaProject.git\Dersa_A\bin\Microsoft.Owin.Hosting.xml
+C:\VSP\DersaProject.git\Dersa_A\obj\Debug\Dersa_A.csproj.AssemblyReference.cache
+C:\VSP\DersaProject.git\Dersa_A\obj\Debug\Dersa_A.csproj.SuggestedBindingRedirects.cache
+C:\VSP\DersaProject.git\Dersa_A\obj\Debug\Dersa_A.exe.config
+C:\VSP\DersaProject.git\Dersa_A\obj\Debug\Dersa_A.csproj.CoreCompileInputs.cache
+C:\VSP\DersaProject.git\Dersa_A\obj\Debug\Dersa_A.exe
