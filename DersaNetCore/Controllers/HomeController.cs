@@ -36,11 +36,11 @@ namespace Dersa.Controllers
         //}
         public ActionResult Index()
         {
-            DIOS.Common.SqlManager.SqlBrand = DIOS.Common.SqlBrand.MSSqlServer;
+            //DIOS.Common.SqlManager.SqlBrand = DIOS.Common.SqlBrand.MSSqlServer;
             if (HttpContext.User.Identity.IsAuthenticated)
             {
-                //if (!Dersa.Models.User.Exists(HttpContext.User.Identity.Name))
-                //    return RedirectToAction("Login", "Account");
+                if (!Dersa.Models.User.Exists(HttpContext.User.Identity.Name))
+                    return RedirectToAction("Login", "Account");
                 string userName = HttpContext.User.Identity.Name;
                 ViewBag.Login = userName;
                 ViewBag.ToolBoxData = "[]";

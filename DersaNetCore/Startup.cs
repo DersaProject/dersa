@@ -51,10 +51,6 @@ namespace Dersa_C
                 });
 
             services.AddControllersWithViews();
-            services.Configure<MyAppOptions>(options =>
-            {
-                options.CS = Configuration["ConnectionStrings:DefaultConnection"];
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -87,7 +83,7 @@ namespace Dersa_C
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            new SqlManagerConfigProvider(Configuration);
+            new SqlManagerConfigProvider(Configuration, new UserIsAuthenticatedMethod(()=>true));
         }
     }
     public class MyAppOptions

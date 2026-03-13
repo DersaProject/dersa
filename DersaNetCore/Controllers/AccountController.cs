@@ -51,7 +51,7 @@ namespace Dersa.Controllers
 
 		public async Task<IActionResult> Auth(string login, string password)
 		{
-			string authResult = "";// AccountControllerAdapter.AuthorizeUser(login, password);
+			string authResult = AccountControllerAdapter.AuthorizeUser(login, password);
 			if (authResult == "")
 			{
 				await Authenticate(login);
@@ -110,6 +110,7 @@ namespace Dersa.Controllers
 		{
 		}
 	*/
+
 		public ActionResult Login(int userid=0, string login = "", string result = "")
 		{
 			if (HttpContext.User.Identity.IsAuthenticated)

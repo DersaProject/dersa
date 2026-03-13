@@ -1,13 +1,11 @@
 ﻿@using Dersa_C
 @using Microsoft.Extensions.Options
-@inject IOptions<MyAppOptions> options
 
 @{
     ViewBag.Title = "О программе";
 }
 
     <hgroup class="title">
-        <h2>@options.Value.CS</h2>
         <h1>@ViewBag.Title.</h1>
         <h2>@ViewBag.Message</h2>
     </hgroup>
