@@ -1,0 +1,261 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Стили для верхнего фрейма */
+.top-frame {
+    height: 80px;
+    background-color: #f5f5f5;
+    border-bottom: 2px solid #ccc;
+    padding: 15px;
+}
+
+/* Контейнер для левого и основного фреймов */
+.main-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Левый фрейм */
+.left-frame {
+    width: 200px;
+    min-width: 150px;
+    max-width: 400px;
+    background-color: #e9ecef;
+    overflow-x: auto;
+    overflow-y: auto;
+    border-right: 2px solid #ccc;
+    resize: horizontal;
+}
+
+#dersa {
+    padding: 10px;
+}
+
+/* Основной фрейм */
+.main-frame {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Панель вкладок */
+.tab-panel {
+    background-color: #f2f2f2;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.tab-button {
+    padding: 8px 16px;
+    margin-right: 5px;
+    border: none;
+    background: #e0e0e0;
+    cursor: pointer;
+    border-radius: 4px 4px 0 0;
+}
+
+.tab-button.active {
+    background: white;
+    font-weight: bold;
+}
+
+/* Содержимое вкладок */
+.tab-content {
+    display: none;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+.tab-content.active {
+    display: flex;
+}
+
+/* Первая вкладка — общая информация */
+.info-block {
+    width: 100%;
+    height: calc(100% - 60px);
+    display: block;
+}
+
+.diagram-block {
+    width: 100%;
+    height: calc(100% - 60px);
+    display: none;
+}
+
+.content-display {
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    background-color: #fafafa;
+    overflow-y: auto;
+}
+
+.diagram-display {
+    width: 100%;
+    height: calc(100% - 40px);
+    padding: 15px;
+    background-color: #fff;
+    overflow: auto;
+    border: 1px dashed #ccc;
+}
+
+.control-buttons {
+    padding: 10px;
+    text-align: center;
+}
+
+.control-button {
+    padding: 8px 16px;
+    margin: 0 5px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Разделение на панели для вкладок 2 и 3 */
+.split-container {
+    display: flex;
+    height: calc(100% - 50px); /* Учитываем высоту панели вкладок */
+}
+
+/* Левая панель второй вкладки */
+.left-panel {
+    width: 30%;
+    min-width: 250px;
+    border-right: 1px solid #ddd;
+    overflow: auto;
+}
+
+/* Правая панель второй вкладки */
+.right-panel {
+    width: 70%;
+    overflow: auto;
+}
+
+/* Таблица свойств */
+#properties-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#properties-table th,
+#properties-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#properties-table thead {
+    background-color: #f2f2f2;
+}
+
+/* Продолжение таблицы свойств */
+#properties-table tbody tr:hover {
+    background-color: #f5f9ff;
+    cursor: pointer;
+}
+
+#properties-table tbody tr.selected {
+    background-color: #e3f2fd;
+}
+
+/* Блок отображения значения свойства */
+#property-value {
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    background-color: #fafafa;
+    overflow-y: auto;
+}
+
+/* Левая панель третьей вкладки */
+.left-panel-2 {
+    width: 300px;
+    border-right: 1px solid #ddd;
+    overflow: auto;
+}
+
+/* Правая панель третьей вкладки */
+.right-panel-2 {
+    flex: 1;
+    overflow: auto;
+}
+
+/* Таблица методов */
+#methods-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#methods-table th,
+#methods-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#methods-table thead {
+    background-color: #f2f2f2;
+}
+
+#methods-table tbody tr:hover {
+    background-color: #f5f9ff;
+    cursor: pointer;
+}
+
+#methods-table tbody tr.selected {
+    background-color: #e3f2fd;
+}
+
+/* Кнопка в таблице методов */
+#methods-table button {
+    padding: 5px 10px;
+    background: #C7D0CC;
+    /*color: white;*/
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+#methods-table button:hover {
+    background: #0d8aef;
+}
+
+/* Блок результата вызова метода */
+#method-result {
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    background-color: #fafafa;
+    overflow: auto;
+}
+
+/* Резервная вкладка */
+.placeholder {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    text-align: center;
+    color: #666;
+}

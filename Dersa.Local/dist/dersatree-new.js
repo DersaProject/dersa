@@ -1,0 +1,944 @@
+﻿
+$.jstree.defaults.dnd = {
+        copy: false,//function (data) { console.log(data.event.target.id); return data.event.target.id === "Entity_anchor"; },//true,//{ return nodes[0].id == "Attribute" || nodes[0].id == "Entity"; },
+        always_copy: false,
+        open_timeout: 500,
+        is_draggable: function (nodes) { return nodes[0].id != "ENTITIES" && nodes[0].id != "STEREOTYPES";/*nodes[0].id === "Package" || nodes[0].id === "Entity" || nodes[0].id === "Attribute";*/ },
+        can_dnd: function (ndsrc, nddst, data) {
+            return CanDnD(ndsrc, nddst, data);
+        }
+}
+
+let keyOptions;
+var lastDnDsource;
+var lastDnDtarget;
+var lastDnDresult;
+var selectedForCut;
+
+function InsertNode(data) {
+    var inst = $.jstree.reference(data.reference);
+    obj = inst.get_node(data.reference);
+    var result = DnD(data.item.stereotype, obj.id, 0);
+    var newObjArr = JSON.parse(result);
+    var newId = newObjArr[0].id;
+    var newIcon = newObjArr[0].icon;
+    var newText = newObjArr[0].text;
+    var new_node = inst.create_node(obj, newId, 'last');
+    inst.set_id(new_node, newId);
+    inst.set_icon(newId, newIcon);
+    inst.set_text(newId, newText);
+    var newnodeObj = inst.get_node(newId);
+    newnodeObj.data = newObjArr[0].data;
+    if (obj.state.loaded) {
+        inst.deselect_all();
+        inst.select_node(newId);
+        EditNode(newId, newText);
+    }
+    else
+        RefreshNode(newId);  
+}
+
+function AddSubmenu(items, dest, prefix = '') {
+    dest.submenu = [];
+    items.forEach( function(item, i){
+        var subitem = {
+            "label": item.label,
+            "icon": item.icon,
+            "stereotype": prefix + item.label,
+            "action": function (data) {
+                InsertNode(data);
+            }
+        };
+        if (item.children && item.children.length > 0) {
+            subitem.action = null;
+            AddSubmenu(item.children, subitem, prefix);
+        }
+        dest.submenu.push(subitem);
+    });
+}
+
+function CanDnD(src, dstNode, data)
+{
+	//if (diagramManager.isEditing)
+	//	return true;
+    //if (dstNode) {
+    //   var result = lastDnDresult;
+    //    if (dstNode.id) {
+    //        if (src != lastDnDsource || dstNode.id != lastDnDtarget) {
+    //            var xhr = new XMLHttpRequest();
+    //            args = "src=" + src + "&dst=" + dstNode.id;
+    //            xhr.open('GET', "node/CanDnD?" + args, false);
+    //            xhr.send();
+    //            result = xhr.responseText > 0;
+    //            lastDnDresult = result;
+    //            lastDnDsource = src;
+    //            lastDnDtarget = dstNode.id;
+    //        }
+    //    }
+    //    else
+    //        result = true;
+    //    return result;
+    //}
+    //else if (data.event.target.ondrop) {
+    //    data.event.data = { id: src, name: data.element.text };
+    //    return data.event.target.ondrop(data.event);
+    //}
+    //return false;
+	//console.log(src);
+	//console.log(dstNode);
+	//console.log(data);
+	if(dstNode && dstNode.id[0]==='P')
+		return true;
+	else
+		console.log(dstNode);
+	return false;
+}
+
+$(document)
+.on("dnd_stop.vakata", function (e, data) {
+console.log({droppedData: data});
+    var instance = $('#dersa').jstree(true);
+    var node = data.data.nodes[0];
+	var src_node = instance.get_node(node);
+	if (diagramManager.isEditing)
+	{
+        diagramManager.createElementFromDrop('rectangle', data.event.offsetX, data.event.offsetY, src_node.text, src_node.id);
+		return;
+	}
+    var target = instance.get_node(data.event.target);
+    var canDnD = CanDnD(node, target, data);
+    if (!canDnD)
+        return;
+	if(!target)
+		return;
+    var options = 0;
+    if (data.event.ctrlKey)
+        options += 1;
+    if (data.event.shiftKey)
+        options += 2;
+    if (data.event.altKey)
+        options += 4;
+    var handlerEcho = DnD(node, target.id, options);
+    instance.delete_node(node);
+    var newObjArr = JSON.parse(handlerEcho);
+    var newId = newObjArr[0].id;
+    var newIcon = newObjArr[0].icon;
+    var newText = newObjArr[0].text;
+    var new_node = instance.create_node('#', node, 'last');
+    instance.set_id(new_node, newId);
+    instance.set_icon(newId, newIcon);
+    instance.set_text(newId, newText);
+    data.data.nodes = [newId];
+})
+
+$.jstree.defaults.contextmenu = {
+    select_node: true,
+    show_at_node: false,
+    items: function (o, cb) { // Could be an object directly
+        return {
+            "refresh": {
+                "separator_before": false,
+                "separator_after": true,
+                //"_disabled": o.id < 0 || (o.id.indexOf("_") >= 0 && o.id[0] !== "D" && o.id[0] !== "C"),//this.check("create_node", data.reference, {}, "last"),
+                "label": "Refresh",
+                "action": function (data) {
+                    var inst = $.jstree.reference(data.reference),
+                        obj = inst.get_node(data.reference);
+                    RefreshNode();
+                }
+            },
+            "rename": {
+                "separator_before": false,
+                "separator_after": false,
+                //"_disabled": isNaN(o.id) && o.id[0] !== "D" && o.id[0] !== "C",//o.text == 'Entities' || o.text == 'Stereotypes',//false, //(this.check("rename_node", data.reference, this.get_parent(data.reference), "")),
+                "label": "Rename",
+                "action": function (data) {
+                    var inst = $.jstree.reference(data.reference),
+                        obj = inst.get_node(data.reference);
+                    obj_text = inst.get_text(data.reference);
+                    EditNode(obj, obj_text);
+                    //inst.edit(obj, obj_text, function (obj, tmp, nv, cancel) { RenameNode(obj.id, inst.get_text(data.reference)); });
+                }
+            },
+            "edit":
+            {
+                "separator_before": true,
+                "icon": false,
+                "separator_after": true,
+                "label": "Edit node",
+                "action": false,
+                "sumbenu": {},
+            },
+            "find": {
+                "separator_before": false,
+                "separator_after": true,
+                "_disabled": false,// +o.id.isNaN || +o.id > 0, //(this.check("create_node", data.reference, {}, "last")),
+                "label": "Find",
+                "action": false,
+                "submenu": {},
+            },
+            "methods": {
+                "separator_before": false,
+                "separator_after": false,
+                "_disabled": false,
+                "label": "Methods",
+                "action": function (data) {
+                    var inst = $.jstree.reference(data.reference),
+                    obj = inst.get_node(data.reference);
+                    formCaption = obj.text.substring(0, 20) + ' methods';
+                    var form = new mxForm(formCaption);
+                    //// Adds a readonly field for the entity id
+                    //var id = form.addText('ID', objectid/*cell.getId()*/);
+                    //id.setAttribute('readonly', 'true');
+
+                    var xhr = new XMLHttpRequest();
+                    args = "id=" + obj.id;
+                    xhr.open('GET', "node/MethodsForm?" + args, false);
+                    xhr.send();
+                    var attrs = JSON.parse(xhr.responseText);
+
+                    var Props = CreateProperties(form, attrs, "");
+                    //alert(Props.innerHTML);
+                    var wnd = new mxWindow(formCaption,
+                        Props, 100, +$(window).scrollTop() + 100, 250, 400, false, true);
+                    form.window = wnd;
+                    wnd.setVisible(true);
+                }
+            },
+            "properties": {
+                "separator_before": false,
+                "separator_after": true,
+                "_disabled": false,
+                "label": "Properties",
+                "action": function (data) {
+                    var inst = $.jstree.reference(data.reference),
+                    obj = inst.get_node(data.reference);
+                    var form = new mxForm('properties');
+                    //// Adds a readonly field for the entity id
+                    //var id = form.addText('ID', objectid/*cell.getId()*/);
+                    //id.setAttribute('readonly', 'true');
+
+                    var xhr = new XMLHttpRequest();
+                    args = "id=" + obj.id;
+                    xhr.open('GET', "node/PropertiesForm?" + args, false);
+                    xhr.send();
+                    var attrs = JSON.parse(xhr.responseText);
+                    var Props = CreateProperties(form, attrs, "Node/SetProperties");
+                    //alert(Props.innerHTML);
+                    var wnd = new mxWindow('properties',
+                        Props, 100, +$(window).scrollTop() + 100, 300, (attrs.length * 22) + 60, false, true);
+                    form.window = wnd;
+                    wnd.setVisible(true);
+                }
+            },
+            "insertEntity": {
+                        "separator_before": true,
+                        "icon": false,
+                        "separator_after": false,
+                        "label": "Insert",
+                        "action": false,
+                        "sumbenu": {}
+            },
+            "insertCachedEntity": {
+                        "separator_before": true,
+                        "icon": false,
+                        "separator_after": false,
+                        "label": "Ins Cache",
+                        "action": false,
+                        "sumbenu": {}
+            }
+        }
+    }
+}
+
+
+    $('#goto_button').on("click", function () {
+        var instance = $('#dersa').jstree(true);
+        instance.deselect_all();
+        var found = document.getElementById("found");
+        var nextId = found.value;
+        if (instance.get_node(nextId)) {
+            instance.select_node(nextId);
+            var documentId = '#' + nextId + '_anchor';
+            var scrollTop = $(documentId).offset().top;
+            $(document).scrollTop(scrollTop);
+        }
+});
+
+$('#listBox').on("click", function () {
+    var listBox = document.getElementById("listBox");
+    Index = listBox.selectedIndex;
+    if (Index >= 0) {
+        var found = document.getElementById("found");
+        found.value = listBox.options[Index].value;
+        var foundpath = document.getElementById("foundpath");
+        foundpath.value = listBox.options[Index].text;
+    }
+});
+
+$('#reset_button').on("click", function () {
+    var listBox = document.getElementById("listBox");
+    while (listBox.options.length > 0) {
+        listBox.options[0] = null;
+    }
+});
+
+$('#find_button').on("click", function () {
+    var searchtext = document.getElementById("searchtext");
+    if (searchtext.value.length < 4)
+        return;
+    var instance = $('#dersa').jstree(true);
+    var found = document.getElementById("found");
+    var foundpath = document.getElementById("foundpath");
+    var nextId = found.value;
+    nextId = FindNext(nextId, searchtext.value);
+    found.value = nextId;
+    foundpath.value = GetPath(nextId);
+    addValue();
+});
+
+function EditNode(obj, obj_text) {
+    var instance = $('#dersa').jstree(true);
+    instance.edit(obj, obj_text, function (obj, tmp, nv, cancel) { RenameNode(obj.id, obj.text); });
+}
+
+function DoPaste(selectedForCut, dst) {
+    while (selectedForCut.length) {
+        DnD(selectedForCut[0], dst, 0);
+        selectedForCut.shift();
+    }
+}
+
+function FindAbsolute(Val){
+	/*
+                if (isNaN(+Val) || +Val < 10000) {
+                            var form = new mxForm('find');
+                            var xhr = new XMLHttpRequest();
+                            args = 'srchval=' + Val;
+                            xhr.open('GET', 'Entity/Find?' + args, false);
+                            xhr.send();
+                            var attrs = JSON.parse(xhr.responseText);
+                            var Props = CreateProperties(form, attrs, '');
+                            var wnd = new mxWindow('find', Props, 100, 100, 800, 400, false, true);
+                            form.window = wnd;
+                            wnd.setVisible(true);
+                            return;
+                        }*/
+                        GoToNode(Val);
+}
+
+function FindInChildren(nodeId) {
+    var fheader = 'find (parent = ' + nodeId + ')';
+    var form = new mxForm(fheader);
+    var xhr = new XMLHttpRequest();
+    var srchVal = prompt('Введите строку поиска');
+    if (!srchVal)
+        return;
+    args = 'srchval=' + srchVal + '&root_entity=' + nodeId;
+    xhr.open('GET', 'Entity/Find?' + args, false); xhr.send();
+    var attrs = JSON.parse(xhr.responseText);
+    var Props = CreateProperties(form, attrs, '');
+    var wnd = new mxWindow(fheader, Props, 100, 100, 800, 400, false, true);
+    form.window = wnd;
+    wnd.setVisible(true); 
+}
+
+
+function RefreshNode(selectId) {
+    var instance = $('#dersa').jstree(true);
+    var selected_node = instance.get_selected();
+    instance.refresh_node(selected_node);
+    if (selectId)
+    {
+        instance = $('#dersa').jstree(true);
+        var selectedNode = instance.get_node(selectId);
+        if (selectedNode) {
+            instance.select_node(selectId);
+        }
+        else {
+            var jsonPath = GetPath(selectId, 1);
+            npath = JSON.parse(jsonPath);
+            LoadPath();
+        }
+    }
+}
+
+function CanShow(event) {
+    laEdit = document.getElementById("laEdit");
+    if (laEdit != null && laEdit.innerHTML != "")
+        return false;
+    var displaytext = document.getElementById("displaytext");
+    displaytext.value = event.target.id;
+    return displaytext.value == GetSelectedNode();
+}
+
+function GetSelectedNode() {
+    var instance = $('#dersa').jstree(true);
+    sel = instance.get_selected();
+    if (sel == -1 || sel == null || sel.length == 0) {
+        return "пыщьпыщь";//потому что в этом случае не надо показывать меню
+    }
+    res = sel + "_anchor";
+    return res;
+}
+
+
+function GoToB() {
+    const instance = $('#dersa').jstree(true);
+    var relId = instance.get_selected();
+    instance.deselect_all();
+    nodeId = FindNext(relId, '');
+    if (instance.get_node(nodeId)) {
+        instance.select_node(nodeId);
+        var documentId = '#' + nodeId + '_anchor';
+        var scrollTop = $(documentId).offset().top;
+        $(document).scrollTop(scrollTop);
+
+    }
+    else {
+        var jsonPath = GetPath(nodeId, 1);
+        npath = JSON.parse(jsonPath);
+        LoadPath();
+    }
+}
+
+function GoToNode(N)
+{
+    jP = GetPath(N, 1);
+    npath = JSON.parse(jP);
+    LoadPath();
+}
+
+var navigationArray = new Array();;
+var navigationArrayIndex = -1;
+var preventSaveNode = false;
+
+function SaveCurrentNode(nodeId) {
+    if (preventSaveNode) {
+        preventSaveNode = false;
+        return;
+    }
+    navigationArrayIndex++;
+    navigationArray[navigationArrayIndex] = nodeId;
+}
+
+function moveForward() {
+    if (navigationArrayIndex >= navigationArray.length - 1) {
+        navigationArrayIndex = navigationArray.length - 1;
+        return null;
+    }
+    preventSaveNode = true;
+    return navigationArray[++navigationArrayIndex];
+}
+function moveBack() {
+    if (navigationArrayIndex <= 0) {
+        navigationArrayIndex = 0;
+        return null;
+    }
+    preventSaveNode = true;
+    return navigationArray[--navigationArrayIndex];
+}
+
+var npath;//это глобальная переменная, потому что нужно вызывать функцию через указатель в instance.load_node(lnode, LoadPath);
+function LoadPath() {
+    const instance = $('#dersa').jstree(true);
+    if (npath.length == 1) {
+        //console.log(instance.get_node(npath[0]).state);
+        if (!instance.get_node(npath[0]) || !instance.get_node(npath[0]).state.loaded)
+            instance.load_node(npath[0]);
+        instance.deselect_node(instance.get_selected());
+        instance.select_node(npath[0]);
+		const anchor = document.getElementById(npath[0] + '_anchor');
+		const container = document.querySelector('#left-frame');
+		container.scrollTop = anchor.offsetTop - 100;
+    }
+    else {
+        var lnode = npath[0];
+        npath.shift();
+        var nodeObject = instance.get_node(lnode);
+        if (!nodeObject || !nodeObject.state.loaded) {
+            instance.load_node(lnode, LoadPath);
+        }
+        else {
+            LoadPath();
+        }
+    }
+}
+
+function GetPath(id, for_system) {
+    //var xhr = new XMLHttpRequest();
+    //xhr.open('GET', "entity/GetPath?id=" + id + "&for_system=" + for_system, false);
+    //xhr.send();
+    //var response = xhr.responseText;
+    //return response;
+	let result = [id];
+	let node = dTree.getNode(id);
+	while(node.parent()){
+		node = node.parent();
+		result.unshift(node.id);
+	}
+	//console.log(result);
+	return JSON.stringify(result);
+}
+
+
+function NewDiagram(id) {
+    args = "parent=" + id;
+    xhr = new XMLHttpRequest();
+    xhr.open('POST', "diagram/Create", false);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send(args);
+}
+
+function EditDiagram() {
+    if (Editor != null)
+        Editor.execute("clearDiagram");
+    chEdit.attributes.removeNamedItem("hidden");
+    chEdit.checked = true;
+    laEdit.innerHTML = "Diagram edit mode";
+    infoControl.innerHTML = "";
+    dID = document.getElementById("DiagramId");
+    diagramXml = GetText(dID.value, "DiagramXml");
+    //diagramXmlAdd = GetText(dID.value, "DiagramXmlAdditional");
+    
+    //diagXmlMain = document.getElementById("diag_xml_main");
+    //diagXmlAdd = document.getElementById("diag_xml_add");
+    //diagXmlMain.value = diagramXml;
+    //diagXmlAdd.value = diagramXmlAdd;
+    //chAddXml = document.getElementById("add_xml");
+    //console.log(diagXmlMain.value);
+    //if (chAddXml.checked)
+    //    drawGraph(/*infoControl,*/ diagXmlAdd.value);//'<mxGraphModel> <root> <mxCell id="0"/> <mxCell id="1" parent="0"/>  <Shape label="Shape" href="" id="208"> <mxCell style="ellipse" parent="1" vertex="1"> <mxGeometry x="310" y="210" width="60" height="60" as="geometry"/> </mxCell>  </Shape>  <mxCell id="602257" parent="1" vertex="1">  <Object entity="602256" label="SYSTEM_X " as="value"/>  <mxGeometry x="270" y="86" width="120" height="25" as="geometry"/> </mxCell> </root></mxGraphModel>');
+    //else 
+    drawGraph(diagramXml);
+    DiagramIsEdit = true;
+}
+
+function CancelEditDiagram() {
+    codec = new mxCodec();
+    encXml = codec.encode(Editor.graph.getModel())
+    Editor.execute("clearDiagram");
+    if (DiagramIsEdit)//(chEdit.checked)//(graph != null)
+    {
+        if (confirm('Сохранить диаграмму ?'))
+        {
+            var xml = mxUtils.getXml(encXml);
+            safeXml = xml.replace(new RegExp("<", 'g'), "{lt;").replace(new RegExp(">", 'g'), "{gt;");
+            dID = document.getElementById("DiagramId");
+            args = "id=" + dID.value + "&xml=" + safeXml;
+            xhr = new XMLHttpRequest();
+            //formData = new FormData();
+            //formData.append('id', 0);
+            xhr.open('POST', "diagram/Save", false);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send(args);
+            //xhr.open('POST', "diagram/Save?" + args, false);
+            //xhr.setRequestHeader("Content-Type", "text/xml");
+            //xhr.send();
+            response = xhr.responseText;
+            //console.log(response);
+            if (response == 0)
+                //graph = null;
+                DiagramIsEdit = false;
+        }
+        else
+        {
+            //graph = null;
+            DiagramIsEdit = false;
+        }
+    }
+    if (chEdit.attributes.getNamedItem("hidden") == null)
+        chEdit.attributes.setNamedItem(document.createAttribute("hidden"));
+    laEdit.innerHTML = "";
+}
+
+function AddVertex(id, text, x, y)
+{
+    Editor.execute('insertNode', id, text, x, y);
+}
+
+function drawGraph(xml) {
+    Editor.execute('initG', xml);
+}
+
+function DnD(src, dst, options) {
+    const newNodeId = dTree.nodes.get(dst).generateId(dTree, src);
+    dTree.getNode(dst).addChild(new DersaNode(newNodeId, src, src));
+    const result = [{id: newNodeId, text: src, icon: src, name: src}];
+    return JSON.stringify(result);
+}
+
+function RenameNode(id, name) {
+    let node = dTree.getNode(id);
+    node.name = name;
+    const result = [{id: node.id, text: node.name, icon: node.stereotype, name: node.name}];
+    return JSON.stringify(result);
+}
+
+function RestoreNode(id) {
+    var xhr = new XMLHttpRequest();
+    args = '?id=' + id;
+    xhr.open('POST', "node/restore" + args, false);
+    xhr.send();
+    return xhr.responseText;
+}
+
+function RemoveNode(id, options) {
+    dTree.deleteNode(id);
+    return "";
+}
+
+function GetText(id, attr_name) {
+    var xhr = new XMLHttpRequest();
+    args = "id=" + id;
+    if (attr_name != "")
+        args = args + "&attr_name=" + attr_name;
+    xhr.open('GET', "node/description?" + args, false);
+    xhr.send();
+    return xhr.responseText;
+}
+
+function FindNext(id, searchtext) {
+    var xhr = new XMLHttpRequest();
+    //xhr.open('GET', "SearchHandler.ashx?id=" + id + "&searchtext=" + searchtext, false);
+    xhr.open('GET', "Entity/Find?entity=" + id + "&srchval=" + searchtext, false);
+    xhr.send();
+    return xhr.responseText;
+}
+
+//function GetPath(id) {
+//    var xhr = new XMLHttpRequest();
+//    xhr.open('GET', "FoundInfoHandler.ashx?id=" + id, false);
+//    xhr.send();
+//    return xhr.responseText;
+//}
+
+function addValue() {
+    var foundpath = document.getElementById("foundpath");
+    var text = foundpath.value;
+    var found = document.getElementById("found");
+    var v = found.value;
+    if (v > 0) {
+        var listBox = document.getElementById("listBox");
+        count = listBox.options.length;
+        exists = false;
+        for (i = 0; i < count; i++) {
+            if (listBox.options[i].value == v)
+                exists = true;
+        }
+        if (!exists) {
+            AddOpt = new Option(text, v);
+            listBox.options[count] = AddOpt;
+        }
+    }
+    return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Создаём экземпляр менеджера
+const dbManager = new IndexedDBManager('DersaLocalDB', 1, ['diagrams','entities','relations','stereotypes','attributes','settings']);
+//var childStereotypes;
+let subMenues;
+dbManager.getData('settings', 'submenues')
+	.then(result => {
+		//childStereotypes = result;
+        subMenues = result;
+	  // Здесь работаем с результатом
+	})
+	.catch(error => {
+	  console.error('Ошибка:', error);
+	});
+
+var dTree = new DersaTree(dbManager);
+
+$('#dersa')
+    .jstree({
+        "core": {
+            "animation": 0,
+            "check_callback": true,
+            'force_text': true,
+            "themes": { "stripes": true },
+			'data' :  function (node, cbfunct) {
+					dersaNode = dTree.getNode(node.id);
+					if(node.id === '#' || (dersaNode.has_children === true && (!dersaNode._children || dersaNode._children.length == 0))){
+						dTree.loadNodes(node.id)
+							.then(()=> {
+									dTree.getNodes(node.id).then(displayData => {
+									cbfunct(displayData);	
+									//console.log(JSON.stringify(displayData, null, 2));
+								});
+							});
+					}		
+					else
+						dTree.getNodes(node.id).then(displayData => {
+						cbfunct(displayData);	
+						//console.log(JSON.stringify(displayData, null, 2));
+					});
+						
+					//dbManager.getData('nodes', node.id)
+					//.then(result => {
+					//  cbfunct(JSON.parse(result));
+					//})
+					//.catch(error => {
+					//  console.error('Ошибка:', error);
+					//});
+					
+					//cbfunct([{"text" : "Child" + node.id, "id" : 1+(+node.id), "icon":"Entity", "children" : true}]);
+				//}
+			}
+			/*
+			"data": function(obj, callback){
+				console.log(obj);
+				callback.call(this, [
+		 				{
+		 					'id' : 'node_1',
+		 					'text' : 'Root node ' + obj.id,
+							'parent': obj.id,
+		 					'children' : true
+		 				},
+		 				{
+		 					'id' : 'node_2',
+		 					'text' : 'Root node ' + obj.id,
+							'parent': obj.id,
+		 					'children' : true
+		 				}
+			])}
+			*/
+			/*
+            "data": {
+                "multiple": false,
+                "url": "/node/list",
+                "dataType": "json",
+                "data": function (node) {
+                    return { "id": node.id };
+                }
+            }*/
+        },
+        "contextmenu": {
+            'items': function (o, cb) {
+                var tmp = $.jstree.defaults.contextmenu.items(o, cb);
+                tmp.find.submenu = {
+                    "goto_b": {
+                        "separator_before": false,
+                        "separator_after": true,
+                        "_disabled": +o.id.isNaN || o.id.split('_').length > 1 || o.id > 0, //(this.check("create_node", data.reference, {}, "last")),
+                        "label": "Go to B",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            GoToB();
+                        }
+                    },
+                    "goto_a": {
+                        "separator_before": false,
+                        "separator_after": true,
+                        "_disabled": o.id.split('_').length < 2,
+                        "label": "Go to A",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference);
+                            var strId = ' ' + inst.get_selected()
+                            GoToNode(strId.split('_')[1]);
+                        }
+                    },
+                    "find_in_children": {
+                        "separator_before": false,
+                        "separator_after": true,
+                        "_disabled": +o.id.isNaN || o.id.split('_').length > 1 || o.id < 0,
+                        "label": "Find lower",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference);
+                            var strId = ' ' + inst.get_selected()
+                            FindInChildren(o.id);
+                        }
+                    },
+                    "find_history": {
+                        "separator_before": false,
+                        "separator_after": false,
+                        "_disabled": false,
+                        "label": "History",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference);
+                            var strId = inst.get_selected();
+                            var defaultUrl = inst.settings.core.data.url;
+                            inst.settings.core.data.url = 'node/history'
+                            inst.refresh_node(strId);
+                            inst.settings.core.data.url = defaultUrl;
+                        }
+                    }
+
+                };
+                tmp.edit.submenu = {
+                    "restore": {
+                        "separator_before": false,
+                        "icon": false,
+                        "separator_after": true,
+                        "_disabled": o.icon != 'Recycle',
+                        "label": "Restore",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            if (inst.is_selected(obj)) {
+                                selectedNodes = inst.get_selected();
+                                restoreMessage = selectedNodes.length > 1 ? "узлы" : obj.id;
+                                if (confirm('Восстановить ' + restoreMessage + '?')) {
+                                    while (selectedNodes.length > 0) {
+                                        RestoreNode(selectedNodes[0]);
+                                        selectedNodes.shift();
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "remove": {
+                        "separator_before": false,
+                        "icon": false,
+                        "separator_after": true,
+                        "_disabled": o.text == 'Entities' || o.text == 'Stereotypes',//false, //(this.check("delete_node", data.reference, this.get_parent(data.reference), "")),
+                        "label": "Delete",
+                        "action": function (data) {
+                            var addInfo = "";
+                            if (keyOptions == 4)
+                                addInfo = "без возможности восстановления "
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            if (inst.is_selected(obj)) {
+                                selectedNodes = inst.get_selected();
+                                deleteMessage = selectedNodes.length > 1 ? "узлы" : obj.id;
+                                if (confirm('Удалить ' + addInfo + deleteMessage + '?')) {
+                                    inst.delete_node(selectedNodes);
+                                    while (selectedNodes.length > 0) {
+                                        RemoveNode(selectedNodes[0], keyOptions);
+                                        selectedNodes.shift();
+                                    }
+                                }
+                            }
+                            else {
+                                if (confirm('Удалить ' + addInfo + obj.id + '?')) {
+                                    RemoveNode(obj.id, keyOptions);
+                                    inst.delete_node(obj);
+                                }
+                            }
+                            keyOptions = 0;
+                        }
+                    },
+                    "cut":
+                    {
+                        "separator_before": true,
+                        "separator_after": false,
+                        "_disabled": false,
+                        "label": "Cut",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            selectedForCut = inst.get_selected(false);
+                        }
+                    },
+                    "copy":
+                    {
+                        "separator_before": false,
+                        "separator_after": false,
+                        "_disabled": true,
+                        "label": "Copy",
+                        "action": false
+                    },
+                    "paste":
+                    {
+                        "separator_before": false,
+                        "separator_after": true,
+                        "_disabled": !selectedForCut || selectedForCut.length < 1,
+                        "label": "Paste",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            DoPaste(selectedForCut, obj.id);
+                            inst.refresh_node(obj);
+                        }
+                    },
+                    "editDiagram": {
+                        "separator_before": false,
+                        "separator_after": false,
+                        "_disabled": o.id[0] != "D", //(this.check("create_node", data.reference, {}, "last")),
+                        "label": "Edit diagram",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            EditDiagram();
+                        }
+                    },
+                    "newDiagram": {
+                        "separator_before": false,
+                        "separator_after": true,
+                        //"_disabled": o.text == 'Entities' || o.text == 'Stereotypes' || o.id < 0 || o.id[0] == "D",
+                        "label": "New diagram",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                            NewDiagram(obj.id);
+                        }
+                    }
+                };
+                //tmp.insertEntity.submenu = {};
+                delete tmp.insertCachedEntity;
+                const node = dTree.getNode(o.id);
+				console.log(node);
+
+                //var xhr = new XMLHttpRequest();
+                //args = "id=" + o.id;
+                //xhr.open('GET', "node/GetInsertSubmenu?" + args, false);
+                //xhr.send();
+                //var childStereotypes = JSON.parse(xhr.responseText);
+				//if(tmp.insertEntity)
+                /*
+				if(o.id[0] === 'S')
+					AddSubmenu([
+						{
+							"label": "SuperPackage",
+							"icon": "./dist/themes/default/SuperPackage.gif",
+							"children": []
+						},
+						{
+							"label": "Package",
+							"icon": "./dist/themes/default/Package.gif",
+							"children": []
+						}
+					], 
+					tmp.insertEntity);
+				else
+					AddSubmenu(childStereotypes, tmp.insertEntity);
+                */
+                const subMenuItems = subMenues[node.stereotype];
+                if(subMenuItems)
+				    AddSubmenu(subMenuItems, tmp.insertEntity);
+                return tmp;
+            }
+        },
+
+        "plugins": ["contextmenu", "dnd", "state"]
+    })
+    .on("loaded.jstree", function (e, data) {
+        if (initialNodeId) {
+            GoToNode(initialNodeId); initialNodeId = undefined;
+        } //console.log GoToNode
+    })
+    .on("changed.jstree", function (e, data) {
+        if (data.selected.length) {
+            selected_id = data.selected[0];
+            keyOptions = 0;
+            if (data.event) {
+                if (data.event.ctrlKey)
+                    keyOptions += 1;
+                if (data.event.shiftKey)
+                    keyOptions += 2;
+                if (data.event.altKey)
+                    keyOptions += 4;
+            }
+
+            loadNodeProperties(selected_id);
+            loadNodeMethods(selected_id);
+			loadNodeInfo(selected_id);
+        }
+    });
+
+		
+		
+
