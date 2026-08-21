@@ -97,13 +97,10 @@ async function loadNodeInfo(node_id) {
 				const node = dTree.getNode(node_id);
 				if(node_id[0] === 'D')//diagram
 					return [{Name: "diagram", Value: node.id},{Name: "name", Value: node.name}];
-        let attrs = [{Name: "entity", Value: node.id},{Name: "stereotype", Value: node.stereotype},{Name: "name", Value: node.name}];  
+        let attrs = [{Name: "<i>entity</i>", Value: node.id},{Name: "<i>stereotype</i>", Value: node.stereotype},{Name: "<i>name</i>", Value: node.name}];  
         const savedAttrs = node.properties();
-        if(savedAttrs)
-        {
-          for (const key in savedAttrs) {
-            attrs.push({Name: key, Value: savedAttrs[key]});
-          }          
+        if(savedAttrs) {
+          savedAttrs.forEach(attr => attrs.push(attr));
         }
 
 				return attrs;

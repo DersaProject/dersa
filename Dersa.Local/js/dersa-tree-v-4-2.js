@@ -1,5 +1,6 @@
 class DersaNode {
-  constructor(id, stereotype, name, has_children = false, tree = null) {
+  constructor(id, stereotype, name, has_children = false, tree = null, needsSave = false) {
+    this.needsSave = needsSave;
     this.id = id;
     this.stereotype = stereotype;
     this.name = name;
@@ -8,10 +9,13 @@ class DersaNode {
     this._children = [];
     // ссылка на дерево, чтобы при добавлении ребёнка сразу класть его в dTree.nodes
     this._tree = tree;
+    this._properties = [];
     if(tree) {
       tree.getProperties(id)
         .then(result => {
-					this._properties = result;				
+          if(result) {
+            this._properties = result;
+          }
 				});;
     }
   }
@@ -32,12 +36,16 @@ class DersaNode {
     return this._properties;
   }
 
-  
+  setProperties(p) {
+    this._properties = p;
+    this._tree.saveProperties(this.id, p);
+  }
   /**
    * Добавить дочерний узел.
    * Если у текущего узла есть ссылка на дерево (_tree), новый узел сразу регистрируется в нём.
    */
   addChild(childNode) {
+    this.needsSave = true;
     childNode._tree = this._tree;
     this._children.push(childNode);
     childNode.setParent(this);
@@ -331,7 +339,7 @@ async saveAllNodes() {
 
   // Проходим по всем узлам в Map и собираем те, у которых stereotype === 'Package'
   for (const [, node] of this.nodes.entries()) {
-    if (node.stereotype === 'Package') {
+    if (node.stereotype === 'Package' && node.needsSave) {
       nodesToSave.push(node);
     }
   }
@@ -519,5 +527,9 @@ async saveAllNodes() {
 
   async getProperties(id) {
     return await dbManager.getData('attributes', id);
+  }
+
+  async saveProperties(id, properties) {
+    dbManager.saveData('attributes', id, properties);
   }
 }

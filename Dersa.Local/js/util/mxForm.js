@@ -142,7 +142,7 @@ mxForm.prototype.addText = function(name, value, type, childFormAttrs, ParentFor
 	return this.addField(name, input);
 };
 
-function CreateProperties(form, attrs, urlOK, ActionAfterExec, ClassName, callBackFunction, parentForm, urlCancel) {
+function CreateProperties(form, attrs, cbOK, ActionAfterExec, ClassName, callBackFunction, parentForm, urlCancel) {
     var texts = [];
     for (var i = 0; i < attrs.length; i++) {
         var fControl = null;
@@ -197,16 +197,20 @@ function CreateProperties(form, attrs, urlOK, ActionAfterExec, ClassName, callBa
             }
         }
         if (sendResult) {
-            if (urlOK) {
+            if (cbOK) {
+                if(typeof cbOK === 'function') {
+                    cbOK(results);
+                    return;
+                }
                 if (ActionAfterExec == "goto")
                 {
-                    window.open(urlOK + "?json_params=" + encodeURIComponent(JSON.stringify(results)));
+                    window.open(cbOK + "?json_params=" + encodeURIComponent(JSON.stringify(results)));
                     return;
                 }
                 if (ActionAfterExec == "goto_byId") {
                     var xhr = new XMLHttpRequest();
                     var body = "json_params=" + encodeURIComponent(JSON.stringify(results));
-                    xhr.open('POST', urlOK, false);
+                    xhr.open('POST', cbOK, false);
                     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                     xhr.send(body);
                     window.open(xhr.responseText);
@@ -216,7 +220,7 @@ function CreateProperties(form, attrs, urlOK, ActionAfterExec, ClassName, callBa
                 var body = "json_params=" + encodeURIComponent(JSON.stringify(results));
                 if (ClassName)
                     body += "&class_name=" + ClassName;
-                xhr.open('POST', urlOK, false);
+                xhr.open('POST', cbOK, false);
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 xhr.send(body);
                 var actionObject = null;
@@ -241,7 +245,7 @@ function CreateProperties(form, attrs, urlOK, ActionAfterExec, ClassName, callBa
                     if (actionObject && resultAction && actionObject.arg_name && actionObject.arg) {
                         var f = new Function(actionObject.arg_name, resultAction);
                         var arg = actionObject.arg;
-                        arg = arg.constructor === Array ? arg : [arg];      //если передали массив - так и оставляем, а если одиночный объект - преобразуем в массив (нужно для передачи более одного аргумента)
+                        arg = arg.constructor === Array ? arg : [arg];      //пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
                         var R = f.apply(this, arg);
                         if (ActionAfterExec == "alert")
                             alert(R);

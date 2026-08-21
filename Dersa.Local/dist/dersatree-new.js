@@ -214,19 +214,20 @@ $.jstree.defaults.contextmenu = {
                     var inst = $.jstree.reference(data.reference),
                     obj = inst.get_node(data.reference);
                     var form = new mxForm('properties');
-                    //// Adds a readonly field for the entity id
-                    //var id = form.addText('ID', objectid/*cell.getId()*/);
-                    //id.setAttribute('readonly', 'true');
-
-                    var xhr = new XMLHttpRequest();
-                    args = "id=" + obj.id;
-                    xhr.open('GET', "node/PropertiesForm?" + args, false);
-                    xhr.send();
-                    var attrs = JSON.parse(xhr.responseText);
-                    var Props = CreateProperties(form, attrs, "Node/SetProperties");
+                    const dTreeNode = dTree.getNode(obj.id);
+                    let attrs = [
+                        {Name: "entity", Value: dTreeNode.id, ReadOnly: true},
+                        {Name: "stereotype", Value: dTreeNode.stereotype, ReadOnly: true},
+                        {Name: "name", Value: dTreeNode.name, ReadOnly: true}];//JSON.parse(xhr.responseText);
+                    const nodeAttrs = dTreeNode.properties();
+                    nodeAttrs.forEach(attr => attrs.push(attr));
+                    var Props = CreateProperties(form, attrs, result => {
+                        console.log(result);
+                        dTreeNode.setProperties(result);
+                    });
                     //alert(Props.innerHTML);
                     var wnd = new mxWindow('properties',
-                        Props, 100, +$(window).scrollTop() + 100, 300, (attrs.length * 22) + 60, false, true);
+                        Props, 600, +$(window).scrollTop() + 300, 300, (attrs.length * 22) + 60, false, true);
                     form.window = wnd;
                     wnd.setVisible(true);
                 }
@@ -563,7 +564,7 @@ function drawGraph(xml) {
 
 function DnD(src, dst, options) {
     const newNodeId = dTree.nodes.get(dst).generateId(dTree, src);
-    dTree.getNode(dst).addChild(new DersaNode(newNodeId, src, src));
+    dTree.getNode(dst).addChild(new DersaNode(newNodeId, src, src, false, dTree, true));
     const result = [{id: newNodeId, text: src, icon: src, name: src}];
     return JSON.stringify(result);
 }
