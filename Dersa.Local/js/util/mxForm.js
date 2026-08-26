@@ -126,8 +126,14 @@ mxForm.prototype.addText = function(name, value, type, childFormAttrs, ParentFor
         inputForValue.value = value;
         if (type == 'button')
         {
-            if (childFormAttrs.InfoLink == "")
+            if (childFormAttrs.InfoLink === "")
                 input.setAttribute('onclick', childFormAttrs.OnClick);
+            else if(childFormAttrs.formAttrs) {
+                mxEvent.addListener(input, 'click', function () {
+                    console.log(childFormAttrs.formAttrs);
+                    ChildForm(name, inputForValue, childFormAttrs.formAttrs, childFormAttrs.SaveLink, childFormAttrs.Height, childFormAttrs.Width, childFormAttrs.ActionAfterExec, ParentForm, childFormAttrs.CancelLink);
+                });
+            }
             else
                 mxEvent.addListener(input, 'click', function () {
                     ChildForm(name, inputForValue, childFormAttrs.InfoLink, childFormAttrs.SaveLink, childFormAttrs.Height, childFormAttrs.Width, childFormAttrs.ActionAfterExec, ParentForm, childFormAttrs.CancelLink);
@@ -188,7 +194,7 @@ function CreateProperties(form, attrs, cbOK, ActionAfterExec, ClassName, callBac
                 iValue = "";
             if ((iValue != texts[i].value && !attrs[i].ReadOnly) || attrs[i].WriteUnchanged)
             {
-                saveText = texts[i].value.replace(new RegExp("<", 'g'), "$lt$").replace(new RegExp(">", 'g'), "$gt$");
+                saveText = texts[i].value;//.replace(new RegExp("<", 'g'), "$lt$").replace(new RegExp(">", 'g'), "$gt$");
                 results[j++] = { Name: attrs[i].Name, Value: saveText};
                 if (form.Result) {
                     form.Result.value = texts[i].value;
@@ -292,12 +298,7 @@ function CloseForm(form) {
         form.okClick();
 }
 
-function ChildForm(Name, Input, UrlIn, UrlOut, Height, Width, ActionAfterExec, ParentForm, UrlCancel) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', UrlIn, false);
-    xhr.send();
-    var formAttrs = JSON.parse(xhr.responseText);
-    
+function ChildForm(Name, Input, formAttrs, UrlOut, Height, Width, ActionAfterExec, ParentForm, UrlCancel) {
     var form = new mxForm(Name);
     form.Result = Input;
     var Props = CreateProperties(form, formAttrs, UrlOut, ActionAfterExec, "", this.CloseForm, ParentForm, UrlCancel);

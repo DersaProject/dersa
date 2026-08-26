@@ -642,6 +642,9 @@
 .jstree-default .Inherit {
   background: url("Inherit.gif") 0px 0px no-repeat;
 }
+.jstree-default .JSForm {
+  background: url("JSForm.gif") 0px 0px no-repeat;
+}
 .jstree-default .Entity {
   background: url("Entity.gif") 0px 0px no-repeat;
 }

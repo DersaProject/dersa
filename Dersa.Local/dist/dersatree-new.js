@@ -219,10 +219,20 @@ $.jstree.defaults.contextmenu = {
                         {Name: "entity", Value: dTreeNode.id, ReadOnly: true},
                         {Name: "stereotype", Value: dTreeNode.stereotype, ReadOnly: true},
                         {Name: "name", Value: dTreeNode.name, ReadOnly: true}];//JSON.parse(xhr.responseText);
-                    const nodeAttrs = dTreeNode.properties();
-                    nodeAttrs.forEach(attr => attrs.push(attr));
-                    var Props = CreateProperties(form, attrs, result => {
+                    const nodeAttrs = dTreeNode.properties;
+                    nodeAttrs.forEach(attr => attrs.push({Name: attr.Name, Value: attr.Value, Type: 4, ControlType: "button", ChildFormAttrs: {
+  "Height": 900,
+  "Width": 600,
+  "DisplayValue": "...",
+  "formAttrs": [{Name: attr.Name, Value: attr.Value, ControlType: "textarea", Height: 400, Width: 300}],
+  "cbOK": result => {
                         console.log(result);
+                        dTreeNode.setProperties(result);
+                    },
+  "OnClick": null,
+  "CancelLink": "Entity/CancelEditAttribute?entityId=10166227&attrName=Text"
+}}));
+                    var Props = CreateProperties(form, attrs, result => {
                         dTreeNode.setProperties(result);
                     });
                     //alert(Props.innerHTML);
@@ -639,18 +649,17 @@ function addValue() {
 // Создаём экземпляр менеджера
 const dbManager = new IndexedDBManager('DersaLocalDB', 1, ['diagrams','entities','relations','stereotypes','attributes','settings']);
 //var childStereotypes;
+
+var dTree = new DersaTree(dbManager);
 let subMenues;
-dbManager.getData('settings', 'submenues')
+dTree.getSettings('submenues')
 	.then(result => {
-		//childStereotypes = result;
         subMenues = result;
 	  // Здесь работаем с результатом
 	})
 	.catch(error => {
 	  console.error('Ошибка:', error);
 	});
-
-var dTree = new DersaTree(dbManager);
 
 $('#dersa')
     .jstree({

@@ -98,7 +98,7 @@ async function loadNodeInfo(node_id) {
 				if(node_id[0] === 'D')//diagram
 					return [{Name: "diagram", Value: node.id},{Name: "name", Value: node.name}];
         let attrs = [{Name: "<i>entity</i>", Value: node.id},{Name: "<i>stereotype</i>", Value: node.stereotype},{Name: "<i>name</i>", Value: node.name}];  
-        const savedAttrs = node.properties();
+        const savedAttrs = node.properties;
         if(savedAttrs) {
           savedAttrs.forEach(attr => attrs.push(attr));
         }
@@ -111,13 +111,14 @@ async function loadNodeInfo(node_id) {
 
 // Получение детального значения свойства
 async function GetPropertyValue(node_id, property_name) {
-
+/*
   const response = await fetch(`/Node/PropertyForm?id=${node_id}&prop_name=${property_name}&prop_type=2`);   //GetPropertyValue
                 if (response.ok) {
                     const resultObj = await response.json();
 		    const property = resultObj.find(p => p.Name === property_name);
-                    return property.Value;
-                }
+                    return property.Value;*/
+  const dTreeNode = dTree.getNode(node_id);
+  return dTreeNode.getPropertyValue(property_name);
 }
 
 // Загрузка свойств узла в таблицу
@@ -156,7 +157,7 @@ function needButton(text){
 }
 
 function getButtonHtml(id, name){
-	return `<button onclick="showEvent(event, '${name}', ${id})">html</button>`;
+	return `<button onclick="showEvent(event, '${name}', '${id}')">html</button>`;
 }
 
 function showEvent(event, propertyName, nodeId){
@@ -190,7 +191,19 @@ async function GetNodeMethods(node_id) {
 //            }
 
             // Возвращаем [], если API недоступно
-            return [];
+  const node = dTree.getNode(node_id);
+  if(!node)
+    throw new error(`узел ${node_id} не найден`);
+  //const methods = Object.getOwnPropertyNames(Stereotypes[node.stereotype].prototype).filter(name => name !== 'constructor');        
+  const methods = Stereotypes[node.stereotype].exposedMethods;
+  if(methods.length) {
+    let result = [];
+    methods.forEach(m => {
+      result.push({Name: m, Value: ''});
+    });
+    return result;
+  }  
+  return [];
 }
 
 // Отображение результата вызова метода
@@ -198,7 +211,7 @@ var currentMethodResult = "";
 async function displayMethodResult(node_id, method_name) {
   const methodResultDiv = document.getElementById('method-result');
   methodResultDiv.textContent = "Выполнение...";
-
+/*
   const response = await fetch(`/Node/ExecMethodForm?id=${node_id}&method_name=${method_name}`);   //GetMethodResult
                 if (response.ok) {
                     //methodResultDiv.textContent = await response.text();
@@ -207,7 +220,13 @@ async function displayMethodResult(node_id, method_name) {
                     currentMethodResult = resultObj[0].Value;
                     methodResultDiv.innerHTML = '<pre>' + currentMethodResult + '</pre><br>--------<br><button onclick="navigator.clipboard.writeText(currentMethodResult)">Copy</button>';
                 }
+*/
+  const node = dTree.getNode(node_id);
+  if(!node)
+    throw new error(`узел ${node_id} не найден`);
 
+  currentMethodResult = node.execMethod(method_name);
+  methodResultDiv.innerHTML = '<pre>' + currentMethodResult + '</pre><br>--------<br><button onclick="navigator.clipboard.writeText(currentMethodResult)">Copy</button>';
 }
 
 // Загрузка методов узла в таблицу
@@ -288,3 +307,4 @@ let initialNodeId;
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
     }
+

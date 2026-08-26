@@ -32,14 +32,52 @@ class DersaNode {
     this._parent = parentNode;
   }
 
-  properties() {
-    return this._properties;
+  get properties() {
+    let attributes = [];
+    if(this._properties)
+      this._properties.forEach(p => attributes.push({...p}));
+    const typeAttributes = Stereotypes[this.stereotype].attributes;
+    if(!attributes ||!attributes.length){
+      attributes = typeAttributes;
+    }
+    else if(typeAttributes) {
+      typeAttributes.forEach(
+        tattr => {
+          let attr = attributes.find(a => a.Name == tattr.Name);
+          if(attr) {
+            attr.Type = tattr.Type;
+          }
+          else {
+            attributes.push(tattr);
+          }
+        }
+      );
+    }
+    return attributes;
   }
 
-  setProperties(p) {
-    this._properties = p;
-    this._tree.saveProperties(this.id, p);
+  setProperties(changedProperties) {
+    changedProperties.forEach(
+      chP => {
+        let property = this._properties.find(p => p.Name == chP.Name);
+        if(property)
+          property.Value = chP.Value;
+        else
+          this._properties.push({Name: chP.Name, Value: chP.Value});
+      }
+    );
+    console.log(this._properties);
+    this._tree.saveProperties(this.id, this._properties);
   }
+
+  getPropertyValue(property_name) {
+    const property = this._properties.find(p => p.Name === property_name);
+    if(property)
+      return property.Value;
+    return null;
+  }
+
+
   /**
    * Добавить дочерний узел.
    * Если у текущего узла есть ссылка на дерево (_tree), новый узел сразу регистрируется в нём.
@@ -117,6 +155,18 @@ class DersaNode {
     dbManager.deleteData("attributes", this.id);
     if(this.stereotype === 'Package')
       dbManager.deleteData("entities", this.id);
+  }
+
+  getDersaEntity() {
+    //if(this._dersaEntity)
+    //  return this._dersaEntity;  надо подумать, кэширование здесь нужно или не нужно
+    this._dersaEntity = new Stereotypes[this.stereotype](this);
+    return this._dersaEntity;
+  }
+
+  execMethod(method_name){
+    const obj = this.getDersaEntity();  //create an object of type this.stereotype
+    return obj[method_name].apply(obj);
   }
 }
 
@@ -531,5 +581,16 @@ async saveAllNodes() {
 
   async saveProperties(id, properties) {
     dbManager.saveData('attributes', id, properties);
+  }
+
+  async getSettings(id) {
+    let result = await dbManager.getData('settings', id);
+    if(!result)
+      result = {};
+    return result;
+  }
+
+  async saveSettings(id, settings) {
+    dbManager.saveData('settings', id, settings);
   }
 }
