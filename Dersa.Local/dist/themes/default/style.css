@@ -624,6 +624,9 @@
 .jstree-default .Collection {
   background: url("Application.gif") 4px 4px no-repeat;
 }
+.jstree-default .DateTimeBox {
+  background: url("DateTimeBox.gif") 0px 0px no-repeat;
+}
 .jstree-default .Diagram {
   background: url("Xsd.gif") 0px 0px no-repeat;
 }

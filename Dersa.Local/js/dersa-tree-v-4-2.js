@@ -170,7 +170,19 @@ class DersaNode {
   }
 }
 
-
+class DersaNodeRelation extends DersaNode{
+  constructor(id, stereotype, aNodeId, bNodeId, tree){
+    let name = bNodeId;
+    if(tree){
+      const bNode = tree.getNode(bNodeId);
+      if(bNode)
+        name = bNode.name;
+  }
+    super(id, stereotype, name, false, tree);
+    this._aNodeId = aNodeId;
+    this._bNodeId = bNodeId;
+  }
+}
 
 class DersaTree {
   constructor(dbManager) {
@@ -408,7 +420,7 @@ async saveAllNodes() {
     const records = await this.dbManager.getAllData('relations');
     const result = records.map(item => {
       if (typeof item.data === 'object' && item.data !== null) {
-        item.data["relation_id"] = 'R' + item.id;	
+        item.data["relation_id"] = item.id;	
         return item.data;
       }
       return item.data;
@@ -427,6 +439,7 @@ async saveAllNodes() {
       .map(r => ({
         relation_id: r.relation_id,
         stereotype: r.stereotype,
+        aNodeId: r.aNodeId,
         bNodeId: r.bNodeId
       }));
   }
@@ -486,9 +499,12 @@ async saveAllNodes() {
             );
             this.registerNode(childNode);
             node.addChild(childNode);
+            let needLoadChildren = Array.isArray(childData.children) && childData.children.length > 0;
+            const childARelations = this.getARelations(childNode.id);
+            needLoadChildren = needLoadChildren || Array.isArray(childARelations) && childARelations.length > 0;
 
-            if (Array.isArray(childData.children) && childData.children.length > 0) {
-              await this._loadSubtree(childNode, childData.children);
+            if (needLoadChildren) {
+              await this._loadSubtree(childNode, childData.children, childARelations);
             }
           }
         }
@@ -496,7 +512,7 @@ async saveAllNodes() {
         const aRelations = this.getARelations(nodeData.id);
         if (Array.isArray(aRelations) && aRelations.length > 0) {
           for (const R of aRelations) {
-            const relNode = new DersaNode(R.relation_id, R.stereotype, R.bNodeId, false, this);
+            const relNode = new DersaNodeRelation(R.relation_id, R.stereotype, R.aNodeId, R.bNodeId, this);
             this.registerNode(relNode);
             node.addChild(relNode);
           }
@@ -510,9 +526,19 @@ async saveAllNodes() {
     }
   }
 
-  async _loadSubtree(parentNode, childrenData) {
-    for (const childData of childrenData) {
-      const childNode = new DersaNode(
+  async _loadSubtree(parentNode, childrenData, aRelations) {
+
+    let allChildren = childrenData;
+
+    if (Array.isArray(aRelations) && aRelations.length > 0) {
+      for (const R of aRelations) {
+        //allChildren.push({id: R.relation_id, stereotype: R.stereotype, name: 'Rel'});
+        allChildren.push(new DersaNodeRelation(R.relation_id, R.stereotype, R.aNodeId, R.bNodeId, this))
+      }
+    }
+
+    for (const childData of allChildren) {
+      const childNode = childData instanceof DersaNodeRelation? childData : new DersaNode(
         childData.id,
         childData.stereotype,
         childData.name,
@@ -522,8 +548,12 @@ async saveAllNodes() {
       this.registerNode(childNode);
       parentNode.addChild(childNode);
 
-      if (Array.isArray(childData.children) && childData.children.length > 0) {
-        await this._loadSubtree(childNode, childData.children);
+      let needLoadChildren = Array.isArray(childData.children) && childData.children.length > 0;
+      const childARelations = this.getARelations(childData.id);
+      needLoadChildren = needLoadChildren || Array.isArray(childARelations) && childARelations.length > 0;
+
+      if (needLoadChildren) {
+        await this._loadSubtree(childNode, childData.children, childARelations);
       }
     }
   }
@@ -593,4 +623,94 @@ async saveAllNodes() {
   async saveSettings(id, settings) {
     dbManager.saveData('settings', id, settings);
   }
+
+/**
+ * Сохраняет связи между узлами в БД.
+ * @param {Array} relations - массив объектов связей. 
+ *                           Ожидается, что у каждого есть relationId и данные.
+ * @returns {Promise<Array>} массив сохранённых relationId
+ */
+async saveRelations() {
+  const relations = this.relations;
+  const savedIds = [];
+
+  for (const rel of relations) {
+    // Проверка структуры объекта связи
+    if (!rel || typeof rel !== 'object') {
+      console.warn('Пропущен некорректный объект связи:', rel);
+      continue;
+    }
+
+    const relationId = rel.relation_id; // Используем relation_id, если нет - пробуем id
+    const relationData = {stereotype: rel.stereotype, aNodeId: rel.aNodeId, bNodeId: rel.bNodeId}; // Передаём весь объект или только нужные поля, зависит от dbManager
+
+    if (!relationId) {
+      console.warn('У связи отсутствуют relation_id или id, пропуск:', rel);
+      continue;
+    }
+
+    try {
+      // Вызов метода менеджера БД для каждой связи
+      await this.dbManager.saveData('relations', relationId, relationData);
+      savedIds.push(relationId);
+    } catch (error) {
+      console.error(`Ошибка при сохранении связи ${relationId}:`, error);
+      // Реши: прерывать весь процесс (throw error) или продолжать сохранять остальные
+      // throw error; 
+    }
+  }
+
+  return savedIds;
 }
+
+  /**
+   * Добавляет новую связь между узлами.
+   * 
+   * @param {string} stereotype - тип связи (например, 'child_of', 'dependency')
+   * @param {string|number} aNodeId - ID первого узла
+   * @param {string|number} bNodeId - ID второго узла
+   * @returns {Object} созданный объект связи
+   */
+  addRelation(stereotype, aNodeId, bNodeId) {
+    if (!stereotype || aNodeId === undefined || bNodeId === undefined) {
+      throw new Error('Недостаточно данных для создания связи: требуются stereotype, aNodeId и bNodeId');
+    }
+
+    // 1. Находим максимальный номер среди существующих relation_id
+    // relation_id имеет формат "R" + число (например, "R1", "R15", "R103")
+    let maxNum = 0;
+
+    for (const rel of this.relations) {
+      if (rel.relation_id && typeof rel.relation_id === 'string') {
+        // Извлекаем число после буквы 'R'
+        const match = rel.relation_id.match(/^R(\d+)$/);
+        if (match) {
+          const num = parseInt(match[1], 10);
+          if (num > maxNum) {
+            maxNum = num;
+          }
+        }
+      }
+    }
+
+    // 2. Генерируем новый номер (максимальный + 1)
+    const nextNum = maxNum + 1;
+    const relation_id = `R${nextNum}`;
+
+    // 3. Создаем объект связи с правильным именем поля
+    const newRelation = {
+      relation_id,
+      stereotype,
+      aNodeId,
+      bNodeId
+    };
+
+    // 4. Добавляем в массив
+    this.relations.push(newRelation);
+
+    return newRelation;
+  }
+}
+
+
+

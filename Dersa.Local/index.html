@@ -166,7 +166,7 @@
     // Тестовый массив данных
     const testData = [
 {item:10159948,icon: 'fa fa-share',tooltip:"copy attrs"},
-{item:10163494,icon: 'fa fa-info',tooltip:"information"},
+{item:'P1_5',icon: 'fa fa-info',tooltip:"information"},
 {item:10150232, icon:"fa fa-arrows-v", tooltip:"add rel"},
 {item:'P1_3',icon: 'fa fa-magic',tooltip:"magic"},
 {item:10160042,icon: 'fa fa-pencil',tooltip:"редактировать"},
@@ -231,6 +231,7 @@ function addToolButtons(itemsArray) {
 function OnToolButtonClick(item) {
   if(item === 10150585){
     dTree.saveAllNodes();
+    dTree.saveRelations()
     return;
   }
 	console.log('нажали кнопку для скрипта ' + item);

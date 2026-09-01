@@ -171,7 +171,6 @@ function CreateProperties(form, attrs, cbOK, ActionAfterExec, ClassName, callBac
         if (attrs[i].ReadOnly)
             fControl.setAttribute('readonly', 'true');
     }
-
     // Adds an OK and Cancel button to the dialog
     // contents and implements the respective
     // actions below
