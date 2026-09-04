@@ -193,7 +193,7 @@ function CreateProperties(form, attrs, cbOK, ActionAfterExec, ClassName, callBac
                 iValue = "";
             if ((iValue != texts[i].value && !attrs[i].ReadOnly) || attrs[i].WriteUnchanged)
             {
-                saveText = texts[i].value;//.replace(new RegExp("<", 'g'), "$lt$").replace(new RegExp(">", 'g'), "$gt$");
+                saveText = texts[i].value;
                 results[j++] = { Name: attrs[i].Name, Value: saveText};
                 if (form.Result) {
                     form.Result.value = texts[i].value;

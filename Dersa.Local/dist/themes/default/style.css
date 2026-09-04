@@ -615,14 +615,17 @@
 .jstree-default .CheckBox {
   background: url("CheckBox.gif") 0px 0px no-repeat;
 }
+.jstree-default .Collection {
+  background: url("Application.gif") 4px 4px no-repeat;
+}
 .jstree-default .ComboBox {
   background: url("ComboBox.gif") 0px 0px no-repeat;
 }
+.jstree-default .Configuration {
+  background: url("Wrench.png") 4px 4px no-repeat;
+}
 .jstree-default .Const {
   background: url("Const.gif") 0px 0px no-repeat;
-}
-.jstree-default .Collection {
-  background: url("Application.gif") 4px 4px no-repeat;
 }
 .jstree-default .DateTimeBox {
   background: url("DateTimeBox.gif") 0px 0px no-repeat;

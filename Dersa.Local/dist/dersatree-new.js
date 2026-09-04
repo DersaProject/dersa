@@ -573,10 +573,20 @@ function drawGraph(xml) {
 }
 
 function DnD(src, dst, options) {
-    const newNodeId = dTree.nodes.get(dst).generateId(dTree, src);
-    dTree.getNode(dst).addChild(new DersaNode(newNodeId, src, src, false, dTree, true));
-    const result = [{id: newNodeId, text: src, icon: src, name: src}];
-    return JSON.stringify(result);
+    const parentNode = dTree.getNode(dst); 
+    if(Stereotypes[src]){
+        console.log(Stereotypes[src]);
+        const newNodeId = parentNode.generateId(dTree, src);
+        parentNode.addChild(new DersaNode(newNodeId, src, src, false, dTree, true));
+        const result = [{id: newNodeId, text: src, icon: src, name: src}];
+        return JSON.stringify(result);
+    }
+    const srcNode = dTree.getNode(src);
+    if(srcNode){
+        parentNode.addChild(srcNode);
+        const result = [{id: src, text: srcNode.name, icon: srcNode.stereotype, name: srcNode.name}];
+        return JSON.stringify(result);
+    }
 }
 
 function RenameNode(id, name) {

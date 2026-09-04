@@ -398,6 +398,9 @@ class DateTimeBox extends FormControl {
 class Procedure extends DersaEntity {
 }
 
+class Diagram extends DersaEntity {
+}
+
 class Attribute extends DersaEntity {
     static get attributes() {
         return [
@@ -416,6 +419,7 @@ class Inherit extends DersaRelation {
 }
 
 const Stereotypes = {
+    Diagram: Diagram,
     Package: Package,
     Configuration: Configuration,
     Type: Type,

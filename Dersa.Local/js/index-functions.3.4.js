@@ -267,8 +267,9 @@ async function saveDiagram(diagramId, xml){
 	dTree.saveDiagramData(diagramId, xml);
 }
 
-async function getRelationInfo(){
-	return { fromEntityId: 'L1_1', toEntityId: 'L3_1' } ;
+async function getRelationInfo(id){
+  const R = dTree.getRelation(id);
+	return { fromEntityId: R.aNodeId, toEntityId: R.bNodeId } ;
 }
 
 
@@ -308,3 +309,9 @@ let initialNodeId;
         .replace(/'/g, "&#039;");
     }
 
+
+function getDictionary(paramsArray) {
+  let result = {};
+  paramsArray.forEach(p => result[p.Name] = p.Value);
+  return result;
+}    

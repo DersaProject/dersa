@@ -29,6 +29,13 @@ class DersaNode {
   }
 
   setParent(parentNode) {
+    const parent = this._parent;
+    if (parent) {
+      const idx = parent._children.findIndex(c => c.id === this.id);
+      if (idx !== -1) {
+        parent._children.splice(idx, 1);
+      }
+    }
     this._parent = parentNode;
   }
 
@@ -66,7 +73,6 @@ class DersaNode {
           this._properties.push({Name: chP.Name, Value: chP.Value});
       }
     );
-    console.log(this._properties);
     this._tree.saveProperties(this.id, this._properties);
   }
 
@@ -76,6 +82,47 @@ class DersaNode {
       return property.Value;
     return null;
   }
+
+/**
+ * Импортирует дочерние узлы из массива объектов.
+ * 
+ * @param {Array} childrenData - массив объектов вида:
+ *   { Name, StereotypeName, schemaAttributes: [{Name, Value}], childEntities: [...] }
+ */
+importChildren(childrenData) {
+  if (!Array.isArray(childrenData)) return;
+
+  for (const item of childrenData) {
+    const child = this.importNode(item);
+  }
+  this._tree.saveAllNodes();
+}
+
+/**
+ * Создаёт узел из одного объекта и рекурсивно обрабатывает его дочерние.
+ * 
+ * @param {Object} data - { Name, StereotypeName, schemaAttributes, childEntities }
+ * @returns {DersaNode} созданный узел
+ */
+importNode(data) {
+  // 1. Создаём узел нужного типа через фабрику
+  const newId = this._tree.generateNewNodeId(this.id, data.StereotypeName);
+  const node = new DersaNode(newId, data.StereotypeName, data.Name, false, this._tree);
+  this.addChild(node);
+
+  // 2. Переносим schemaAttributes в properties
+  if (Array.isArray(data.schemaAttributes)) {
+console.log(node.name, data.schemaAttributes);
+    node.setProperties(data.schemaAttributes);
+  }
+
+  // 3. Рекурсивно импортируем дочерние узлы
+  if (Array.isArray(data.childEntities) && data.childEntities.length > 0) {
+    node.importChildren(data.childEntities);
+  }
+
+  return node;
+}
 
 
   /**
@@ -155,6 +202,8 @@ class DersaNode {
     dbManager.deleteData("attributes", this.id);
     if(this.stereotype === 'Package')
       dbManager.deleteData("entities", this.id);
+    if(this instanceof DersaNodeRelation)
+      dbManager.deleteData("relations", this.id);
   }
 
   getDersaEntity() {
@@ -223,17 +272,14 @@ deleteNode(id) {
   // Удаляем сам узел из Map
   this.nodes.delete(id);
 
-  // Убираем узел из children родителя, если он есть
-  if (node._parent) {
-    const parent = node._parent;
-    const idx = parent._children.findIndex(c => c.id === id);
-    if (idx !== -1) {
-      parent._children.splice(idx, 1);
-    }
     // Сбрасываем родителя у удалённого узла
-    node.setParent(null);
-  }
+  node.setParent(null);
+  // в setParent убираем узел из children родителя, если он есть
 
+  if(node instanceof DersaNodeRelation) {
+    console.log('drop relation');
+    this.dropRelation(id);
+  }
   node.deleteFromDatabase(this.dbManager);
 
 }
@@ -267,9 +313,26 @@ deleteNode(id) {
         }
       }
     }
-
     return maxNum;
   }
+
+  getMaxDiagramNumber() {
+    let maxNum = 0;
+
+    for (const node of this.nodes.values()) {
+      if (node.stereotype === 'Diagram') {
+        const match = node.id.match(/^D(\d+)$/);
+        if (match) {
+          const num = parseInt(match[1], 10);
+          if (num > maxNum) {
+            maxNum = num;
+          }
+        }
+      }
+    }
+    return maxNum;
+  }
+
 
   /**
    * Получить следующий индекс для дочернего узла родителя (для типов 1 и 3).
@@ -305,12 +368,17 @@ deleteNode(id) {
    */
   generateNewNodeId(parentId, stereotype) {
     // Тип 2 теперь — 'Package'
-    const type2Stereotype = 'Package';
+    const PStereotype = 'Package';
+    const DStereotype = 'Diagram';
 
-    if (stereotype === type2Stereotype) {
-      // Для каталога, содержащего сущности: L<номер>
+    if (stereotype === PStereotype) {
+      // Для каталога, содержащего сущности: P<номер>
       const nextNum = this.getMaxPackageNumber() + 1;
       return `P${nextNum}`;
+    } else if (stereotype === DStereotype) {
+      // Для диаграммы: D<номер>
+      const nextNum = this.getMaxDiagramNumber() + 1;
+      return `D${nextNum}`;
     } else {
       // Для SuperPackage (тип 1) и всех остальных (тип 3)
       if (!parentId) {
@@ -325,6 +393,8 @@ deleteNode(id) {
 
   async getDiagramData(node_id){
     const diagramData = await this.dbManager.getData('diagrams', node_id);
+    if(!diagramData)
+      return {xml: ''};
     return diagramData;
   }
 
@@ -671,7 +741,7 @@ async saveRelations() {
    * @param {string|number} bNodeId - ID второго узла
    * @returns {Object} созданный объект связи
    */
-  addRelation(stereotype, aNodeId, bNodeId) {
+  addRelation({stereotype, aNodeId, bNodeId}) {
     if (!stereotype || aNodeId === undefined || bNodeId === undefined) {
       throw new Error('Недостаточно данных для создания связи: требуются stereotype, aNodeId и bNodeId');
     }
@@ -708,8 +778,39 @@ async saveRelations() {
     // 4. Добавляем в массив
     this.relations.push(newRelation);
 
+    const parentNode = this.getNode(aNodeId);
+    const relNode = new DersaNodeRelation(relation_id, stereotype, aNodeId, bNodeId);
+    parentNode.addChild(relNode);
+
     return newRelation;
   }
+
+/**
+ * Удаляет связь между узлами.
+ * 
+ * @param {string} relation_id - ID удаляемой связи (например, "R1", "R42")
+ * @returns {Object|null} Удалённый объект связи или null, если не найден
+ */
+dropRelation(relation_id) {
+  if (!relation_id || typeof relation_id !== 'string') {
+    throw new Error('Требуется корректный relation_id для удаления связи');
+  }
+
+  // 1. Ищем связь в массиве
+  const index = this.relations.findIndex(rel => rel.relation_id === relation_id);
+
+  if (index === -1) {
+    return null;
+  }
+
+  const removedRelation = this.relations[index];
+
+  // 2. Удаляем из массива relations
+  this.relations.splice(index, 1);
+
+  return removedRelation;
+}
+
 }
 
 
